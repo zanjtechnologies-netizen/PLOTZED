@@ -1,0 +1,344 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phone         String?   @unique
+  name          String
+  password_hash String
+  role          UserRole  @default(CUSTOMER)
+  
+  // KYC
+  kyc_verified  Boolean   @default(false)
+  kyc_documents String[]  // S3 URLs
+  
+  // OTP
+  otp_secret    String?
+  otp_expires   DateTime?
+  
+  // Preferences
+  saved_plots   String[]  // Array of plot IDs
+  
+  // Timestamps
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  last_login    DateTime?
+  
+  // Relations
+  bookings      Booking[]
+  inquiries     Inquiry[]
+  site_visits   SiteVisit[]
+  payments      Payment[]
+  
+  @@index([email])
+  @@index([phone])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+// Plot model
+model Plot {
+  id          String     @id @default(uuid())
+  title       String
+  slug        String     @unique
+  description String?    @db.Text
+  
+  // Pricing
+  price       Decimal    @db.Decimal(15, 2)
+  booking_amount Decimal @db.Decimal(15, 2)
+  
+  // Specifications
+  plot_size   Decimal    @db.Decimal(10, 2) // in sq ft
+  dimensions  String?    // e.g., "40x60 ft"
+  facing      String?    // North, South, East, West
+  
+  // Location
+  address     String     @db.Text
+  city        String
+  state       String
+  pincode     String
+  latitude    Decimal?   @db.Decimal(10, 8)
+  longitude   Decimal?   @db.Decimal(11, 8)
+  
+  // Legal
+  rera_number String?
+  approved_layout String? // S3 URL
+  legal_docs  String[]   // S3 URLs
+  
+  // Media
+  images      String[]   // S3 URLs
+  videos      String[]   // S3 URLs
+  tour_360    String?    // 360 tour URL
+  brochure    String?    // PDF URL
+  
+  // Amenities
+  amenities   String[]
+  nearby_places Json?    // {schools: [], hospitals: []}
+  
+  // Status
+  status      PlotStatus @default(AVAILABLE)
+  
+  // SEO
+  meta_title       String?
+  meta_description String?
+  
+  // Featured
+  is_featured Boolean    @default(false)
+  is_published Boolean   @default(true)
+  
+  // Timestamps
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  
+  // Relations
+  bookings    Booking[]
+  inquiries   Inquiry[]
+  site_visits SiteVisit[]
+  
+  @@index([slug])
+  @@index([city])
+  @@index([status])
+  @@index([is_featured])
+  @@map("plots")
+}
+
+enum PlotStatus {
+  AVAILABLE
+  BOOKED
+  SOLD
+}
+
+// Booking model
+model Booking {
+  id              String        @id @default(uuid())
+  
+  // Relations
+  user_id         String
+  user            User          @relation(fields: [user_id], references: [id])
+  plot_id         String
+  plot            Plot          @relation(fields: [plot_id], references: [id])
+  
+  // Booking details
+  booking_amount  Decimal       @db.Decimal(15, 2)
+  total_amount    Decimal       @db.Decimal(15, 2)
+  
+  // Payment plan
+  payment_plan    Json?         // {installments: [...]}
+  
+  // Status
+  status          BookingStatus @default(PENDING)
+  
+  // Documents
+  documents       String[]      // S3 URLs
+  agreement_url   String?       // Signed agreement
+  
+  // Timestamps
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  confirmed_at    DateTime?
+  completed_at    DateTime?
+  
+  // Relations
+  payments        Payment[]
+  
+  @@index([user_id])
+  @@index([plot_id])
+  @@index([status])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  PAYMENT_PENDING
+  COMPLETED
+  CANCELLED
+}
+
+// Payment model
+model Payment {
+  id                  String        @id @default(uuid())
+  
+  // Relations
+  user_id             String
+  user                User          @relation(fields: [user_id], references: [id])
+  booking_id          String
+  booking             Booking       @relation(fields: [booking_id], references: [id])
+  
+  // Payment details
+  amount              Decimal       @db.Decimal(15, 2)
+  currency            String        @default("INR")
+  payment_type        PaymentType
+  
+  // Razorpay
+  razorpay_order_id   String?       @unique
+  razorpay_payment_id String?       @unique
+  razorpay_signature  String?
+  
+  // Status
+  status              PaymentStatus @default(PENDING)
+  payment_method      String?       // card, upi, netbanking
+  
+  // Invoice
+  invoice_number      String?       @unique
+  receipt_url         String?
+  
+  // Timestamps
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+  completed_at        DateTime?
+  
+  @@index([user_id])
+  @@index([booking_id])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentType {
+  BOOKING
+  INSTALLMENT
+  FULL_PAYMENT
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Inquiry model
+model Inquiry {
+  id         String        @id @default(uuid())
+  
+  // Relations
+  user_id    String?
+  user       User?         @relation(fields: [user_id], references: [id])
+  plot_id    String?
+  plot       Plot?         @relation(fields: [plot_id], references: [id])
+  
+  // Contact info
+  name       String
+  email      String
+  phone      String
+  message    String        @db.Text
+  
+  // Tracking
+  source     String?       // website, whatsapp, phone
+  utm_source String?
+  utm_medium String?
+  
+  // Status
+  status     InquiryStatus @default(NEW)
+  
+  // Timestamps
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  
+  @@index([status])
+  @@index([created_at])
+  @@map("inquiries")
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  CLOSED
+}
+
+// Site Visit model
+model SiteVisit {
+  id              String          @id @default(uuid())
+  
+  // Relations
+  user_id         String
+  user            User            @relation(fields: [user_id], references: [id])
+  plot_id         String
+  plot            Plot            @relation(fields: [plot_id], references: [id])
+  
+  // Schedule
+  visit_date      DateTime
+  visit_time      String
+  attendees       Int             @default(1)
+  
+  // Status
+  status          SiteVisitStatus @default(PENDING)
+  notes           String?         @db.Text
+  
+  // Timestamps
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  
+  @@index([user_id])
+  @@index([plot_id])
+  @@index([visit_date])
+  @@map("site_visits")
+}
+
+enum SiteVisitStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+// Blog Post model (optional, or use WordPress API)
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?
+  featured_image String?
+  category    String?
+  tags        String[]
+  
+  // SEO
+  meta_title       String?
+  meta_description String?
+  
+  // Status
+  is_published Boolean  @default(false)
+  published_at DateTime?
+  
+  // Timestamps
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  
+  @@index([slug])
+  @@index([is_published])
+  @@map("blog_posts")
+}
+
+// Activity Log (audit trail)
+model ActivityLog {
+  id          String   @id @default(uuid())
+  user_id     String?
+  action      String
+  entity_type String?  // plot, booking, payment
+  entity_id   String?
+  ip_address  String?
+  user_agent  String?
+  metadata    Json?
+  created_at  DateTime @default(now())
+  
+  @@index([user_id])
+  @@index([created_at])
+  @@map("activity_logs")
+}
