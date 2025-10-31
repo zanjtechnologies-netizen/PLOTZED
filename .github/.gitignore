@@ -1,0 +1,160 @@
+# ================================================
+# ROOT LEVEL IGNORES
+# ================================================
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
+*.env
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# ================================================
+# FRONTEND SPECIFIC
+# ================================================
+
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.cache/
+frontend/coverage/
+frontend/.env.local
+frontend/.env.*.local
+
+# ================================================
+# BACKEND SPECIFIC
+# ================================================
+
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/coverage/
+backend/.env
+backend/.env.local
+backend/.env.*.local
+backend/logs/
+backend/uploads/
+
+# ================================================
+# SHARED
+# ================================================
+
+shared/node_modules/
+shared/dist/
+
+# ================================================
+# DEPENDENCIES
+# ================================================
+
+node_modules/
+bower_components/
+jspm_packages/
+
+# Lock files (choose one based on package manager)
+# Uncomment if using yarn
+# yarn.lock
+# package-lock.json
+
+# ================================================
+# BUILD & DISTRIBUTION
+# ================================================
+
+dist/
+build/
+*.tgz
+*.zip
+
+# ================================================
+# DOCKER
+# ================================================
+
+*.log
+.dockerignore
+
+# ================================================
+# TERRAFORM
+# ================================================
+
+infrastructure/.terraform/
+infrastructure/*.tfstate
+infrastructure/*.tfstate.backup
+infrastructure/.terraform.lock.hcl
+infrastructure/terraform.tfvars
+infrastructure/*.tfvars
+
+# ================================================
+# SENSITIVE DATA
+# ================================================
+
+# Private keys
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Database dumps
+*.sql
+*.dump
+
+# Certificates
+*.crt
+*.cer
+
+# Secrets
+secrets/
+*.secret
+
+# AWS credentials
+.aws/
+
+# ================================================
+# TESTING
+# ================================================
+
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+
+# ================================================
+# MISC
+# ================================================
+
+.cache/
+temp/
+tmp/
+*.pid
+*.seed
+*.pid.lock
+.npm/
