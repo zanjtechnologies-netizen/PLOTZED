@@ -5,6 +5,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { rateLimit, getIdentifier } from '@/lib/rate-limit-redis'
 
 // Rate limiting store (in-memory for development, use Redis in production)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
@@ -95,37 +96,46 @@ export async function middleware(request: NextRequest) {
   // ================================================
   // 2. RATE LIMITING FOR API ROUTES
   // ================================================
-  if (pathname.startsWith('/api')) {
-    const ip = request.headers.get('x-forwarded-for') || 'unknown'
-    const identifier = `${ip}:${pathname}`
 
-    const config = getRateLimitConfig(pathname)
-    const allowed = checkRateLimit(identifier, config)
+// In the middleware function, replace the rate limiting code:
+// Rate limiting for API routes
+if (pathname.startsWith('/api')) {
+  const identifier = getIdentifier(request)
+  
+  // Determine rate limit type based on path
+  let type: 'default' | 'login' | 'register' | 'payment' | 'upload' = 'default'
+  
+  if (pathname.includes('/auth/login')) type = 'login'
+  else if (pathname.includes('/auth/register')) type = 'register'
+  else if (pathname.includes('/payments')) type = 'payment'
+  else if (pathname.includes('/upload')) type = 'upload'
 
-    if (!allowed) {
-      return new NextResponse(
-        JSON.stringify({
-          error: 'Rate limit exceeded',
-          message: 'Too many requests. Please try again later.',
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Retry-After': String(Math.ceil(config.interval / 1000)),
-          },
-        }
-      )
-    }
+  const rateLimitResult = await rateLimit(identifier, type)
 
-    // Add rate limit headers
-    const record = rateLimitStore.get(identifier)
-    if (record) {
-      response.headers.set('X-RateLimit-Limit', String(config.maxRequests))
-      response.headers.set('X-RateLimit-Remaining', String(config.maxRequests - record.count))
-      response.headers.set('X-RateLimit-Reset', String(record.resetTime))
-    }
+  if (!rateLimitResult.success) {
+    return new NextResponse(
+      JSON.stringify({
+        error: 'Rate limit exceeded',
+        message: `Too many requests. Try again in ${rateLimitResult.reset - Math.floor(Date.now() / 1000)} seconds.`,
+      }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-RateLimit-Limit': String(rateLimitResult.limit),
+          'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+          'X-RateLimit-Reset': String(rateLimitResult.reset),
+          'Retry-After': String(rateLimitResult.reset - Math.floor(Date.now() / 1000)),
+        },
+      }
+    )
   }
+
+  // Add rate limit headers to response
+  response.headers.set('X-RateLimit-Limit', String(rateLimitResult.limit))
+  response.headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining))
+  response.headers.set('X-RateLimit-Reset', String(rateLimitResult.reset))
+}
 
   // ================================================
   // 3. AUTHENTICATION CHECK FOR PROTECTED ROUTES

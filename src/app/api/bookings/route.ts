@@ -3,86 +3,123 @@
 // ================================================
 
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
-import { bookingSchema } from '@/lib/validators'
+import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
-export async function POST(req: NextRequest) {
-  try {
-    const session = await auth()
+const bookingSchema = z.object({
+  plot_id: z.string().uuid(),
+  booking_date: z.string().datetime(),
+  booking_time: z.string(),
+  attendees: z.number().min(1).max(10),
+  notes: z.string().optional(),
+})
 
-    if (!session?.user?.id) {
+// GET /api/bookings - Get user's bookings
+export async function GET(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const userId = session.user.id
-    const body = await req.json()
-    const validation = bookingSchema.safeParse(body)
+    const { searchParams } = new URL(request.url)
+    const status = searchParams.get('status')
 
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: 'Invalid input', details: validation.error.flatten() },
-        { status: 400 }
-      )
-    }
+    const where: any = { user_id: session.user.id }
+    if (status) where.status = status
 
-    const { plotId, visitDate, attendees, notes } = validation.data
-    const visitDateTime = new Date(visitDate)
-    const visitTime = visitDateTime.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
+    const bookings = await prisma.booking.findMany({
+      where,
+      include: {
+        plot: {
+          select: {
+            id: true,
+            title: true,
+            price: true,
+            images: true,
+            city: true,
+            state: true,
+          },
+        },
+        payments: {
+          select: {
+            id: true,
+            amount: true,
+            status: true,
+            payment_type: true,
+            created_at: true,
+          },
+        },
+      },
+      orderBy: { created_at: 'desc' },
     })
 
-    // 1. Check if the plot exists
+    return NextResponse.json(bookings)
+  } catch (error) {
+    console.error('Bookings fetch error:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch bookings' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/bookings - Create booking
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const validatedData = bookingSchema.parse(body)
+
+    // Check if plot exists and is available
     const plot = await prisma.plot.findUnique({
-      where: { id: plotId },
+      where: { id: validatedData.plot_id },
     })
 
     if (!plot) {
       return NextResponse.json({ error: 'Plot not found' }, { status: 404 })
     }
 
-    // 2. Check for conflicting site visits for the same plot at the same time
-    const conflictingVisit = await prisma.siteVisit.findFirst({
-      where: {
-        plot_id: plotId,
-        visit_date: visitDateTime,
-      },
-    })
-
-    if (conflictingVisit) {
+    if (plot.status !== 'AVAILABLE') {
       return NextResponse.json(
-        { error: 'This time slot is already booked for a site visit.' },
-        { status: 409 }
-      )
-    }
-
-    // 3. Create the new site visit
-    const newSiteVisit = await prisma.siteVisit.create({
-      data: {
-        plot_id: plotId,
-        user_id: userId,
-        visit_date: visitDateTime,
-        visit_time: visitTime,
-        attendees,
-        notes,
-        status: 'PENDING', // Default status
-      },
-    })
-
-    return NextResponse.json(newSiteVisit, { status: 201 })
-  } catch (error) {
-    console.error('Site visit creation error:', error)
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid input', details: error.flatten() },
+        { error: 'Plot is not available' },
         { status: 400 }
       )
     }
+
+    // Create booking
+    const booking = await prisma.booking.create({
+      data: {
+        user_id: session.user.id,
+        plot_id: validatedData.plot_id,
+        booking_amount: plot.booking_amount,
+        total_amount: plot.price,
+        status: 'PENDING',
+      },
+      include: {
+        plot: true,
+      },
+    })
+
+    return NextResponse.json(booking, { status: 201 })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.issues },
+        { status: 400 }
+      )
+    }
+
+    console.error('Booking creation error:', error)
     return NextResponse.json(
-      { error: 'An unexpected error occurred' },
+      { error: 'Failed to create booking' },
       { status: 500 }
     )
   }

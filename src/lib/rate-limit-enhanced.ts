@@ -1,12 +1,10 @@
-// ================================================
-// src/lib/rate-limit-redis.ts - Redis-based Rate Limiting (Production)
-// ================================================
+// src/lib/rate-limit-enhanced.ts
 
 import { Redis } from '@upstash/redis'
 
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+  url: process.env.UPSTASH_REDIS_URL!,
+  token: process.env.UPSTASH_REDIS_TOKEN!,
 })
 
 interface RateLimitConfig {
@@ -14,7 +12,7 @@ interface RateLimitConfig {
   window: number // seconds
 }
 
-const rateLimitConfigs: Record<string, RateLimitConfig> = {
+const rateLimitConfigs = {
   default: { requests: 100, window: 900 }, // 15 min
   login: { requests: 5, window: 900 },
   register: { requests: 3, window: 3600 },
@@ -23,23 +21,16 @@ const rateLimitConfigs: Record<string, RateLimitConfig> = {
   otp: { requests: 3, window: 300 },
 }
 
-interface RateLimitResult {
-  success: boolean
-  limit: number
-  remaining: number
-  reset: number
-}
-
 export async function rateLimit(
   identifier: string,
   type: keyof typeof rateLimitConfigs = 'default'
-): Promise<RateLimitResult> {
+): Promise<{ success: boolean; limit: number; remaining: number; reset: number }> {
   const config = rateLimitConfigs[type]
   const key = `ratelimit:${type}:${identifier}`
 
   try {
     const current = await redis.incr(key)
-
+    
     if (current === 1) {
       // First request in window, set expiry
       await redis.expire(key, config.window)
@@ -65,7 +56,7 @@ export async function rateLimit(
     }
   } catch (error) {
     console.error('Rate limit error:', error)
-    // Fail open in case of Redis issues
+    // Fail open
     return {
       success: true,
       limit: config.requests,
@@ -75,11 +66,14 @@ export async function rateLimit(
   }
 }
 
-// Helper to get IP from request
-export function getIdentifier(request: Request): string {
-  return (
-    request.headers.get('x-forwarded-for')?.split(',')[0] ||
-    request.headers.get('x-real-ip') ||
-    'unknown'
-  )
+// Apply rate limiting in middleware
+export async function applyRateLimit(request: Request, type: keyof typeof rateLimitConfigs) {
+  const ip = request.headers.get('x-forwarded-for') || 'unknown'
+  const result = await rateLimit(ip, type)
+
+  if (!result.success) {
+    throw new Error(`Rate limit exceeded. Try again in ${result.reset - Math.floor(Date.now() / 1000)} seconds.`)
+  }
+
+  return result
 }

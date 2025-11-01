@@ -3,7 +3,12 @@
 // ================================================
 
 import { PrismaClient } from '@prisma/client'
+import { validateEnvironment } from './env-validation'
 
+//validate environment before anything else
+if (process.env.NODE_ENV != 'test'){
+  validateEnvironment()
+}
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
