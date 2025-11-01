@@ -81,3 +81,6 @@ export const createPlotSchema = z.object({
   amenities: z.array(z.string()),
   isFeatured: z.boolean().default(false),
 })
+
+// Plot update schema (Admin)
+export const updatePlotSchema = createPlotSchema.partial()

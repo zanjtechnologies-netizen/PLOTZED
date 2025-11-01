@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
 .pnp.*
@@ -9,35 +9,55 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+package-lock.json
 
-# testing
-/coverage
-
-# next.js
+# Build & Output
+/build
+/dist
 /.next/
 /out/
 
-# production
-/build
+# Testing
+/coverage
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+lerna-debug.log*
 
-# env files (can opt-in for committing if needed)
+# Local Environment Variables
+# It's recommended to use .env.example for team collaboration.
 .env*
+!.env.example
 
-# vercel
-.vercel
+# OS-specific files
+.DS_Store
+Thumbs.db
 
-# typescript
+# Editor folders and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
+# Prisma
 /src/generated/prisma
+prisma/dev.db
+prisma/*.db-journal
+prisma/migrations/**/migration.sql
+
+# Vercel
+.vercel
+
+# Misc
+*.pem
+/tmp/
+/temp/
