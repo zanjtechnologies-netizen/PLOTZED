@@ -29,39 +29,53 @@ const envSchema = z.object({
     .string().default('dummy_secret'),
     //.min(1, 'RAZORPAY_KEY_SECRET is required'),
 
-  // AWS S3
+  // AWS S3 (Optional - using Cloudflare R2 instead)
   AWS_REGION: z
     .string()
-    .min(1, 'AWS_REGION is required (e.g., ap-south-1)'),
-  
+    .min(1, 'AWS_REGION is required (e.g., ap-south-1)')
+    .optional(),
+
   AWS_ACCESS_KEY_ID: z
     .string()
-    .min(16, 'AWS_ACCESS_KEY_ID must be at least 16 characters'),
-  
+    .min(16, 'AWS_ACCESS_KEY_ID must be at least 16 characters')
+    .optional(),
+
   AWS_SECRET_ACCESS_KEY: z
     .string()
-    .min(32, 'AWS_SECRET_ACCESS_KEY must be at least 32 characters'),
-  
+    .min(32, 'AWS_SECRET_ACCESS_KEY must be at least 32 characters')
+    .optional(),
+
   AWS_S3_BUCKET: z
     .string()
     .min(3, 'AWS_S3_BUCKET name must be at least 3 characters')
     .max(63, 'AWS_S3_BUCKET name must be at most 63 characters')
-    .regex(/^[a-z0-9.-]+$/, 'AWS_S3_BUCKET must contain only lowercase letters, numbers, dots, and hyphens'),
+    .regex(/^[a-z0-9.-]+$/, 'AWS_S3_BUCKET must contain only lowercase letters, numbers, dots, and hyphens')
+    .optional(),
 
-  // Encryption
+  // Cloudflare R2 (Primary storage)
+  R2_ENDPOINT: z.string().url().optional(),
+  R2_ACCESS_KEY_ID: z.string().optional(),
+  R2_SECRET_ACCESS_KEY: z.string().optional(),
+  R2_BUCKET: z.string().optional(),
+  R2_ACCOUNT_ID: z.string().optional(),
+
+  // Encryption (Optional for development)
   ENCRYPTION_KEY: z
     .string()
-    .length(64, 'ENCRYPTION_KEY must be exactly 64 characters (32 bytes in hex format)'),
+    .length(64, 'ENCRYPTION_KEY must be exactly 64 characters (32 bytes in hex format)')
+    .optional(),
 
-  // Redis (Upstash)
+  // Redis (Upstash) - Optional
   UPSTASH_REDIS_REST_URL: z
     .string()
     .url('UPSTASH_REDIS_REST_URL must be a valid URL')
-    .startsWith('https://', 'UPSTASH_REDIS_REST_URL must use HTTPS'),
-  
+    .startsWith('https://', 'UPSTASH_REDIS_REST_URL must use HTTPS')
+    .optional(),
+
   UPSTASH_REDIS_REST_TOKEN: z
     .string()
-    .min(1, 'UPSTASH_REDIS_REST_TOKEN is required'),
+    .min(1, 'UPSTASH_REDIS_REST_TOKEN is required')
+    .optional(),
 
   // Optional: Email (can be added later)
   RESEND_API_KEY: z.string().optional(),

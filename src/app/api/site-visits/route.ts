@@ -2,10 +2,14 @@
 // src/app/api/site-visits/route.ts - Site Visits API
 // ================================================
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
+import { sendEmail, emailTemplates } from '@/lib/email'
+import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { UnauthorizedError } from '@/lib/errors'
+import { structuredLogger } from '@/lib/structured-logger'
 
 const siteVisitSchema = z.object({
   plot_id: z.string().uuid(),
@@ -16,12 +20,12 @@ const siteVisitSchema = z.object({
 })
 
 // POST /api/site-visits - Schedule site visit
-export async function POST(request: NextRequest) {
-  try {
-    const session = await auth();
+export const POST = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to schedule a site visit')
     }
 
     const body = await request.json()
@@ -48,39 +52,61 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // TODO: Send confirmation email
-    // TODO: Send SMS confirmation
+    structuredLogger.info('Site visit scheduled', {
+      siteVisitId: siteVisit.id,
+      userId: session.user.id,
+      plotId: validatedData.plot_id,
+      type: 'site_visit_scheduled',
+    })
 
-    return NextResponse.json(
+    // Send confirmation email
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true, email: true },
+    })
+
+    if (user?.email) {
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Site Visit Scheduled - Plotzed Real Estate',
+          html: emailTemplates.siteVisitConfirmation({
+            customerName: user.name,
+            propertyName: siteVisit.plot.title,
+            visitDate: new Date(siteVisit.visit_date).toLocaleDateString('en-IN', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }),
+            visitTime: siteVisit.visit_time,
+          }),
+        })
+      } catch (emailError) {
+        structuredLogger.error('Site visit confirmation email failed', emailError as Error, {
+          siteVisitId: siteVisit.id,
+        })
+      }
+    }
+
+    return createdResponse(
       {
         message: 'Site visit scheduled successfully',
         siteVisit,
       },
-      { status: 201 }
+      'Site visit scheduled successfully'
     )
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Validation failed', details: error.issues },
-        { status: 400 }
-      )
-    }
-
-    console.error('Site visit creation error:', error)
-    return NextResponse.json(
-      { error: 'Failed to schedule site visit' },
-      { status: 500 }
-    )
-  }
-}
+  },
+  'POST /api/site-visits'
+)
 
 // GET /api/site-visits - Get user's site visits
-export async function GET(request: NextRequest) {
-  try {
-    const session = await auth();
+export const GET = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to view site visits')
     }
 
     const siteVisits = await prisma.siteVisit.findMany({
@@ -98,12 +124,7 @@ export async function GET(request: NextRequest) {
       orderBy: { visit_date: 'desc' },
     })
 
-    return NextResponse.json(siteVisits)
-  } catch (error) {
-    console.error('Site visits fetch error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch site visits' },
-      { status: 500 }
-    )
-  }
-}
+    return successResponse({ siteVisits })
+  },
+  'GET /api/site-visits'
+)

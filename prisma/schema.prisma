@@ -15,29 +15,38 @@ model User {
   name          String
   password_hash String
   role          UserRole  @default(CUSTOMER)
-  
+
+  // Email Verification
+  email_verified Boolean   @default(false)
+  verification_token String?  @unique
+  verification_token_expires DateTime?
+
+  // Password Reset
+  reset_token String?  @unique
+  reset_token_expires DateTime?
+
   // KYC
   kyc_verified  Boolean   @default(false)
   kyc_documents String[]  // S3 URLs
-  
+
   // OTP
   otp_secret    String?
   otp_expires   DateTime?
-  
+
   // Preferences
   saved_plots   String[]  // Array of plot IDs
-  
+
   // Timestamps
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
   last_login    DateTime?
-  
+
   // Relations
   bookings      Booking[]
   inquiries     Inquiry[]
   site_visits   SiteVisit[]
   payments      Payment[]
-  
+
   @@index([email])
   @@index([phone])
   @@map("users")

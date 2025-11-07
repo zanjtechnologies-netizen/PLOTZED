@@ -15,7 +15,7 @@ function Add-TestResult {
         [string]$Name,
         [string]$Status,
         [string]$StatusCode = "",
-        [string]$Error = ""
+        [string]$issues = ""
     )
     # Using the unary comma operator to ensure the item is added as a new element
     $global:testResults += ,@{

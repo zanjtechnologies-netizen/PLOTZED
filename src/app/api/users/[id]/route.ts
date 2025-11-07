@@ -2,28 +2,29 @@
 // src/app/api/users/[id]/route.ts - User Profile API (NextAuth v5)
 // ================================================
 
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth"; // ✅ new NextAuth v5 helper
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from 'next/server'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { ForbiddenError, NotFoundError, UnauthorizedError } from '@/lib/errors'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const session = await auth();
+export const GET = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to view user profile')
     }
 
+    const { id } = await params
+
     // Only the user themselves or an admin can view this profile
-    if (session.user.id !== params.id && session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (session.user.id !== id && session.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You do not have permission to view this profile')
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: {
         id: true,
         email: true,
@@ -36,50 +37,44 @@ export async function GET(
         created_at: true,
         last_login: true,
       },
-    });
+    })
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      throw new NotFoundError('User not found')
     }
 
-    return NextResponse.json(user);
-  } catch (error) {
-    console.error("User fetch error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status: 500 }
-    );
-  }
-}
+    return successResponse({ user })
+  },
+  'GET /api/users/[id]'
+)
 
 // ================================================
 // PATCH /api/users/[id] - Update user profile
 // ================================================
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const session = await auth();
+export const PATCH = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to update user profile')
     }
 
-    if (session.user.id !== params.id && session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { id } = await params
+
+    if (session.user.id !== id && session.user.role !== 'ADMIN') {
+      throw new ForbiddenError('You do not have permission to update this profile')
     }
 
-    const body = await request.json();
+    const body = await request.json()
 
     // Prevent updates to sensitive fields
-    delete body.password_hash;
-    delete body.role;
-    delete body.kyc_verified;
+    delete body.password_hash
+    delete body.role
+    delete body.kyc_verified
 
     const updatedUser = await prisma.user.update({
-      where: { id: params.id },
+      where: { id },
       data: body,
       select: {
         id: true,
@@ -89,14 +84,9 @@ export async function PATCH(
         role: true,
         kyc_verified: true,
       },
-    });
+    })
 
-    return NextResponse.json(updatedUser);
-  } catch (error) {
-    console.error("User update error:", error);
-    return NextResponse.json(
-      { error: "Failed to update user" },
-      { status: 500 }
-    );
-  }
-}
+    return successResponse({ user: updatedUser }, 200, 'User updated successfully')
+  },
+  'PATCH /api/users/[id]'
+)

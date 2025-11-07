@@ -2,26 +2,26 @@
 // src/app/api/bookings/route.ts - Bookings API
 // ================================================
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { sendEmail, emailTemplates } from '@/lib/email'
+import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { BadRequestError, NotFoundError, UnauthorizedError } from '@/lib/errors'
+import { structuredLogger } from '@/lib/structured-logger'
 
 const bookingSchema = z.object({
   plot_id: z.string().uuid(),
-  booking_date: z.string().datetime(),
-  booking_time: z.string(),
-  attendees: z.number().min(1).max(10),
-  notes: z.string().optional(),
 })
 
 // GET /api/bookings - Get user's bookings
-export async function GET(request: NextRequest) {
-  try {
-    const session = await auth();
+export const GET = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to view bookings')
     }
 
     const { searchParams } = new URL(request.url)
@@ -56,23 +56,18 @@ export async function GET(request: NextRequest) {
       orderBy: { created_at: 'desc' },
     })
 
-    return NextResponse.json(bookings)
-  } catch (error) {
-    console.error('Bookings fetch error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch bookings' },
-      { status: 500 }
-    )
-  }
-}
+    return successResponse({ bookings })
+  },
+  'GET /api/bookings'
+)
 
 // POST /api/bookings - Create booking
-export async function POST(request: NextRequest) {
-  try {
-    const session = await auth();
+export const POST = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to create a booking')
     }
 
     const body = await request.json()
@@ -84,14 +79,11 @@ export async function POST(request: NextRequest) {
     })
 
     if (!plot) {
-      return NextResponse.json({ error: 'Plot not found' }, { status: 404 })
+      throw new NotFoundError('Plot not found')
     }
 
     if (plot.status !== 'AVAILABLE') {
-      return NextResponse.json(
-        { error: 'Plot is not available' },
-        { status: 400 }
-      )
+      throw new BadRequestError('Plot is not available for booking')
     }
 
     // Create booking
@@ -104,23 +96,60 @@ export async function POST(request: NextRequest) {
         status: 'PENDING',
       },
       include: {
-        plot: true,
+        plot: {
+          select: {
+            title: true,
+            price: true,
+            booking_amount: true,
+            address: true,
+            city: true,
+          },
+        },
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
       },
     })
 
-    return NextResponse.json(booking, { status: 201 })
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Validation failed', details: error.issues },
-        { status: 400 }
-      )
+    structuredLogger.info('Booking created successfully', {
+      bookingId: booking.id,
+      userId: session.user.id,
+      plotId: plot.id,
+      type: 'booking_creation',
+    })
+
+    // Send booking confirmation email
+    try {
+      if (booking.user.email) {
+        await sendEmail({
+          to: booking.user.email,
+          subject: 'Booking Confirmed - Plotzed Real Estate',
+          html: emailTemplates.bookingConfirmation({
+            customerName: booking.user.name,
+            propertyName: booking.plot.title,
+            bookingId: booking.id,
+            amount: booking.booking_amount.toNumber(),
+            date: booking.created_at.toLocaleDateString('en-IN', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }),
+          }),
+        })
+      }
+    } catch (emailError) {
+      structuredLogger.error('Booking confirmation email failed', emailError as Error, {
+        bookingId: booking.id,
+        userId: session.user.id,
+      })
+      // Don't fail booking if email fails
     }
 
-    console.error('Booking creation error:', error)
-    return NextResponse.json(
-      { error: 'Failed to create booking' },
-      { status: 500 }
-    )
-  }
-}
+    return createdResponse(booking, 'Booking created successfully')
+  },
+  'POST /api/bookings'
+)

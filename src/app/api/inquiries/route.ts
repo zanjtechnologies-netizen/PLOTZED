@@ -2,10 +2,14 @@
 // src/app/api/inquiries/route.ts - Inquiries API
 // ================================================
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
+import { sendEmail, emailTemplates } from '@/lib/email'
+import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { UnauthorizedError } from '@/lib/errors'
+import { structuredLogger } from '@/lib/structured-logger'
 
 const inquirySchema = z.object({
   name: z.string().min(2),
@@ -17,8 +21,8 @@ const inquirySchema = z.object({
 })
 
 // POST /api/inquiries - Create inquiry
-export async function POST(request: NextRequest) {
-  try {
+export const POST = withErrorHandling(
+  async (request: NextRequest) => {
     const body = await request.json()
     const validatedData = inquirySchema.parse(body)
 
@@ -27,41 +31,80 @@ export async function POST(request: NextRequest) {
         ...validatedData,
         status: 'NEW',
       },
+      include: {
+        plot: {
+          select: {
+            title: true,
+          },
+        },
+      },
     })
 
-    // TODO: Send notification email to admin
-    // TODO: Send confirmation email to customer
+    structuredLogger.info('New inquiry received', {
+      inquiryId: inquiry.id,
+      email: validatedData.email,
+      plotId: validatedData.plot_id,
+      type: 'inquiry_creation',
+    })
 
-    return NextResponse.json(
+    // Send confirmation email to customer
+    try {
+      await sendEmail({
+        to: validatedData.email,
+        subject: 'Inquiry Received - Plotzed Real Estate',
+        html: emailTemplates.inquiryReceived(
+          validatedData.name,
+          inquiry.plot?.title || 'General Inquiry'
+        ),
+      })
+    } catch (emailError) {
+      structuredLogger.error('Customer inquiry email failed', emailError as Error, {
+        inquiryId: inquiry.id,
+      })
+      // Don't fail inquiry if email fails
+    }
+
+    // Send notification email to admin
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL
+      if (adminEmail) {
+        await sendEmail({
+          to: adminEmail,
+          subject: 'New Inquiry Received - Plotzed Admin',
+          html: emailTemplates.adminNewInquiry(
+            validatedData.name,
+            validatedData.email,
+            validatedData.phone,
+            inquiry.plot?.title || 'General Inquiry',
+            validatedData.message
+          ),
+        })
+      }
+    } catch (emailError) {
+      structuredLogger.error('Admin inquiry notification failed', emailError as Error, {
+        inquiryId: inquiry.id,
+      })
+      // Don't fail inquiry if email fails
+    }
+
+    return createdResponse(
       {
         message: 'Inquiry submitted successfully',
         inquiry,
       },
-      { status: 201 }
+      'Inquiry submitted successfully'
     )
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Validation failed', details: error.issues },
-        { status: 400 }
-      )
-    }
-
-    console.error('Inquiry creation error:', error)
-    return NextResponse.json(
-      { error: 'Failed to submit inquiry' },
-      { status: 500 }
-    )
-  }
-}
+  },
+  'POST /api/inquiries'
+)
 
 // GET /api/inquiries - Get all inquiries (Admin only)
-export async function GET(request: NextRequest) {
-  try {
-    const session = await auth();
+export const GET = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
 
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user || session.user.role !== 'ADMIN') {
+      throw new UnauthorizedError('Admin access required')
     }
 
     const { searchParams } = new URL(request.url)
@@ -91,8 +134,8 @@ export async function GET(request: NextRequest) {
       prisma.inquiry.count({ where }),
     ])
 
-    return NextResponse.json({
-      data: inquiries,
+    return successResponse({
+      inquiries,
       pagination: {
         page,
         limit,
@@ -100,11 +143,6 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
     })
-  } catch (error) {
-    console.error('Inquiries fetch error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch inquiries' },
-      { status: 500 }
-    )
-  }
-}
+  },
+  'GET /api/inquiries'
+)

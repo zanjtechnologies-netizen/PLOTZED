@@ -2,18 +2,19 @@
 // src/app/api/plots/[id]/route.ts - Single Plot API
 // ================================================
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { updatePlotSchema } from '@/lib/validators'
-import { z } from 'zod'
+import { noContentResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { ForbiddenError, NotFoundError, UnauthorizedError } from '@/lib/errors'
+import { structuredLogger } from '@/lib/structured-logger'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
+export const GET = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params
     const plot = await prisma.plot.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         bookings: {
           where: { status: 'COMPLETED' },
@@ -23,40 +24,34 @@ export async function GET(
     })
 
     if (!plot) {
-      return NextResponse.json(
-        { error: 'Plot not found' },
-        { status: 404 }
-      )
+      throw new NotFoundError('Plot not found')
     }
 
-    return NextResponse.json(plot)
-  } catch (error) {
-    console.error('Plot fetch error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch plot' },
-      { status: 500 }
-    )
-  }
-}
+    return successResponse({ plot })
+  },
+  'GET /api/plots/[id]'
+)
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
+export const PUT = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const session = await auth()
+
+    if (!session?.user) {
+      throw new UnauthorizedError('Unauthorized. Please login.')
+    }
+
+    if (session.user.role !== 'ADMIN') {
+      throw new ForbiddenError('Only admins can update plot listings.')
+    }
+
+    const { id } = await params
     const body = await request.json()
     const plotData = updatePlotSchema.parse(body)
 
-    const {
-      bookingAmount,
-      plotSize,
-      reraNumber,
-      isFeatured,
-      ...restOfPlotData
-    } = plotData
+    const { bookingAmount, plotSize, reraNumber, isFeatured, ...restOfPlotData } = plotData
 
     const updatedPlot = await prisma.plot.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...restOfPlotData,
         booking_amount: bookingAmount,
@@ -66,34 +61,41 @@ export async function PUT(
       },
     })
 
-    return NextResponse.json(updatedPlot)
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues }, { status: 400 })
-    }
-    console.error('Plot update error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update plot' },
-      { status: 500 }
-    )
-  }
-}
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    await prisma.plot.delete({
-      where: { id: params.id },
+    structuredLogger.info('Plot updated', {
+      plotId: id,
+      userId: session.user.id,
+      type: 'plot_update',
     })
 
-    return new NextResponse(null, { status: 204 })
-  } catch (error) {
-    console.error('Plot delete error:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete plot' },
-      { status: 500 }
-    )
-  }
-}
+    return successResponse({ plot: updatedPlot }, 200, 'Plot updated successfully')
+  },
+  'PUT /api/plots/[id]'
+)
+
+export const DELETE = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const session = await auth()
+
+    if (!session?.user) {
+      throw new UnauthorizedError('Unauthorized. Please login.')
+    }
+
+    if (session.user.role !== 'ADMIN') {
+      throw new ForbiddenError('Only admins can delete plot listings.')
+    }
+
+    const { id } = await params
+    await prisma.plot.delete({
+      where: { id },
+    })
+
+    structuredLogger.warn('Plot deleted', {
+      plotId: id,
+      userId: session.user.id,
+      type: 'plot_deletion',
+    })
+
+    return noContentResponse()
+  },
+  'DELETE /api/plots/[id]'
+)

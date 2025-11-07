@@ -2,23 +2,24 @@
 // src/app/api/bookings/[id]/route.ts
 // ================================================
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { ForbiddenError, NotFoundError, UnauthorizedError } from '@/lib/errors'
+import { structuredLogger } from '@/lib/structured-logger'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const session = await auth();
+export const GET = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const session = await auth()
 
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to view booking details')
     }
 
+    const { id } = await params
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         plot: true,
         user: {
@@ -34,49 +35,43 @@ export async function GET(
     })
 
     if (!booking) {
-      return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+      throw new NotFoundError('Booking not found')
     }
 
     // Check if user owns this booking or is admin
     if (booking.user_id !== session.user.id && session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      throw new ForbiddenError('You do not have permission to view this booking')
     }
 
-    return NextResponse.json(booking)
-  } catch (error) {
-    console.error('Booking fetch error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch booking' },
-      { status: 500 }
-    )
-  }
-}
+    return successResponse({ booking })
+  },
+  'GET /api/bookings/[id]'
+)
 
 // PATCH /api/bookings/[id] - Update booking
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const session = await auth();
+export const PATCH = withErrorHandling(
+  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const session = await auth()
 
-    if (!session || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!session?.user || session.user.role !== 'ADMIN') {
+      throw new UnauthorizedError('Admin access required')
     }
 
+    const { id } = await params
     const body = await request.json()
 
     const booking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id },
       data: body,
     })
 
-    return NextResponse.json(booking)
-  } catch (error) {
-    console.error('Booking update error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update booking' },
-      { status: 500 }
-    )
-  }
-}
+    structuredLogger.info('Booking updated', {
+      bookingId: id,
+      userId: session.user.id,
+      type: 'booking_update',
+    })
+
+    return successResponse({ booking }, 200, 'Booking updated successfully')
+  },
+  'PATCH /api/bookings/[id]'
+)

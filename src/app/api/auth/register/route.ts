@@ -2,10 +2,15 @@
 // src/app/api/auth/register/route.ts - Registration API
 // ================================================
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { sendEmail, emailTemplates } from '@/lib/email'
+import { createdResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { ConflictError } from '@/lib/errors'
+import { structuredLogger } from '@/lib/structured-logger'
 
 const registerSchema = z.object({
   name: z.string().min(2),
@@ -14,10 +19,10 @@ const registerSchema = z.object({
   password: z.string().min(8),
 })
 
-export async function POST(request: NextRequest) {
-  try {
+export const POST = withErrorHandling(
+  async (request: NextRequest) => {
     const body = await request.json()
-    
+
     // Validate input
     const validatedData = registerSchema.parse(body)
 
@@ -32,14 +37,15 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'User with this email or phone already exists' },
-        { status: 400 }
-      )
+      throw new ConflictError('User with this email or phone already exists')
     }
 
     // Hash password
     const password_hash = await bcrypt.hash(validatedData.password, 12)
+
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex')
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
 
     // Create user
     const user = await prisma.user.create({
@@ -49,6 +55,9 @@ export async function POST(request: NextRequest) {
         phone: validatedData.phone,
         password_hash,
         role: 'CUSTOMER',
+        verification_token: verificationToken,
+        verification_token_expires: verificationExpires,
+        email_verified: false,
       },
       select: {
         id: true,
@@ -58,25 +67,55 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(
-      { 
-        message: 'User registered successfully',
-        user,
-      },
-      { status: 201 }
-    )
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Validation failed', details: error.issues },
-        { status: 400 }
-      )
+    structuredLogger.info('User registered successfully', {
+      userId: user.id,
+      email: user.email,
+      type: 'user_registration',
+    })
+
+    // Send verification email
+    const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${verificationToken}`
+
+    try {
+      await sendEmail({
+        to: validatedData.email,
+        subject: 'Verify Your Email - Plotzed Real Estate',
+        html: emailTemplates.emailVerification(validatedData.name, verificationUrl),
+      })
+    } catch (emailError) {
+      structuredLogger.error('Verification email failed', emailError as Error, {
+        userId: user.id,
+        email: user.email,
+      })
+      // Don't fail registration if email fails
     }
 
-    console.error('Registration error:', error)
-    return NextResponse.json(
-      { error: 'Registration failed' },
-      { status: 500 }
+    // Also send welcome email
+    try {
+      await sendEmail({
+        to: validatedData.email,
+        subject: 'Welcome to Plotzed Real Estate!',
+        html: emailTemplates.welcomeEmail(validatedData.name),
+      })
+    } catch (emailError) {
+      structuredLogger.error('Welcome email failed', emailError as Error, {
+        userId: user.id,
+        email: user.email,
+      })
+      // Don't fail registration if email fails
+    }
+
+    return createdResponse(
+      {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        },
+      },
+      'User registered successfully. Please check your email to verify your account.'
     )
-  }
-}
+  },
+  'POST /api/auth/register'
+)
