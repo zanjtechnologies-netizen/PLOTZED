@@ -33,7 +33,7 @@ lerna-debug.log*
 # It's recommended to use .env.example for team collaboration.
 .env*
 !.env.example
-!.env.Local
+.env.Local
 # OS-specific files
 .DS_Store
 Thumbs.db
