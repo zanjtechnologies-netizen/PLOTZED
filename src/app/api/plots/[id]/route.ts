@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/plots/[id]/route.ts - Single Plot API
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
@@ -9,25 +10,35 @@ import { updatePlotSchema } from '@/lib/validators'
 import { noContentResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { ForbiddenError, NotFoundError, UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
+import { cache, CACHE_KEYS, CACHE_TTL } from '@/lib/cache'
 
 export const GET = withErrorHandling(
   async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params
-    const plot = await prisma.plot.findUnique({
-      where: { id },
-      include: {
-        bookings: {
-          where: { status: 'COMPLETED' },
-          select: { id: true },
-        },
+
+    const result = await cache.get(
+      CACHE_KEYS.PLOT_BY_ID(id),
+      async () => {
+        const plot = await prisma.plot.findUnique({
+          where: { id },
+          include: {
+            bookings: {
+              where: { status: 'COMPLETED' },
+              select: { id: true },
+            },
+          },
+        })
+
+        if (!plot) {
+          throw new NotFoundError('Plot not found')
+        }
+
+        return { plot }
       },
-    })
+      CACHE_TTL.LONG // 15 minutes for individual plots
+    )
 
-    if (!plot) {
-      throw new NotFoundError('Plot not found')
-    }
-
-    return successResponse({ plot })
+    return successResponse(result)
   },
   'GET /api/plots/[id]'
 )
@@ -67,6 +78,9 @@ export const PUT = withErrorHandling(
       type: 'plot_update',
     })
 
+    // Invalidate plot caches after update
+    await cache.invalidatePlotCaches(id)
+
     return successResponse({ plot: updatedPlot }, 200, 'Plot updated successfully')
   },
   'PUT /api/plots/[id]'
@@ -94,6 +108,9 @@ export const DELETE = withErrorHandling(
       userId: session.user.id,
       type: 'plot_deletion',
     })
+
+    // Invalidate plot caches after deletion
+    await cache.invalidatePlotCaches(id)
 
     return noContentResponse()
   },

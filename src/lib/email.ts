@@ -597,3 +597,114 @@ export const emailService = {
     });
   },
 };
+
+// Payment Email Functions (for webhook integration)
+export async function sendPaymentConfirmationEmail(
+  to: string,
+  name: string,
+  amount: number,
+  invoiceNumber: string,
+  plotTitle: string
+) {
+  return sendEmail({
+    to,
+    subject: 'Payment Confirmation - Plotzed Real Estate',
+    html: emailTemplates.paymentConfirmation(name, plotTitle, amount, '', invoiceNumber),
+  });
+}
+
+export async function sendPaymentFailedEmail(
+  to: string,
+  name: string,
+  amount: number,
+  plotTitle: string,
+  errorDescription?: string
+) {
+  const failedTemplate = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #ef4444; color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; background: #f9fafb; }
+          .details { background: white; padding: 15px; margin: 20px 0; border-radius: 6px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Payment Failed ✗</h1>
+          </div>
+          <div class="content">
+            <p>Hi ${name},</p>
+            <p>Unfortunately, your payment could not be processed.</p>
+            <div class="details">
+              <h3>Payment Details:</h3>
+              <p><strong>Property:</strong> ${plotTitle}</p>
+              <p><strong>Amount:</strong> ₹${amount.toLocaleString('en-IN')}</p>
+              ${errorDescription ? `<p><strong>Reason:</strong> ${errorDescription}</p>` : ''}
+            </div>
+            <p>Please try again or contact our support team for assistance.</p>
+            <p>Best regards,<br>Plotzed Team</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to,
+    subject: 'Payment Failed - Plotzed Real Estate',
+    html: failedTemplate,
+  });
+}
+
+export async function sendRefundConfirmationEmail(
+  to: string,
+  name: string,
+  amount: number,
+  plotTitle: string,
+  invoiceNumber: string
+) {
+  const refundTemplate = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #f59e0b; color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; background: #f9fafb; }
+          .details { background: white; padding: 15px; margin: 20px 0; border-radius: 6px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Refund Processed</h1>
+          </div>
+          <div class="content">
+            <p>Hi ${name},</p>
+            <p>Your refund has been processed successfully.</p>
+            <div class="details">
+              <h3>Refund Details:</h3>
+              <p><strong>Property:</strong> ${plotTitle}</p>
+              <p><strong>Refund Amount:</strong> ₹${amount.toLocaleString('en-IN')}</p>
+              <p><strong>Original Invoice:</strong> ${invoiceNumber}</p>
+            </div>
+            <p>The refund will be credited to your original payment method within 5-7 business days.</p>
+            <p>Best regards,<br>Plotzed Team</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to,
+    subject: 'Refund Confirmation - Plotzed Real Estate',
+    html: refundTemplate,
+  });
+}

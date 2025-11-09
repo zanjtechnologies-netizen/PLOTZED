@@ -44,7 +44,46 @@ export function decrypt(encryptedData: string): string {
   return decrypted
 }
 
-// Hash function for phone numbers (for indexing while keeping encrypted)
+/**
+ * Hash PII for searching while keeping encrypted
+ * Creates a searchable hash for database indexing
+ */
+export function hashPII(data: string): string {
+  return crypto.createHash('sha256').update(data).digest('hex')
+}
+
+/**
+ * Hash function for phone numbers (for indexing while keeping encrypted)
+ * @deprecated Use hashPII() instead
+ */
 export function hashPhone(phone: string): string {
-  return crypto.createHash('sha256').update(phone).digest('hex')
+  return hashPII(phone)
+}
+
+/**
+ * Encrypt email and generate search hash
+ * Returns both encrypted value and searchable hash for database queries
+ */
+export function encryptEmail(email: string): {
+  encrypted: string
+  searchHash: string
+} {
+  return {
+    encrypted: encrypt(email),
+    searchHash: hashPII(email.toLowerCase()),
+  }
+}
+
+/**
+ * Encrypt phone number and generate search hash
+ * Returns both encrypted value and searchable hash for database queries
+ */
+export function encryptPhone(phone: string): {
+  encrypted: string
+  searchHash: string
+} {
+  return {
+    encrypted: encrypt(phone),
+    searchHash: hashPII(phone),
+  }
 }

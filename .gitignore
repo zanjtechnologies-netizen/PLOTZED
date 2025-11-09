@@ -9,13 +9,13 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-package-lock.json
 
 # Build & Output
 /build
 /dist
 /.next/
 /out/
+.turbo/
 
 # Testing
 /coverage
@@ -28,12 +28,20 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 lerna-debug.log*
+*.pid
+*.seed
+*.pid.lock
+pids
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Local Environment Variables
 # It's recommended to use .env.example for team collaboration.
 .env*
 !.env.example
-.env.Local
+.env.local
+
 # OS-specific files
 .DS_Store
 Thumbs.db
@@ -57,7 +65,17 @@ prisma/migrations/**/migration.sql
 # Vercel
 .vercel
 
+
+# Sentry
+.sentryclirc
+*.sentry-*
+.env.sentry-build-plugin
+
 # Misc
 *.pem
 /tmp/
 /temp/
+nul
+*.tgz
+.npm
+.eslintcache

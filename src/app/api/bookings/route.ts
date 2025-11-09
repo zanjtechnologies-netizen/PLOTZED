@@ -1,12 +1,14 @@
 // ================================================
 // src/app/api/bookings/route.ts - Bookings API
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { sendEmail, emailTemplates } from '@/lib/email'
+import { sendBookingConfirmationWhatsApp } from '@/lib/whatsapp'
 import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { BadRequestError, NotFoundError, UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
@@ -147,6 +149,29 @@ export const POST = withErrorHandling(
         userId: session.user.id,
       })
       // Don't fail booking if email fails
+    }
+
+    // Send booking confirmation via WhatsApp
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { phone: true }
+      })
+
+      if (user?.phone) {
+        await sendBookingConfirmationWhatsApp(
+          user.phone,
+          booking.user.name,
+          booking.plot.title,
+          booking.id
+        )
+      }
+    } catch (whatsappError) {
+      structuredLogger.error('Booking confirmation WhatsApp failed', whatsappError as Error, {
+        bookingId: booking.id,
+        userId: session.user.id,
+      })
+      // Don't fail booking if WhatsApp fails
     }
 
     return createdResponse(booking, 'Booking created successfully')

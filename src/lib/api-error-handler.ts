@@ -15,6 +15,7 @@ import {
   RateLimitError,
   DatabaseError,
 } from './errors';
+import * as Sentry from '@sentry/nextjs';
 
 /**
  * Standard error response format
@@ -142,6 +143,27 @@ export function handleApiError(error: unknown, context?: string): NextResponse<E
     // Unknown error - treat as internal server error
     const message = error instanceof Error ? error.message : 'An unexpected error occurred';
     apiError = new InternalServerError(message);
+  }
+
+  // Report to Sentry for server errors (5xx) and unexpected errors
+  if (
+    apiError.statusCode >= 500 ||
+    !(error instanceof ApiError)
+  ) {
+    Sentry.captureException(error, {
+      contexts: {
+        api: {
+          context: context || 'unknown',
+          errorCode: apiError.code,
+          statusCode: apiError.statusCode,
+        },
+      },
+      tags: {
+        errorType: error instanceof Error ? error.constructor.name : 'UnknownError',
+        apiContext: context || 'unknown',
+      },
+      level: apiError.statusCode >= 500 ? 'error' : 'warning',
+    });
   }
 
   // Build error response

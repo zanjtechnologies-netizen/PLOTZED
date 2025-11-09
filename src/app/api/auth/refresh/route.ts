@@ -2,6 +2,7 @@
 // src/app/api/auth/refresh/route.ts
 // JWT Refresh Token Endpoint
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

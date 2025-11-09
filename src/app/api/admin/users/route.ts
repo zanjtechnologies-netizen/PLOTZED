@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/admin/users/route.ts - User Management (Admin)
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

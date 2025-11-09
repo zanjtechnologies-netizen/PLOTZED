@@ -46,6 +46,7 @@ model User {
   inquiries     Inquiry[]
   site_visits   SiteVisit[]
   payments      Payment[]
+  refreshTokens RefreshToken[]
 
   @@index([email])
   @@index([phone])
@@ -350,4 +351,18 @@ model ActivityLog {
   @@index([user_id])
   @@index([created_at])
   @@map("activity_logs")
+}
+
+// Refresh Token Model
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  expires_at DateTime
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id])
+  @@map("refresh_tokens")
 }

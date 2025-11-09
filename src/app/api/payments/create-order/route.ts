@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/payments/create-order/route.ts - Razorpay Order Creation
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'

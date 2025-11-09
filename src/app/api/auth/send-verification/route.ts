@@ -2,6 +2,7 @@
 // src/app/api/auth/send-verification/route.ts
 // Resend Email Verification
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'

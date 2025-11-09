@@ -1,8 +1,8 @@
 // ================================================
-// src/lib/auth.ts - NextAuth v5 Configuration
+// src/lib/auth.ts - NextAuth v4 Configuration
 // ================================================
 
-import NextAuth from "next-auth";
+import { NextAuthOptions, getServerSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
@@ -16,7 +16,7 @@ import {
 
 const MAX_ATTEMPTS = 5; // ✅ Define max failed attempts before lockout
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
       name: "Credentials",
@@ -121,4 +121,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+// ================================================
+// Helper function for NextAuth v4 compatibility
+// ================================================
+
+/**
+ * Get the current session in server components and API routes
+ * This replaces the NextAuth v5 `auth()` function
+ */
+export function auth() {
+  return getServerSession(authOptions);
+}

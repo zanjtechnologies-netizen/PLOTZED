@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/users/route.ts - User Listing (Admin only)
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

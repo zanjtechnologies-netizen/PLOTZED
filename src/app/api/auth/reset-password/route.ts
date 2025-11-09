@@ -2,6 +2,7 @@
 // src/app/api/auth/reset-password/route.ts
 // Password Reset Endpoint
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'

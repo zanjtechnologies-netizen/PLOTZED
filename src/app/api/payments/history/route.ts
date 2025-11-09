@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/payments/history/route.ts - Payment History
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

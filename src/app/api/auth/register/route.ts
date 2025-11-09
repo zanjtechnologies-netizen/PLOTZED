@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/auth/register/route.ts - Registration API
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import bcrypt from 'bcryptjs'

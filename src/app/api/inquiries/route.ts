@@ -1,12 +1,14 @@
 // ================================================
 // src/app/api/inquiries/route.ts - Inquiries API
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
 import { sendEmail, emailTemplates } from '@/lib/email'
+import { sendInquiryReceivedWhatsApp } from '@/lib/whatsapp'
 import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
@@ -85,6 +87,19 @@ export const POST = withErrorHandling(
         inquiryId: inquiry.id,
       })
       // Don't fail inquiry if email fails
+    }
+
+    // Send WhatsApp confirmation to customer
+    try {
+      await sendInquiryReceivedWhatsApp(
+        validatedData.phone,
+        validatedData.name
+      )
+    } catch (whatsappError) {
+      structuredLogger.error('Customer inquiry WhatsApp failed', whatsappError as Error, {
+        inquiryId: inquiry.id,
+      })
+      // Don't fail inquiry if WhatsApp fails
     }
 
     return createdResponse(

@@ -3,6 +3,25 @@
 // ================================================
 
 import { z } from 'zod'
+import validator from 'validator'
+
+// ================================================
+// Sanitization Utilities
+// ================================================
+
+/**
+ * Sanitize HTML input to prevent XSS attacks
+ */
+export const sanitizeHtml = (input: string): string => {
+  return validator.escape(input.trim())
+}
+
+/**
+ * Sanitized text schema for user-generated content
+ */
+export const sanitizedTextSchema = z.string().transform((val) => {
+  return validator.escape(val.trim())
+})
 
 // Phone validation (Indian format)
 export const phoneSchema = z.string().regex(
@@ -13,7 +32,7 @@ export const phoneSchema = z.string().regex(
 // Email validation
 export const emailSchema = z.string().email('Invalid email address')
 
-// Password validation
+// Password validation (basic)
 export const passwordSchema = z
   .string()
   .min(8, 'Password must be at least 8 characters')
@@ -21,6 +40,46 @@ export const passwordSchema = z
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
   .regex(/[0-9]/, 'Password must contain at least one number')
   .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
+
+// Enhanced password schema with strength check and common password detection
+export const strongPasswordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(128, 'Password too long')
+  .refine((password) => {
+    // Check for common passwords
+    const commonPasswords = ['password', '12345678', 'qwerty', 'admin', 'letmein', 'welcome']
+    return !commonPasswords.some((common) => password.toLowerCase().includes(common))
+  }, 'Password too common or weak')
+  .refine((password) => {
+    // Check strength
+    const hasUpper = /[A-Z]/.test(password)
+    const hasLower = /[a-z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+    const hasSpecial = /[^A-Za-z0-9]/.test(password)
+    return hasUpper && hasLower && hasNumber && hasSpecial
+  }, 'Password must contain uppercase, lowercase, number, and special character')
+
+// URL validation schema
+export const urlSchema = z.string().refine(
+  (url) => {
+    return validator.isURL(url, {
+      protocols: ['http', 'https'],
+      require_protocol: true,
+    })
+  },
+  { message: 'Invalid URL format' }
+)
+
+// File upload validation schema
+export const fileUploadSchema = z.object({
+  name: z.string().max(255, 'Filename too long'),
+  size: z.number().max(10 * 1024 * 1024, 'File too large (max 10MB)'),
+  type: z.enum(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']).refine(
+    (val) => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'].includes(val),
+    { message: 'Invalid file type. Allowed: JPEG, PNG, WebP, PDF' }
+  ),
+})
 
 // User registration schema
 export const registerSchema = z.object({

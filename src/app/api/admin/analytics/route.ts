@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/admin/analytics/route.ts - Advanced Analytics Dashboard
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'

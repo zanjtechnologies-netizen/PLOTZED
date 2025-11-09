@@ -2,6 +2,7 @@
 // src/app/api/auth/forgot-password/route.ts
 // Password Reset Request
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'

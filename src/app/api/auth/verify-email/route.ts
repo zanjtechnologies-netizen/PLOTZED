@@ -2,6 +2,7 @@
 // src/app/api/auth/verify-email/route.ts
 // Email Verification Endpoint
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'

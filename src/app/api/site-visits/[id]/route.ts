@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/site-visits/[id]/route.ts - Single Site Visit Management
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

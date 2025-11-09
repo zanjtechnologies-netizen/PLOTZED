@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/payments/webhooks/route.ts - Razorpay Webhook Handler
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
@@ -8,6 +9,8 @@ import crypto from 'crypto'
 import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { BadRequestError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
+import { sendPaymentConfirmationEmail, sendPaymentFailedEmail, sendRefundConfirmationEmail } from '@/lib/email'
+import { sendPaymentConfirmationWhatsApp, sendPaymentFailedWhatsApp } from '@/lib/whatsapp'
 
 /**
  * Razorpay Webhook Events:
@@ -91,7 +94,15 @@ async function handlePaymentCaptured(paymentData: any) {
     // Update payment record
     const payment = await prisma.payment.findFirst({
       where: { razorpay_order_id: order_id },
-      include: { booking: true },
+      include: {
+        booking: {
+          include: {
+            plot: true,
+            user: true,
+          }
+        },
+        user: true,
+      },
     })
 
     if (!payment) {
@@ -142,7 +153,40 @@ async function handlePaymentCaptured(paymentData: any) {
       })
     }
 
-    // TODO: Send email notification to user
+    // Send email and WhatsApp notifications
+    const user = payment.user
+    const plotTitle = payment.booking?.plot?.title || 'Your Property'
+    const amountInRupees = amount / 100
+
+    if (user && user.email) {
+      await sendPaymentConfirmationEmail(
+        user.email,
+        user.name,
+        amountInRupees,
+        payment.invoice_number!,
+        plotTitle
+      ).catch((error: Error) => {
+        structuredLogger.error('Failed to send payment confirmation email', error, {
+          paymentId: payment.id,
+          userId: user.id,
+        })
+      })
+    }
+
+    if (user && user.phone) {
+      await sendPaymentConfirmationWhatsApp(
+        user.phone,
+        user.name,
+        amountInRupees,
+        payment.invoice_number!,
+        plotTitle
+      ).catch((error) => {
+        structuredLogger.error('Failed to send payment confirmation WhatsApp', error as Error, {
+          paymentId: payment.id,
+          userId: user.id,
+        })
+      })
+    }
   } catch (error) {
     structuredLogger.error('Error handling payment captured webhook', error as Error, {
       razorpayPaymentId: id,
@@ -185,11 +229,19 @@ async function handlePaymentAuthorized(paymentData: any) {
 
 // Payment failed
 async function handlePaymentFailed(paymentData: any) {
-  const { id, order_id, error_code, error_description } = paymentData
+  const { id, order_id, error_code, error_description, amount } = paymentData
 
   try {
     const payment = await prisma.payment.findFirst({
       where: { razorpay_order_id: order_id },
+      include: {
+        user: true,
+        booking: {
+          include: {
+            plot: true,
+          }
+        }
+      },
     })
 
     if (payment) {
@@ -209,7 +261,39 @@ async function handlePaymentFailed(paymentData: any) {
         type: 'webhook_payment_failed',
       })
 
-      // TODO: Send failure notification email
+      // Send failure notification
+      const user = payment.user
+      const plotTitle = payment.booking?.plot?.title || 'Property'
+      const amountInRupees = amount / 100
+
+      if (user && user.email) {
+        await sendPaymentFailedEmail(
+          user.email,
+          user.name,
+          amountInRupees,
+          plotTitle,
+          error_description
+        ).catch((error: Error) => {
+          structuredLogger.error('Failed to send payment failed email', error, {
+            paymentId: payment.id,
+            userId: user.id,
+          })
+        })
+      }
+
+      if (user && user.phone) {
+        await sendPaymentFailedWhatsApp(
+          user.phone,
+          user.name,
+          amountInRupees,
+          plotTitle
+        ).catch((error) => {
+          structuredLogger.error('Failed to send payment failed WhatsApp', error as Error, {
+            paymentId: payment.id,
+            userId: user.id,
+          })
+        })
+      }
     }
   } catch (error) {
     structuredLogger.error('Error handling payment failed webhook', error as Error, {
@@ -226,6 +310,14 @@ async function handleRefundCreated(refundData: any) {
   try {
     const payment = await prisma.payment.findFirst({
       where: { razorpay_payment_id: payment_id },
+      include: {
+        user: true,
+        booking: {
+          include: {
+            plot: true,
+          }
+        }
+      },
     })
 
     if (payment) {
@@ -233,6 +325,22 @@ async function handleRefundCreated(refundData: any) {
         where: { id: payment.id },
         data: { status: 'REFUNDED' },
       })
+
+      // Update booking status to CANCELLED
+      if (payment.booking) {
+        await prisma.booking.update({
+          where: { id: payment.booking_id },
+          data: {
+            status: 'CANCELLED',
+          },
+        })
+
+        // Update plot status back to AVAILABLE
+        await prisma.plot.update({
+          where: { id: payment.booking.plot_id },
+          data: { status: 'AVAILABLE' },
+        })
+      }
 
       structuredLogger.info('Refund created via webhook', {
         paymentId: payment.id,
@@ -242,8 +350,25 @@ async function handleRefundCreated(refundData: any) {
         type: 'webhook_refund_created',
       })
 
-      // TODO: Update booking status to CANCELLED
-      // TODO: Send refund notification email
+      // Send refund notification email
+      const user = payment.user
+      const plotTitle = payment.booking?.plot?.title || 'Property'
+      const amountInRupees = amount / 100
+
+      if (user && user.email) {
+        await sendRefundConfirmationEmail(
+          user.email,
+          user.name,
+          amountInRupees,
+          plotTitle,
+          payment.invoice_number!
+        ).catch((error: Error) => {
+          structuredLogger.error('Failed to send refund confirmation email', error, {
+            paymentId: payment.id,
+            userId: user.id,
+          })
+        })
+      }
     }
   } catch (error) {
     structuredLogger.error('Error handling refund created webhook', error as Error, {

@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/inquiries/[id]/route.ts - Single Inquiry Management
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/plots/route.ts - Plots API
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
@@ -9,6 +10,7 @@ import { createPlotSchema } from '@/lib/validators'
 import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { ForbiddenError, UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
+import { cache, CACHE_TTL } from '@/lib/cache'
 
 export const GET = withErrorHandling(
   async (request: NextRequest) => {
@@ -70,54 +72,66 @@ export const GET = withErrorHandling(
       ]
     }
 
-    // Get total count for pagination
-    const total = await prisma.plot.count({ where })
+    // Generate cache key based on query params
+    const cacheKey = `plots:list:${JSON.stringify({ page, limit, city, state, status, minPrice, maxPrice, minSize, maxSize, isFeatured, isPublished, search, sortBy, sortOrder })}`
 
-    // Get plots with pagination and sorting
-    const plots = await prisma.plot.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { [sortBy]: sortOrder },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        description: true,
-        price: true,
-        booking_amount: true,
-        plot_size: true,
-        dimensions: true,
-        facing: true,
-        address: true,
-        city: true,
-        state: true,
-        pincode: true,
-        latitude: true,
-        longitude: true,
-        images: true,
-        amenities: true,
-        status: true,
-        is_featured: true,
-        is_published: true,
-        created_at: true,
-        updated_at: true,
-        _count: {
-          select: { bookings: true },
-        },
-      },
-    })
+    // Use cache for GET requests (cache for 5 minutes)
+    const result = await cache.get(
+      cacheKey,
+      async () => {
+        // Get total count for pagination
+        const total = await prisma.plot.count({ where })
 
-    return successResponse({
-      plots,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        hasMore: skip + plots.length < total,
+        // Get plots with pagination and sorting
+        const plots = await prisma.plot.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: { [sortBy]: sortOrder },
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            description: true,
+            price: true,
+            booking_amount: true,
+            plot_size: true,
+            dimensions: true,
+            facing: true,
+            address: true,
+            city: true,
+            state: true,
+            pincode: true,
+            latitude: true,
+            longitude: true,
+            images: true,
+            amenities: true,
+            status: true,
+            is_featured: true,
+            is_published: true,
+            created_at: true,
+            updated_at: true,
+            _count: {
+              select: { bookings: true },
+            },
+          },
+        })
+
+        return {
+          plots,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasMore: skip + plots.length < total,
+          },
+        }
       },
-    })
+      CACHE_TTL.MEDIUM // 5 minutes
+    )
+
+    return successResponse(result)
   },
   'GET /api/plots'
 )
@@ -163,6 +177,9 @@ export const POST = withErrorHandling(
       userId: session.user.id,
       type: 'plot_creation',
     })
+
+    // Invalidate plot caches after creation
+    await cache.invalidatePlotCaches()
 
     return createdResponse(newPlot, 'Plot created successfully')
   },

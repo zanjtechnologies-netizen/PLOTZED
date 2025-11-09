@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/site-visits/route.ts - Site Visits API
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'

@@ -4,7 +4,7 @@
 // ================================================
 
 import { NextRequest } from 'next/server'
-import { auth, signOut } from '@/lib/auth'
+import { auth } from '@/lib/auth'
 import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
@@ -12,6 +12,10 @@ import { structuredLogger } from '@/lib/structured-logger'
 /**
  * POST /api/auth/logout
  * Explicitly logs out the user and destroys the session
+ *
+ * Note: In NextAuth v4, session destruction is handled client-side
+ * This endpoint validates the session and logs the event
+ * Client should call NextAuth's signOut() after receiving this response
  */
 export const POST = withErrorHandling(
   async (request: NextRequest) => {
@@ -24,14 +28,12 @@ export const POST = withErrorHandling(
 
     const userId = session.user.id
 
-    // Sign out using NextAuth
-    await signOut({ redirect: false })
-
     structuredLogger.info('User logged out successfully', {
       userId,
       type: 'user_logout',
     })
 
+    // Client-side should call signOut() from next-auth/react to clear the session
     return successResponse({
       message: 'Logged out successfully',
     })

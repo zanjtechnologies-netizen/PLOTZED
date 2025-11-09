@@ -2,12 +2,12 @@
 // src/app/api/auth/login/route.ts
 // Explicit Login Endpoint
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
-import { signIn } from '@/lib/auth'
 import {
   checkAccountLockout,
   recordFailedLogin,
@@ -112,26 +112,14 @@ export const POST = withErrorHandling(
       data: { last_login: new Date() },
     })
 
-    // Sign in using NextAuth (creates session)
-    try {
-      await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
-    } catch (signInError) {
-      structuredLogger.error('NextAuth sign in error', signInError as Error, {
-        userId: user.id,
-        email: user.email,
-      })
-      // Continue anyway as we've already validated credentials
-    }
-
     structuredLogger.info('User logged in successfully', {
       userId: user.id,
       email: user.email,
       type: 'user_login',
     })
+
+    // Note: Session creation happens via NextAuth's credentials provider
+    // Client should use NextAuth's signIn() on the frontend after receiving this response
 
     // Return success with user data (excluding sensitive info)
     return successResponse({

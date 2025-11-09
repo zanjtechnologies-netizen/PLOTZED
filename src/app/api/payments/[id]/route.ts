@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/payments/[id]/route.ts - Single Payment Details
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

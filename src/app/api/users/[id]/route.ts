@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/users/[id]/route.ts - User Profile API (NextAuth v5)
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

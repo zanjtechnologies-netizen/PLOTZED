@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/payments/verify/route.ts - Verify Razorpay Payment
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/plots/search/route.ts - Advanced Plot Search
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'

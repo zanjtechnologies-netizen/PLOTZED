@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/payments/[id]/refund/route.ts - Razorpay Refund
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'

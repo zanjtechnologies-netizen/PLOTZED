@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/bookings/[id]/route.ts
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'

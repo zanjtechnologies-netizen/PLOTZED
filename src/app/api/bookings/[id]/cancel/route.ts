@@ -1,6 +1,7 @@
 // ================================================
 // src/app/api/bookings/[id]/cancel/route.ts - Cancel Booking
 // ================================================
+export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
