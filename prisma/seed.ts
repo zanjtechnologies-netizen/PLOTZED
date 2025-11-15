@@ -220,12 +220,9 @@ async function clearDatabase() {
   console.log('🗑️  Clearing existing data...')
 
   await prisma.activityLog.deleteMany({})
-  await prisma.payment.deleteMany({})
   await prisma.siteVisit.deleteMany({})
   await prisma.inquiry.deleteMany({})
-  await prisma.booking.deleteMany({})
   await prisma.plot.deleteMany({})
-  await prisma.blogPost.deleteMany({})
   await prisma.user.deleteMany({})
 
   console.log('   ✅ Database cleared')
@@ -299,65 +296,6 @@ async function createSamplePlots() {
   }
 
   return plots
-}
-
-async function createSampleBookings(users: any[], plots: any[]) {
-  console.log('📋 Creating sample bookings...')
-
-  // Create a booking for the Noida plot (status: BOOKED)
-  const noidaPlot = plots.find(p => p.city === 'Noida')
-  const johnDoe = users.find(u => u.email === 'john.doe@example.com')
-
-  if (noidaPlot && johnDoe) {
-    const booking = await prisma.booking.create({
-      data: {
-        user_id: johnDoe.id,
-        plot_id: noidaPlot.id,
-        booking_amount: noidaPlot.booking_amount,
-        total_amount: noidaPlot.price,
-        status: 'CONFIRMED',
-        confirmed_at: new Date(),
-      },
-    })
-
-    console.log(`   ✅ Booking created: ${johnDoe.name} -> ${noidaPlot.title}`)
-
-    // Create a payment for this booking
-    await prisma.payment.create({
-      data: {
-        user_id: johnDoe.id,
-        booking_id: booking.id,
-        amount: noidaPlot.booking_amount,
-        status: 'COMPLETED',
-        payment_type: 'BOOKING',
-        payment_method: 'razorpay',
-        razorpay_order_id: 'order_' + Math.random().toString(36).substr(2, 9),
-        razorpay_payment_id: 'pay_' + Math.random().toString(36).substr(2, 9),
-        completed_at: new Date(),
-        invoice_number: `INV-${Date.now()}`,
-      },
-    })
-
-    console.log(`   ✅ Payment created for booking`)
-  }
-
-  // Create pending booking
-  const goaPlot = plots.find(p => p.city === 'Calangute')
-  const janeSmith = users.find(u => u.email === 'jane.smith@example.com')
-
-  if (goaPlot && janeSmith) {
-    await prisma.booking.create({
-      data: {
-        user_id: janeSmith.id,
-        plot_id: goaPlot.id,
-        booking_amount: goaPlot.booking_amount,
-        total_amount: goaPlot.price,
-        status: 'PENDING',
-      },
-    })
-
-    console.log(`   ✅ Pending booking created: ${janeSmith.name} -> ${goaPlot.title}`)
-  }
 }
 
 async function createSampleInquiries(users: any[], plots: any[]) {
@@ -438,9 +376,6 @@ async function seed() {
       console.log()
 
       const plots = await createSamplePlots()
-      console.log()
-
-      await createSampleBookings(users, plots)
       console.log()
 
       await createSampleInquiries(users, plots)

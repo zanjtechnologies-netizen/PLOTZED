@@ -47,7 +47,7 @@ export default function Footer() {
   };
 
   return (
-    <footer
+    <footer id='footer'
       className={`${playfair.variable} ${libre.variable} ${inter.variable} bg-[#0C1A3D] text-white pt-20 pb-10`}
     >
       <div className="container-custom">

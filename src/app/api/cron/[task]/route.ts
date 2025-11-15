@@ -7,7 +7,6 @@
  *
  * Endpoints:
  * - GET /api/cron/cleanup-tokens
- * - GET /api/cron/expire-bookings
  * - GET /api/cron/visit-reminders
  * - GET /api/cron/cleanup-logs
  * - GET /api/cron/all (run all tasks)
@@ -28,13 +27,11 @@ import { structuredLogger } from '@/lib/structured-logger'
 
 // Import cron job functions
 import { cleanupExpiredTokens } from '@/../scripts/cron/cleanup-expired-tokens'
-import { expirePendingBookings } from '@/../scripts/cron/expire-pending-bookings'
 import { sendSiteVisitReminders } from '@/../scripts/cron/send-site-visit-reminders'
 import { cleanupActivityLogs } from '@/../scripts/cron/cleanup-activity-logs'
 
 type CronTask =
   | 'cleanup-tokens'
-  | 'expire-bookings'
   | 'visit-reminders'
   | 'cleanup-logs'
   | 'all'
@@ -50,11 +47,6 @@ const CRON_TASKS: Record<string, CronTaskConfig> = {
     name: 'Cleanup Expired Tokens',
     description: 'Remove expired verification and reset tokens',
     handler: cleanupExpiredTokens,
-  },
-  'expire-bookings': {
-    name: 'Expire Pending Bookings',
-    description: 'Cancel bookings pending for more than 48 hours',
-    handler: expirePendingBookings,
   },
   'visit-reminders': {
     name: 'Site Visit Reminders',

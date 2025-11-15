@@ -112,7 +112,7 @@ export const GET = withErrorHandling(
             created_at: true,
             updated_at: true,
             _count: {
-              select: { bookings: true },
+              select: { site_visits: true },
             },
           },
         })

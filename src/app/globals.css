@@ -178,3 +178,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/*scroll behaviour*/
+html {
+  scroll-behavior: smooth;
+}

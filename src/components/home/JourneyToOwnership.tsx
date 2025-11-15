@@ -25,7 +25,7 @@ export default function JourneyToOwnership() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section id='journeytoownership' className="py-20 bg-white">
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}

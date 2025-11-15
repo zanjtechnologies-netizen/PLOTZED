@@ -1,5 +1,5 @@
 // ================================================
-// src/app/api/admin/analytics/route.ts - Advanced Analytics Dashboard
+// src/app/api/admin/analytics/route.ts - Advanced Analytics Dashboard (Site Visits Only)
 // ================================================
 export const runtime = "nodejs";
 
@@ -14,8 +14,8 @@ import { structuredLogger } from '@/lib/structured-logger'
 // Validation schema for query parameters
 const analyticsQuerySchema = z.object({
   period: z.string().optional().default('30').transform(Number).pipe(z.number().min(1).max(365)),
-  granularity: z.enum(['day', 'week', 'month']).optional().default('day'),
-  metrics: z.string().optional(), // Comma-separated: revenue,users,bookings
+  granularity: z.enum(['day', 'week', 'month']).nullable().optional().default('day'),
+  metrics: z.string().nullable().optional(), // Comma-separated: users,plots,siteVisits
 })
 
 export const GET = withErrorHandling(
@@ -60,15 +60,10 @@ export const GET = withErrorHandling(
       plotsByStatus,
       recentPlots,
 
-      // Booking analytics
-      bookingStats,
-      bookingsByStatus,
-      recentBookings,
-
-      // Payment analytics
-      paymentStats,
-      paymentsByType,
-      paymentsByStatus,
+      // Site Visit analytics
+      siteVisitStats,
+      siteVisitsByStatus,
+      recentSiteVisits,
 
       // User analytics
       userStats,
@@ -77,9 +72,6 @@ export const GET = withErrorHandling(
       // Inquiry analytics
       inquiryStats,
       inquiryByStatus,
-
-      // Revenue analytics
-      revenueByMonth,
     ] = await Promise.all([
       // Plot statistics
       prisma.plot.groupBy({
@@ -110,24 +102,24 @@ export const GET = withErrorHandling(
         },
       }),
 
-      // Booking statistics
-      prisma.booking.count({
+      // Site Visit statistics
+      prisma.siteVisit.count({
         where: { created_at: { gte: startDate } },
       }),
 
-      prisma.booking.groupBy({
+      prisma.siteVisit.groupBy({
         by: ['status'],
         _count: true,
       }),
 
-      prisma.booking.findMany({
+      prisma.siteVisit.findMany({
         where: { created_at: { gte: startDate } },
         orderBy: { created_at: 'desc' },
         take: 10,
         select: {
           id: true,
           status: true,
-          total_amount: true,
+          visit_date: true,
           created_at: true,
           user: {
             select: { name: true, email: true },
@@ -136,25 +128,6 @@ export const GET = withErrorHandling(
             select: { title: true, city: true },
           },
         },
-      }),
-
-      // Payment statistics
-      prisma.payment.aggregate({
-        where: { created_at: { gte: startDate } },
-        _sum: { amount: true },
-        _count: true,
-      }),
-
-      prisma.payment.groupBy({
-        by: ['payment_type'],
-        _sum: { amount: true },
-        _count: true,
-      }),
-
-      prisma.payment.groupBy({
-        by: ['status'],
-        _sum: { amount: true },
-        _count: true,
       }),
 
       // User statistics
@@ -173,20 +146,6 @@ export const GET = withErrorHandling(
         by: ['status'],
         _count: true,
       }),
-
-      // Revenue by month (last 12 months)
-      prisma.$queryRaw`
-        SELECT
-          DATE_TRUNC('month', created_at) as month,
-          SUM(amount) as revenue,
-          COUNT(*) as count
-        FROM payments
-        WHERE status = 'COMPLETED'
-          AND created_at >= NOW() - INTERVAL '12 months'
-        GROUP BY DATE_TRUNC('month', created_at)
-        ORDER BY month DESC
-        LIMIT 12
-      `,
     ])
 
     // Calculate conversion rates
@@ -198,15 +157,10 @@ export const GET = withErrorHandling(
       ? ((convertedInquiries / totalInquiries) * 100).toFixed(2)
       : '0.00'
 
-    // Calculate average booking value
-    const avgBookingValue = await prisma.booking.aggregate({
-      _avg: { total_amount: true },
-    })
-
-    // Top performing plots (most bookings)
+    // Top performing plots (most site visits)
     const topPlots = await prisma.plot.findMany({
       where: {
-        bookings: { some: {} },
+        site_visits: { some: {} },
       },
       select: {
         id: true,
@@ -214,19 +168,13 @@ export const GET = withErrorHandling(
         city: true,
         price: true,
         _count: {
-          select: { bookings: true },
+          select: { site_visits: true },
         },
       },
       orderBy: {
-        bookings: { _count: 'desc' },
+        site_visits: { _count: 'desc' },
       },
       take: 10,
-    })
-
-    // Site visit statistics
-    const siteVisitStats = await prisma.siteVisit.groupBy({
-      by: ['status'],
-      _count: true,
     })
 
     // 6. Calculate additional metrics
@@ -235,12 +183,11 @@ export const GET = withErrorHandling(
       where: { status: 'AVAILABLE' },
     })
 
-    // Growth rates
+    // Growth rates for site visits
     const previousPeriodStart = new Date()
     previousPeriodStart.setDate(previousPeriodStart.getDate() - (period * 2))
-    previousPeriodStart.setDate(previousPeriodStart.getDate() - period)
 
-    const previousBookings = await prisma.booking.count({
+    const previousSiteVisits = await prisma.siteVisit.count({
       where: {
         created_at: {
           gte: previousPeriodStart,
@@ -249,24 +196,23 @@ export const GET = withErrorHandling(
       },
     })
 
-    const bookingGrowthRate = previousBookings > 0
-      ? (((bookingStats - previousBookings) / previousBookings) * 100).toFixed(2)
-      : bookingStats > 0 ? '100.00' : '0.00'
+    const siteVisitGrowthRate = previousSiteVisits > 0
+      ? (((siteVisitStats - previousSiteVisits) / previousSiteVisits) * 100).toFixed(2)
+      : siteVisitStats > 0 ? '100.00' : '0.00'
 
-    const previousRevenue = await prisma.payment.aggregate({
+    // User growth rate
+    const previousUsers = await prisma.user.count({
       where: {
-        status: 'COMPLETED',
         created_at: {
           gte: previousPeriodStart,
           lt: startDate,
         },
       },
-      _sum: { amount: true },
     })
 
-    const revenueGrowthRate = previousRevenue._sum.amount
-      ? (((Number(paymentStats._sum.amount || 0) - Number(previousRevenue._sum.amount)) / Number(previousRevenue._sum.amount)) * 100).toFixed(2)
-      : paymentStats._sum.amount ? '100.00' : '0.00'
+    const userGrowthRate = previousUsers > 0
+      ? (((newUsersCount - previousUsers) / previousUsers) * 100).toFixed(2)
+      : newUsersCount > 0 ? '100.00' : '0.00'
 
     // 7. Calculate performance duration
     const duration = Date.now() - startTime
@@ -282,28 +228,26 @@ export const GET = withErrorHandling(
 
       // Overview metrics
       overview: {
-        totalRevenue: paymentStats._sum.amount || 0,
-        totalBookings: bookingStats,
+        totalSiteVisits: siteVisitStats,
         totalUsers: userStats,
         totalPlots: totalPlotsCount,
         activePlots,
         conversionRate: `${conversionRate}%`,
-        avgBookingValue: avgBookingValue._avg.total_amount || 0,
       },
 
       // Growth metrics
       growth: {
-        bookings: {
-          current: bookingStats,
-          previous: previousBookings,
-          growthRate: `${bookingGrowthRate}%`,
-          trend: Number(bookingGrowthRate) > 0 ? 'up' : Number(bookingGrowthRate) < 0 ? 'down' : 'stable',
+        siteVisits: {
+          current: siteVisitStats,
+          previous: previousSiteVisits,
+          growthRate: `${siteVisitGrowthRate}%`,
+          trend: Number(siteVisitGrowthRate) > 0 ? 'up' : Number(siteVisitGrowthRate) < 0 ? 'down' : 'stable',
         },
-        revenue: {
-          current: paymentStats._sum.amount || 0,
-          previous: previousRevenue._sum.amount || 0,
-          growthRate: `${revenueGrowthRate}%`,
-          trend: Number(revenueGrowthRate) > 0 ? 'up' : Number(revenueGrowthRate) < 0 ? 'down' : 'stable',
+        users: {
+          current: newUsersCount,
+          previous: previousUsers,
+          growthRate: `${userGrowthRate}%`,
+          trend: Number(userGrowthRate) > 0 ? 'up' : Number(userGrowthRate) < 0 ? 'down' : 'stable',
         },
       },
 
@@ -326,41 +270,24 @@ export const GET = withErrorHandling(
           title: plot.title,
           city: plot.city,
           price: plot.price,
-          bookingsCount: plot._count.bookings,
+          siteVisitsCount: plot._count.site_visits,
         })),
       },
 
-      bookings: {
-        total: bookingStats,
-        byStatus: bookingsByStatus.map((booking) => ({
-          status: booking.status,
-          count: booking._count,
+      siteVisits: {
+        total: siteVisitStats,
+        byStatus: siteVisitsByStatus.map((visit) => ({
+          status: visit.status,
+          count: visit._count,
         })),
-        recent: recentBookings.map((booking) => ({
-          id: booking.id,
-          status: booking.status,
-          amount: booking.total_amount,
-          createdAt: booking.created_at,
-          user: booking.user,
-          plot: booking.plot,
+        recent: recentSiteVisits.map((visit) => ({
+          id: visit.id,
+          status: visit.status,
+          visitDate: visit.visit_date,
+          createdAt: visit.created_at,
+          user: visit.user,
+          plot: visit.plot,
         })),
-        avgValue: avgBookingValue._avg.total_amount || 0,
-      },
-
-      payments: {
-        total: paymentStats._count,
-        totalAmount: paymentStats._sum.amount || 0,
-        byType: paymentsByType.map((payment) => ({
-          type: payment.payment_type,
-          count: payment._count,
-          totalAmount: payment._sum.amount || 0,
-        })),
-        byStatus: paymentsByStatus.map((payment) => ({
-          status: payment.status,
-          count: payment._count,
-          totalAmount: payment._sum.amount || 0,
-        })),
-        revenueByMonth,
       },
 
       users: {
@@ -380,13 +307,6 @@ export const GET = withErrorHandling(
         conversionRate: `${conversionRate}%`,
       },
 
-      siteVisits: {
-        byStatus: siteVisitStats.map((visit) => ({
-          status: visit.status,
-          count: visit._count,
-        })),
-      },
-
       // Performance metadata
       meta: {
         period,
@@ -395,8 +315,7 @@ export const GET = withErrorHandling(
         queryDuration: `${duration}ms`,
         dataPoints: {
           plots: plotStats.length,
-          bookings: bookingsByStatus.length,
-          payments: paymentsByType.length,
+          siteVisits: siteVisitsByStatus.length,
           inquiries: inquiryByStatus.length,
         },
       },

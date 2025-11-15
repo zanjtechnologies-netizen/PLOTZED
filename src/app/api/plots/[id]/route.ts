@@ -22,7 +22,7 @@ export const GET = withErrorHandling(
         const plot = await prisma.plot.findUnique({
           where: { id },
           include: {
-            bookings: {
+            site_visits: {
               where: { status: 'COMPLETED' },
               select: { id: true },
             },

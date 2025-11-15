@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import SessionProvider from "@/components/providers/SessionProvider";
 
 // Font setup
 const geistSans = Geist({
@@ -56,16 +57,18 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`
-          ${geistSans.variable} 
-          ${geistMono.variable} 
-          ${libreBaskerville.variable} 
-          ${playfairDisplay.variable} 
+          ${geistSans.variable}
+          ${geistMono.variable}
+          ${libreBaskerville.variable}
+          ${playfairDisplay.variable}
           antialiased bg-[#0C1A3D] text-white
         `}
       >
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <SessionProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

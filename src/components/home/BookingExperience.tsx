@@ -29,7 +29,7 @@ export default function BookingExperience() {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section id='bookingexperience' className="py-20 bg-white">
       <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-16">

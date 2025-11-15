@@ -63,11 +63,11 @@ export const GET = withErrorHandling(
         saved_plots: true,
         created_at: true,
         last_login: true,
+        email_verified: true,
         _count: {
           select: {
-            bookings: true,
+            site_visits: true,
             inquiries: true,
-            payments: true,
           },
         },
       },
@@ -78,8 +78,7 @@ export const GET = withErrorHandling(
       total: total,
       customers: await prisma.user.count({ where: { role: 'CUSTOMER' } }),
       admins: await prisma.user.count({ where: { role: 'ADMIN' } }),
-      kycVerified: await prisma.user.count({ where: { kyc_verified: true } }),
-      kycPending: await prisma.user.count({ where: { kyc_verified: false } }),
+      verified: await prisma.user.count({ where: { email_verified: true } }),
     }
 
     return successResponse({

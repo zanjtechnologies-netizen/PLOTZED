@@ -42,10 +42,8 @@ model User {
   last_login    DateTime?
 
   // Relations
-  bookings      Booking[]
   inquiries     Inquiry[]
   site_visits   SiteVisit[]
-  payments      Payment[]
   refreshTokens RefreshToken[]
 
   @@index([email])
@@ -113,7 +111,6 @@ model Plot {
   updated_at  DateTime   @updatedAt
   
   // Relations
-  bookings    Booking[]
   inquiries   Inquiry[]
   site_visits SiteVisit[]
   
@@ -130,105 +127,8 @@ enum PlotStatus {
   SOLD
 }
 
-// Booking model
-model Booking {
-  id              String        @id @default(uuid())
-  
-  // Relations
-  user_id         String
-  user            User          @relation(fields: [user_id], references: [id])
-  plot_id         String
-  plot            Plot          @relation(fields: [plot_id], references: [id])
-  
-  // Booking details
-  booking_amount  Decimal       @db.Decimal(15, 2)
-  total_amount    Decimal       @db.Decimal(15, 2)
-  
-  // Payment plan
-  payment_plan    Json?         // {installments: [...]}
-  
-  // Status
-  status          BookingStatus @default(PENDING)
-  
-  // Documents
-  documents       String[]      // S3 URLs
-  agreement_url   String?       // Signed agreement
-  
-  // Timestamps
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
-  confirmed_at    DateTime?
-  completed_at    DateTime?
-  
-  // Relations
-  payments        Payment[]
-  
-  @@index([user_id])
-  @@index([plot_id])
-  @@index([status])
-  @@map("bookings")
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  PAYMENT_PENDING
-  COMPLETED
-  CANCELLED
-}
-
-// Payment model
-model Payment {
-  id                  String        @id @default(uuid())
-  
-  // Relations
-  user_id             String
-  user                User          @relation(fields: [user_id], references: [id])
-  booking_id          String
-  booking             Booking       @relation(fields: [booking_id], references: [id])
-  
-  // Payment details
-  amount              Decimal       @db.Decimal(15, 2)
-  currency            String        @default("INR")
-  payment_type        PaymentType
-  
-  // Razorpay
-  razorpay_order_id   String?       @unique
-  razorpay_payment_id String?       @unique
-  razorpay_signature  String?
-  
-  // Status
-  status              PaymentStatus @default(PENDING)
-  payment_method      String?       // card, upi, netbanking
-  
-  // Invoice
-  invoice_number      String?       @unique
-  receipt_url         String?
-  
-  // Timestamps
-  created_at          DateTime      @default(now())
-  updated_at          DateTime      @updatedAt
-  completed_at        DateTime?
-  
-  @@index([user_id])
-  @@index([booking_id])
-  @@index([status])
-  @@map("payments")
-}
-
-enum PaymentType {
-  BOOKING
-  INSTALLMENT
-  FULL_PAYMENT
-}
-
-enum PaymentStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-  REFUNDED
-}
+// Booking and Payment models removed - replaced by SiteVisit model
+// Property purchases now handled through direct sales process after site visits
 
 // Inquiry model
 model Inquiry {
@@ -271,32 +171,46 @@ enum InquiryStatus {
   CLOSED
 }
 
-// Site Visit model
+// Site Visit model - Enhanced for comprehensive booking management
 model SiteVisit {
   id              String          @id @default(uuid())
-  
+
   // Relations
   user_id         String
   user            User            @relation(fields: [user_id], references: [id])
   plot_id         String
   plot            Plot            @relation(fields: [plot_id], references: [id])
-  
+
   // Schedule
   visit_date      DateTime
-  visit_time      String
+  visit_time      String          // e.g., "10:00 AM", "2:00 PM"
   attendees       Int             @default(1)
-  
-  // Status
+
+  // Contact Information (optional overrides for user contact)
+  contact_name    String?
+  contact_phone   String?
+  contact_email   String?
+
+  // Status & Notes
   status          SiteVisitStatus @default(PENDING)
-  notes           String?         @db.Text
-  
+  notes           String?         @db.Text      // Customer notes/special requests
+  admin_notes     String?         @db.Text      // Internal admin notes
+
+  // Feedback (post-visit)
+  feedback        String?         @db.Text
+  rating          Int?            // 1-5 stars
+
   // Timestamps
   created_at      DateTime        @default(now())
   updated_at      DateTime        @updatedAt
-  
+  confirmed_at    DateTime?       // When admin confirmed
+  completed_at    DateTime?       // When visit was completed
+  cancelled_at    DateTime?       // When cancelled
+
   @@index([user_id])
   @@index([plot_id])
   @@index([visit_date])
+  @@index([status])
   @@map("site_visits")
 }
 

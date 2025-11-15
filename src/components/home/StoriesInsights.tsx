@@ -36,7 +36,7 @@ export default function StoriesInsights() {
   ];
 
   return (
-    <section
+    <section id='blogs&stories'
       className="py-20 relative overflow-hidden"
       style={{ backgroundColor: '#112250' }}
     >
@@ -59,7 +59,7 @@ export default function StoriesInsights() {
               fontFamily: 'var(--font-playfair)',
             }}
           >
-            Stories & Insights
+            Blogs & Stories
           </h2>
           <p
             className="text-xl max-w-2xl mx-auto"

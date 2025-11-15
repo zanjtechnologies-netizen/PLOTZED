@@ -20,7 +20,11 @@
       "Bash(npm test:*)",
       "Bash(npm run test:coverage:*)",
       "Bash(find:*)",
-      "Bash(openssl rand:*)"
+      "Bash(openssl rand:*)",
+      "Bash(git checkout:*)",
+      "Bash(mv:*)",
+      "Bash(node:*)",
+      "Bash(timeout /t 5 /nobreak)"
     ],
     "deny": [],
     "ask": []

@@ -79,7 +79,7 @@ export default function FeaturedListings() {
   };
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section id='featuredlistings' className="py-20 bg-gray-50">
       <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-16">

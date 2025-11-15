@@ -2,21 +2,25 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { Menu, X, Phone, Mail, User as UserIcon, LogOut } from 'lucide-react';
 
 export default function Header() {
+  const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Properties', href: '/properties' },
-    { name: 'Destinations', href: '/destinations' },
-    { name: 'Bookings', href: '/bookings' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Experiences', href: '/experiences' },
-    { name: 'About', href: '/about' },
-    { name: 'Insights', href: '/insights' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Home', href: '#herosection' },
+    { name: 'Properties', href: '#featuredlistings' },
+    { name: 'Gallery', href: '#landscapevideo' },
+    { name: 'Site Visits', href: '#bookingexperience' },
+    { name: 'Blog', href: '#blogs&stories' },
+    { name: 'Testimonials', href: '#customerexperiences' },
+    { name: 'About', href: '#redefineluxury' },
+    { name: 'Insights', href: '#journeytoownership' },
+    { name: 'Contact', href: '#footer' },
   ];
 
   return (
@@ -57,47 +61,173 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-6">
             {/* Navigation Links */}
             <ul className="flex items-center gap-8 text-sm">
-              {navigation.map((item) => (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    className="transition-colors font-medium"
-                    style={{
-                      color: '#D8B893',
-                      fontFamily: 'var(--font-libre)',
-                    }}
-                    onMouseEnter={(e) =>
-                      ((e.target as HTMLElement).style.color = '#FFFFFF')
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.target as HTMLElement).style.color = '#D8B893')
-                    }
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+
+  {/* Normal Nav Items */}
+  <li>
+    <Link
+      href="/"
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      Home
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      href="#featuredlistings"
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      Properties
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      href="#landscapevideo"
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      Gallery
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      href="#bookingexperience"
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      Site Visits
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      href="#storiesinsights"
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      Blog
+    </Link>
+  </li>
+
+  <li>
+    <Link
+      href="#customerexperiences"
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      Testimonials
+    </Link>
+  </li>
+
+  {/* ⭐ DROPDOWN START */}
+  <li className="relative">
+    <button
+      onClick={() => setMoreOpen(!moreOpen)}
+      className="transition-colors font-medium"
+      style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
+    >
+      More ▾
+    </button>
+
+    {moreOpen && (
+      <div
+        className="absolute top-full left-0 mt-2 w-44 bg-[#0C1A3D] shadow-xl rounded-xl border"
+        style={{ borderColor: 'rgba(216,184,147,0.3)' }}
+      >
+        <ul className="flex flex-col py-2">
+
+          <li>
+            <Link
+              href="#redefineluxury"
+              className="block px-4 py-2 text-[#D8B893] hover:text-white hover:bg-[#D8B893]/10"
+              style={{ fontFamily: 'var(--font-libre)' }}
+              onClick={() => setMoreOpen(false)}
+            >
+              About
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              href="#journeytoownership"
+              className="block px-4 py-2 text-[#D8B893] hover:text-white hover:bg-[#D8B893]/10"
+              style={{ fontFamily: 'var(--font-libre)' }}
+              onClick={() => setMoreOpen(false)}
+            >
+              Insights
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              href="#footer"
+              className="block px-4 py-2 text-[#D8B893] hover:text-white hover:bg-[#D8B893]/10"
+              style={{ fontFamily: 'var(--font-libre)' }}
+              onClick={() => setMoreOpen(false)}
+            >
+              Contact
+            </Link>
+          </li>
+
+        </ul>
+      </div>
+    )}
+  </li>
+  {/* ⭐ DROPDOWN END */}
+
+</ul>
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-6">
-              <Link
-                href="/signin"
-                className="text-white hover:text-[#D8B893] transition-colors font-medium"
-                style={{ fontFamily: 'var(--font-libre)' }}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/login"
-                className="px-5 py-2 rounded-full font-semibold text-[#0C1A3D] text-sm transition-colors"
-                style={{
-                  backgroundColor: '#D8B893',
-                  fontFamily: 'var(--font-libre)',
-                }}
-              >
-                Log in
-              </Link>
+              {session ? (
+                // Authenticated user - show Dashboard and Logout
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 text-white hover:text-[#D8B893] transition-colors font-medium"
+                    style={{ fontFamily: 'var(--font-libre)' }}
+                  >
+                    <UserIcon className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[#0C1A3D] text-sm transition-colors"
+                    style={{
+                      backgroundColor: '#D8B893',
+                      fontFamily: 'var(--font-libre)',
+                    }}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                // Not authenticated - show Login and Sign Up
+                <>
+                  <Link
+                    href="/login"
+                    className="text-white hover:text-[#D8B893] transition-colors font-medium"
+                    style={{ fontFamily: 'var(--font-libre)' }}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="px-5 py-2 rounded-full font-semibold text-[#0C1A3D] text-sm transition-colors"
+                    style={{
+                      backgroundColor: '#D8B893',
+                      fontFamily: 'var(--font-libre)',
+                    }}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -151,6 +281,61 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+            </div>
+
+            {/* Mobile Auth Buttons */}
+            <div className="pt-5 mt-5 border-t border-[#D8B893]/30 space-y-3">
+              {session ? (
+                // Authenticated user - show Dashboard and Logout
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center justify-center gap-2 w-full text-center py-3 px-4 rounded-lg text-white hover:text-[#D8B893] transition-colors font-medium border border-[#D8B893]/30"
+                    style={{ fontFamily: 'var(--font-libre)' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <UserIcon className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full text-center py-3 px-4 rounded-lg font-semibold text-[#0C1A3D] transition-colors"
+                    style={{
+                      backgroundColor: '#D8B893',
+                      fontFamily: 'var(--font-libre)',
+                    }}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                // Not authenticated - show Login and Sign Up
+                <>
+                  <Link
+                    href="/login"
+                    className="block w-full text-center py-3 px-4 rounded-lg text-white hover:text-[#D8B893] transition-colors font-medium border border-[#D8B893]/30"
+                    style={{ fontFamily: 'var(--font-libre)' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="block w-full text-center py-3 px-4 rounded-lg font-semibold text-[#0C1A3D] transition-colors"
+                    style={{
+                      backgroundColor: '#D8B893',
+                      fontFamily: 'var(--font-libre)',
+                    }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Contact Info */}

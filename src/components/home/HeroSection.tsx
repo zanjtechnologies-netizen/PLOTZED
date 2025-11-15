@@ -8,7 +8,7 @@ export default function HeroSection() {
   const propertyTypes = ['Buy', 'Rent', 'Sell'];
 
   return (
-  <section
+  <section id='herosection'
     className="relative flex items-center justify-center pt-[120px] md:pt-[140px]"
     style={{ height: "775.2px", minHeight: "775.2px" }}
   >

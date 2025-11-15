@@ -14,7 +14,7 @@ export default function RedefineLuxury() {
   ];
 
   return (
-    <section className="py-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <section id="redefineluxury" className="py-20" style={{ backgroundColor: '#FFFFFF' }}>
       <div className="container-custom">
         {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

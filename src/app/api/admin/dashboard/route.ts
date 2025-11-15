@@ -23,25 +23,22 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     bookedPlots,
     soldPlots,
     totalCustomers,
-    totalBookings,
+    totalSiteVisits,
+    pendingSiteVisits,
     pendingInquiries,
-    totalRevenue,
   ] = await Promise.all([
     prisma.plot.count(),
     prisma.plot.count({ where: { status: 'AVAILABLE' } }),
     prisma.plot.count({ where: { status: 'BOOKED' } }),
     prisma.plot.count({ where: { status: 'SOLD' } }),
     prisma.user.count({ where: { role: 'CUSTOMER' } }),
-    prisma.booking.count(),
+    prisma.siteVisit.count(),
+    prisma.siteVisit.count({ where: { status: 'PENDING' } }),
     prisma.inquiry.count({ where: { status: 'NEW' } }),
-    prisma.payment.aggregate({
-      where: { status: 'COMPLETED' },
-      _sum: { amount: true },
-    }),
   ])
 
   // Recent activities
-  const recentBookings = await prisma.booking.findMany({
+  const recentSiteVisits = await prisma.siteVisit.findMany({
     take: 5,
     orderBy: { created_at: 'desc' },
     include: {
@@ -49,7 +46,20 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         select: { name: true, email: true },
       },
       plot: {
-        select: { title: true },
+        select: { title: true, city: true },
+      },
+    },
+  })
+
+  const recentInquiries = await prisma.inquiry.findMany({
+    take: 5,
+    orderBy: { created_at: 'desc' },
+    include: {
+      user: {
+        select: { name: true, email: true },
+      },
+      plot: {
+        select: { title: true, city: true },
       },
     },
   })
@@ -63,11 +73,12 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         sold: soldPlots,
       },
       customers: totalCustomers,
-      bookings: totalBookings,
+      siteVisits: totalSiteVisits,
+      pendingSiteVisits,
       pendingInquiries,
-      revenue: totalRevenue._sum.amount || 0,
     },
-    recentBookings,
+    recentSiteVisits,
+    recentInquiries,
   }
 
   return successResponse(responseData, 200)

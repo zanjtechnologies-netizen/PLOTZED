@@ -16,7 +16,7 @@ import { structuredLogger } from '@/lib/structured-logger'
 const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  phone: z.string().regex(/^[6-9]\d{9}$/),
+  phone: z.string().regex(/^[6-9]\d{9}$/).optional().or(z.literal('')),
   password: z.string().min(8),
 })
 
@@ -32,7 +32,7 @@ export const POST = withErrorHandling(
       where: {
         OR: [
           { email: validatedData.email },
-          { phone: validatedData.phone },
+          ...(validatedData.phone ? [{ phone: validatedData.phone }] : []),
         ],
       },
     })
@@ -53,7 +53,7 @@ export const POST = withErrorHandling(
       data: {
         name: validatedData.name,
         email: validatedData.email,
-        phone: validatedData.phone,
+        phone: validatedData.phone || undefined,
         password_hash,
         role: 'CUSTOMER',
         verification_token: verificationToken,

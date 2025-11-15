@@ -17,7 +17,11 @@ const siteVisitSchema = z.object({
   visit_date: z.string(),
   visit_time: z.string(),
   attendees: z.number().min(1).max(10).default(1),
-  notes: z.string().optional(),
+  notes: z.string().max(500).optional(),
+  // Optional contact overrides
+  contact_name: z.string().optional(),
+  contact_phone: z.string().regex(/^[6-9]\d{9}$/).optional().or(z.literal('')),
+  contact_email: z.string().email().optional().or(z.literal('')),
 })
 
 // POST /api/site-visits - Schedule site visit
@@ -40,6 +44,10 @@ export const POST = withErrorHandling(
         visit_time: validatedData.visit_time,
         attendees: validatedData.attendees,
         notes: validatedData.notes,
+        // Optional contact overrides
+        contact_name: validatedData.contact_name || undefined,
+        contact_phone: validatedData.contact_phone || undefined,
+        contact_email: validatedData.contact_email || undefined,
         status: 'PENDING',
       },
       include: {
