@@ -1,0 +1,110 @@
+# ================================================
+# Plotzed Database Backup Cron Jobs
+# ================================================
+#
+# Installation:
+# 1. Copy this file content
+# 2. Run: crontab -e
+# 3. Paste and adjust paths
+# 4. Save and exit
+#
+# Verify installation:
+#   crontab -l
+#
+# View cron logs:
+#   tail -f /var/log/plotzed-backup.log
+#
+# ================================================
+
+# Set environment (required for Node.js and PostgreSQL)
+PATH=/usr/local/bin:/usr/bin:/bin
+SHELL=/bin/bash
+
+# ================================================
+# DAILY BACKUP - Every day at 2:00 AM
+# ================================================
+# Retention: 7 days
+# Size: ~5-50 MB compressed
+0 2 * * * cd /path/to/plotzed-webapp && npm run backup:daily >> /var/log/plotzed-backup.log 2>&1
+
+# ================================================
+# WEEKLY BACKUP - Every Sunday at 3:00 AM
+# ================================================
+# Retention: 4 weeks (1 month)
+# Size: ~10-100 MB compressed
+0 3 * * 0 cd /path/to/plotzed-webapp && npm run backup:weekly >> /var/log/plotzed-backup.log 2>&1
+
+# ================================================
+# MONTHLY BACKUP - First day of month at 4:00 AM
+# ================================================
+# Retention: 12 months (1 year)
+# Size: ~20-200 MB compressed
+0 4 1 * * cd /path/to/plotzed-webapp && npm run backup:monthly >> /var/log/plotzed-backup.log 2>&1
+
+# ================================================
+# BACKUP VERIFICATION - Every Monday at 5:00 AM
+# ================================================
+# Tests that latest backup can be decompressed
+0 5 * * 1 cd /path/to/plotzed-webapp && gunzip -t backups/daily/*.sql.gz 2>&1 | logger -t plotzed-backup-verify
+
+# ================================================
+# LOG ROTATION - Every Sunday at 6:00 AM
+# ================================================
+# Keep last 30 days of logs
+0 6 * * 0 find /var/log/plotzed-backup.log -mtime +30 -delete
+
+# ================================================
+# CLEANUP OLD BACKUPS - Every day at 7:00 AM
+# ================================================
+# Remove backups older than retention policy
+# (This is also done automatically by backup script, but this is a safety net)
+0 7 * * * find /path/to/plotzed-webapp/backups/daily -name "*.sql.gz" -mtime +7 -delete
+0 7 * * 0 find /path/to/plotzed-webapp/backups/weekly -name "*.sql.gz" -mtime +28 -delete
+0 7 1 * * find /path/to/plotzed-webapp/backups/monthly -name "*.sql.gz" -mtime +365 -delete
+
+# ================================================
+# HEALTH CHECK - Every hour
+# ================================================
+# Verify backup system is healthy
+0 * * * * curl -s http://localhost:3000/api/admin/backups/status | jq -r '.data.summary.healthStatus' | grep -q "healthy" || echo "Backup system unhealthy" | mail -s "Plotzed Backup Alert" admin@plotzed.com
+
+# ================================================
+# NOTES
+# ================================================
+#
+# Cron Schedule Format:
+# * * * * *
+# │ │ │ │ │
+# │ │ │ │ └─── Day of week (0-7, 0 or 7 = Sunday)
+# │ │ │ └───── Month (1-12)
+# │ │ └─────── Day of month (1-31)
+# │ └───────── Hour (0-23)
+# └─────────── Minute (0-59)
+#
+# Examples:
+# 0 2 * * *     - Every day at 2 AM
+# 0 3 * * 0     - Every Sunday at 3 AM
+# 0 4 1 * *     - 1st of every month at 4 AM
+# */15 * * * *  - Every 15 minutes
+# 0 */6 * * *   - Every 6 hours
+#
+# Special strings:
+# @reboot       - Run at startup
+# @yearly       - Run once a year (0 0 1 1 *)
+# @monthly      - Run once a month (0 0 1 * *)
+# @weekly       - Run once a week (0 0 * * 0)
+# @daily        - Run once a day (0 0 * * *)
+# @hourly       - Run once an hour (0 * * * *)
+#
+# ================================================
+# TROUBLESHOOTING
+# ================================================
+#
+# If cron jobs aren't running:
+# 1. Check cron service: sudo systemctl status cron
+# 2. Check logs: grep CRON /var/log/syslog
+# 3. Verify user permissions: crontab -u username -l
+# 4. Test command manually: cd /path && npm run backup:database
+# 5. Check PATH in cron: echo $PATH in cron vs shell
+#
+# ================================================

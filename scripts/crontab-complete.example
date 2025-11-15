@@ -1,0 +1,65 @@
+# ================================================
+# Plotzed Complete Cron Configuration
+# ================================================
+#
+# Installation:
+# 1. Copy this file content
+# 2. Run: crontab -e
+# 3. Paste and adjust paths
+# 4. Save and exit
+#
+# Verify: crontab -l
+# Logs: tail -f /var/log/plotzed-*.log
+# ================================================
+
+# Environment
+PATH=/usr/local/bin:/usr/bin:/bin
+SHELL=/bin/bash
+
+# ================================================
+# SCHEDULED TASKS (Cron Jobs)
+# ================================================
+
+# Token Cleanup - Every day at 3:00 AM
+# Removes expired verification & reset tokens
+0 3 * * * cd /path/to/plotzed-webapp && npm run cron:cleanup-tokens >> /var/log/plotzed-cron.log 2>&1
+
+# Expire Pending Bookings - Every 6 hours
+# Cancels bookings pending for more than 48 hours
+0 */6 * * * cd /path/to/plotzed-webapp && npm run cron:expire-bookings >> /var/log/plotzed-cron.log 2>&1
+
+# Site Visit Reminders - Every 2 hours
+# Sends 24h advance reminders for scheduled visits
+0 */2 * * * cd /path/to/plotzed-webapp && npm run cron:visit-reminders >> /var/log/plotzed-cron.log 2>&1
+
+# Activity Log Cleanup - Weekly on Sunday at 4:00 AM
+# Deletes activity logs older than 90 days
+0 4 * * 0 cd /path/to/plotzed-webapp && npm run cron:cleanup-logs >> /var/log/plotzed-cron.log 2>&1
+
+# ================================================
+# DATABASE BACKUPS
+# ================================================
+
+# Daily Backup - Every day at 2:00 AM
+0 2 * * * cd /path/to/plotzed-webapp && npm run backup:daily >> /var/log/plotzed-backup.log 2>&1
+
+# Weekly Backup - Every Sunday at 3:00 AM
+0 3 * * 0 cd /path/to/plotzed-webapp && npm run backup:weekly >> /var/log/plotzed-backup.log 2>&1
+
+# Monthly Backup - First day of month at 4:00 AM
+0 5 1 * * cd /path/to/plotzed-webapp && npm run backup:monthly >> /var/log/plotzed-backup.log 2>&1
+
+# ================================================
+# MAINTENANCE
+# ================================================
+
+# Log Rotation - Every Sunday at 6:00 AM
+0 6 * * 0 find /var/log/plotzed-*.log -mtime +30 -delete
+
+# Health Check - Every hour
+0 * * * * curl -s http://localhost:3000/api/health >> /var/log/plotzed-health.log 2>&1
+
+# ================================================
+# NOTE: Replace /path/to/plotzed-webapp with actual path
+# Example: /home/user/plotzed-webapp
+# ================================================

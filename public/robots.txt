@@ -1,0 +1,23 @@
+# Plotzed - Robots.txt
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and user areas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /api
+
+# Disallow auth pages
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Allow crawling of plots and properties
+Allow: /plots
+Allow: /properties
+
+# Sitemap location
+Sitemap: https://plotzed.com/sitemap.xml

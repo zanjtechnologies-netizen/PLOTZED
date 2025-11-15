@@ -1,0 +1,152 @@
+name: Database Backup
+
+on:
+  # Run daily at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      backup_type:
+        description: 'Backup type'
+        required: true
+        default: 'daily'
+        type: choice
+        options:
+          - daily
+          - weekly
+          - monthly
+
+jobs:
+  backup:
+    name: Backup PostgreSQL Database
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Verify pg_dump installation
+        run: pg_dump --version
+
+      - name: Create backups directory
+        run: mkdir -p backups/daily backups/weekly backups/monthly
+
+      - name: Run database backup
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
+          BACKUP_NOTIFICATION_EMAIL: ${{ secrets.BACKUP_NOTIFICATION_EMAIL }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            npm run backup:database -- --type=${{ inputs.backup_type }}
+          else
+            npm run backup:daily
+          fi
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup-${{ github.run_number }}
+          path: backups/**/*.sql.gz
+          retention-days: 7
+
+      - name: Verify backup integrity
+        run: |
+          echo "Verifying backup integrity..."
+          for file in backups/**/*.sql.gz; do
+            if [ -f "$file" ]; then
+              gunzip -t "$file" && echo "✅ $file is valid" || echo "❌ $file is corrupted"
+            fi
+          done
+
+      - name: Send success notification
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: '✅ Database Backup Successful - ${{ github.run_number }}'
+          to: ${{ secrets.BACKUP_NOTIFICATION_EMAIL }}
+          from: GitHub Actions <noreply@github.com>
+          body: |
+            Database backup completed successfully!
+
+            Repository: ${{ github.repository }}
+            Run ID: ${{ github.run_id }}
+            Backup Type: ${{ github.event.inputs.backup_type || 'daily' }}
+            Timestamp: ${{ github.event.head_commit.timestamp }}
+
+            View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Send failure notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: '❌ Database Backup Failed - ${{ github.run_number }}'
+          to: ${{ secrets.BACKUP_NOTIFICATION_EMAIL }}
+          from: GitHub Actions <noreply@github.com>
+          body: |
+            ⚠️ Database backup FAILED!
+
+            Repository: ${{ github.repository }}
+            Run ID: ${{ github.run_id }}
+            Backup Type: ${{ github.event.inputs.backup_type || 'daily' }}
+            Timestamp: ${{ github.event.head_commit.timestamp }}
+
+            URGENT: Check the logs immediately:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Upload to S3 (if configured)
+        if: success() && env.BACKUP_S3_BUCKET != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          BACKUP_S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
+        run: |
+          # Install AWS CLI if not already installed
+          if ! command -v aws &> /dev/null; then
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+          fi
+
+          # Upload all backup files to S3
+          for file in backups/**/*.sql.gz; do
+            if [ -f "$file" ]; then
+              aws s3 cp "$file" "s3://${BACKUP_S3_BUCKET}/$file" --storage-class STANDARD_IA
+              echo "✅ Uploaded $file to S3"
+            fi
+          done
+
+      - name: Clean old artifacts
+        if: success()
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: '7 days'
+          skip-recent: 5

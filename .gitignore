@@ -1,0 +1,160 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ================================================
+# DEPENDENCIES
+# ================================================
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ================================================
+# BUILD & OUTPUT
+# ================================================
+/build
+/dist
+/.next/
+/out/
+.turbo/
+
+# ================================================
+# TESTING
+# ================================================
+/coverage
+*.test.ts.snap
+*.spec.ts.snap
+
+# ================================================
+# LOGS
+# ================================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+*.pid
+*.seed
+*.pid.lock
+pids
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ================================================
+# ENVIRONMENT VARIABLES
+# ================================================
+# It's recommended to use .env.example for team collaboration
+.env*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ================================================
+# OS-SPECIFIC FILES
+# ================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ================================================
+# EDITOR FOLDERS AND FILES
+# ================================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# ================================================
+# TYPESCRIPT
+# ================================================
+*.tsbuildinfo
+next-env.d.ts
+
+# ================================================
+# PRISMA
+# ================================================
+/src/generated/prisma
+prisma/dev.db
+prisma/*.db
+prisma/*.db-journal
+prisma/migrations/**/migration.sql
+
+# ================================================
+# DEPLOYMENT
+# ================================================
+.vercel
+.netlify
+
+# ================================================
+# SENTRY
+# ================================================
+.sentryclirc
+*.sentry-*
+.env.sentry-build-plugin
+
+# ================================================
+# BACKUP & TEMPORARY FILES
+# ================================================
+*.backup
+*.bak
+*.tmp
+/backups/
+/tmp/
+/temp/
+nul
+
+# ================================================
+# MISC
+# ================================================
+*.pem
+*.tgz
+.npm
+.eslintcache
+.cache
+.parcel-cache
+
+# ================================================
+# DOCUMENTATION (Generated)
+# ================================================
+# Uncomment if you auto-generate docs
+# /docs/api/
+
+# ================================================
+# SECURITY & SECRETS
+# ================================================
+# Keep secrets out of version control
+*.key
+*.crt
+*.p12
+secrets.json
+credentials.json
+
+# ================================================
+# FRONTEND INTEGRATION (Added 2025-11-12)
+# ================================================
+# Integration analysis documents (can be committed if needed)
+# FRONTEND_INTEGRATION_ANALYSIS.md
+# PACKAGE_JSON_COMPARISON.md
+# TAILWIND_VERSION_VERDICT.md
