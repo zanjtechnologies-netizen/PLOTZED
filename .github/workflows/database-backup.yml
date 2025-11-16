@@ -79,7 +79,7 @@ jobs:
           done
 
       - name: Send success notification
-        if: success()
+        if: success() && secrets.BACKUP_NOTIFICATION_EMAIL != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -100,7 +100,7 @@ jobs:
             View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Send failure notification
-        if: failure()
+        if: failure() && secrets.BACKUP_NOTIFICATION_EMAIL != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
