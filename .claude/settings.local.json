@@ -30,7 +30,8 @@
       "Bash(npx next build --help:*)",
       "Bash(dir \"d:\\plotzed-webapp\\.env*\" /b)",
       "Bash(echo:*)",
-      "Bash(\"d:\\plotzed-webapp\\ENVIRONMENT_FILES_GUIDE.txt\")"
+      "Bash(\"d:\\plotzed-webapp\\ENVIRONMENT_FILES_GUIDE.txt\")",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
