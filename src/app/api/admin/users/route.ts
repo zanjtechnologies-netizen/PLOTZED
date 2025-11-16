@@ -7,7 +7,7 @@ import { NextRequest } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
-import { ForbiddenError, UnauthorizedError } from '@/lib/errors'
+import { BadRequestError, ForbiddenError, UnauthorizedError } from '@/lib/errors'
 
 export const GET = withErrorHandling(
   async (request: NextRequest) => {
@@ -94,4 +94,90 @@ export const GET = withErrorHandling(
     })
   },
   'GET /api/admin/users'
+)
+
+export const PUT = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
+
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to access this resource')
+    }
+
+    if (session.user.role !== 'ADMIN') {
+      throw new ForbiddenError('Admin access required')
+    }
+
+    const body = await request.json()
+    const { userId, role, email_verified, kyc_verified } = body
+
+    if (!userId) {
+      throw new BadRequestError('User ID is required')
+    }
+
+    const updateData: any = {}
+    if (role !== undefined) updateData.role = role
+    if (email_verified !== undefined) updateData.email_verified = email_verified
+    if (kyc_verified !== undefined) updateData.kyc_verified = kyc_verified
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        kyc_verified: true,
+        email_verified: true,
+      },
+    })
+
+    return successResponse({ user: updatedUser }, 200, 'User updated successfully')
+  },
+  'PUT /api/admin/users'
+)
+
+export const DELETE = withErrorHandling(
+  async (request: NextRequest) => {
+    const session = await auth()
+
+    if (!session?.user) {
+      throw new UnauthorizedError('Please login to access this resource')
+    }
+
+    if (session.user.role !== 'ADMIN') {
+      throw new ForbiddenError('Admin access required')
+    }
+
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+
+    if (!userId) {
+      throw new BadRequestError('User ID is required')
+    }
+
+    // Prevent deleting yourself
+    if (userId === session.user.id) {
+      throw new ForbiddenError('You cannot delete your own account')
+    }
+
+    // Prevent deleting other admins
+    const userToDelete = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    })
+
+    if (userToDelete?.role === 'ADMIN') {
+      throw new ForbiddenError('Cannot delete admin accounts')
+    }
+
+    await prisma.user.delete({
+      where: { id: userId },
+    })
+
+    return successResponse(null, 200, 'User deleted successfully')
+  },
+  'DELETE /api/admin/users'
 )

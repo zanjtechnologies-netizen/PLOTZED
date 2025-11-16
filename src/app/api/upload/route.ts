@@ -19,6 +19,7 @@ export const POST = withErrorHandling(
 
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const folder = (formData.get('folder') as string) || 'general'
 
     if (!file) {
       throw new BadRequestError('No file provided')
@@ -40,10 +41,10 @@ export const POST = withErrorHandling(
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Generate unique key
+    // Generate unique key with folder organization
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(7)
-    const key = `uploads/${session.user.id}/${timestamp}-${randomString}-${file.name}`
+    const key = `${folder}/${session.user.id}/${timestamp}-${randomString}-${file.name}`
 
     // Upload to S3
     const url = await uploadToS3(buffer, key, file.type)
