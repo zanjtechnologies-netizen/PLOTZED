@@ -158,3 +158,10 @@ credentials.json
 # FRONTEND_INTEGRATION_ANALYSIS.md
 # PACKAGE_JSON_COMPARISON.md
 # TAILWIND_VERSION_VERDICT.md
+
+# ================================================
+# DOCUMENTATION FILES (Added 2025-11-16)
+# ================================================
+# Ignore all markdown documentation files
+*.md
+!README.md
