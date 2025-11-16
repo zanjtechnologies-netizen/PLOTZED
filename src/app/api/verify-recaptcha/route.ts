@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
 
     if (!recaptchaSecretKey) {
-      console.warn('  RECAPTCHA_SECRET_KEY not configured - skipping verification')
+      console.warn('[reCAPTCHA] SECRET_KEY not configured - skipping verification')
 
       // In development or when reCAPTCHA is not configured, allow the request
       // but return a warning
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (!verifyResponse.ok) {
-      console.error('L reCAPTCHA verification request failed:', verifyResponse.statusText)
+      console.error('[reCAPTCHA] Verification request failed:', verifyResponse.statusText)
       return NextResponse.json(
         { success: false, error: 'Failed to verify reCAPTCHA' },
         { status: 500 }
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     // Check for errors from Google
     if (!data.success) {
       const errorCodes = data['error-codes'] || []
-      console.error('L reCAPTCHA verification failed:', errorCodes)
+      console.error('[reCAPTCHA] Verification failed:', errorCodes)
 
       return NextResponse.json(
         {
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
 
     if (data.score !== undefined && data.score < minScore) {
       console.warn(
-        `  reCAPTCHA score too low: ${data.score} (minimum: ${minScore})`,
+        `[reCAPTCHA] Score too low: ${data.score} (minimum: ${minScore})`,
         {
           action: data.action,
           hostname: data.hostname,
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
     // Validate action if provided
     if (action && data.action && data.action !== action) {
       console.warn(
-        `  reCAPTCHA action mismatch: expected "${action}", got "${data.action}"`
+        `[reCAPTCHA] Action mismatch: expected "${action}", got "${data.action}"`
       )
 
       return NextResponse.json(
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verification successful
-    console.log(' reCAPTCHA verification successful:', {
+    console.log('[reCAPTCHA] Verification successful:', {
       score: data.score,
       action: data.action,
       hostname: data.hostname,
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (error) {
-    console.error('L reCAPTCHA verification error:', error)
+    console.error('[reCAPTCHA] Verification error:', error)
 
     return NextResponse.json(
       {

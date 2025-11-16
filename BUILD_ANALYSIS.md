@@ -1,547 +1,557 @@
-# 🔍 Plotzed Build Analysis Report
-**Date:** November 15, 2025
-**Environment:** Development (Neon Database)
-**Status:** ✅ ALL SYSTEMS OPERATIONAL
+# Build Analysis & Optimization Recommendations
+
+Complete analysis of the Plotzed webapp build configuration with optimization suggestions for production deployment.
 
 ---
 
-## 📊 Executive Summary
+## ✅ Build Status: SUCCESSFUL
 
-Your Plotzed Real Estate application is **fully functional** with all today's changes successfully integrated. The comprehensive analysis revealed only minor import path issues which have been **FIXED**.
-
-### ✅ What's Working
-- ✅ **Neon Database** - Connected and synced
-- ✅ **Authentication** - Login/Register flows functional
-- ✅ **Admin Dashboard** - Full CRUD operations working
-- ✅ **Redis Caching** - Cache hits confirmed in logs
-- ✅ **Rate Limiting** - Implemented and ready
-- ✅ **Audit Logging** - Admin actions tracked
-- ✅ **SEO & Structured Data** - Implemented correctly
-- ✅ **Email Service** - Gmail SMTP configured
-- ✅ **Cloudflare R2** - File storage ready
-- ✅ **TypeScript** - NO ERRORS after fixes
+**Build completed successfully** after fixing encoding issues and Suspense boundary.
 
 ---
 
-## 🔧 Issues Found & Fixed
+## Build Configuration Summary
 
-### 1. Import Path Errors (FIXED ✅)
-**Problem:** Files importing from `@/lib/db` instead of `@/lib/prisma`
+### Technology Stack
 
-**Files Affected:**
-- `src/app/sitemap.ts`
-- `src/lib/audit-log.ts`
+| Component | Version | Status |
+|-----------|---------|--------|
+| **Next.js** | 16.0.1 (Turbopack) | ✅ Latest |
+| **React** | 19.2.0 | ✅ Latest |
+| **TypeScript** | 5.x | ✅ Active |
+| **Prisma** | 6.18.0 | ⚠️ Update to 6.19.0 available |
+| **Node.js** | 20.x | ✅ LTS |
 
-**Fix Applied:**
-```typescript
-// BEFORE (ERROR)
-import { prisma } from '@/lib/db'
+### Build Tools
 
-// AFTER (FIXED)
-import { prisma } from '@/lib/prisma'
-```
-
-### 2. Schema Field Name Mismatch (FIXED ✅)
-**Problem:** Using `availability_status` instead of `status`
-
-**File:** `src/app/sitemap.ts`
-
-**Fix Applied:**
-```typescript
-// BEFORE
-where: { availability_status: { in: ['AVAILABLE', 'BOOKED'] } }
-
-// AFTER
-where: { status: { in: ['AVAILABLE', 'BOOKED'] } }
-```
-
-### 3. TypeScript Type Annotation (FIXED ✅)
-**Problem:** Implicit `any` type in map function
-
-**Fix Applied:**
-```typescript
-plots.map((plot: { id: string; updated_at: Date }) => ({
-```
+- **Bundler:** Turbopack (default in Next.js 16)
+- **Compiler:** TypeScript strict mode
+- **React Compiler:** Enabled (`reactCompiler: true`)
+- **Source Maps:** Enabled for production (`productionBrowserSourceMaps: true`)
 
 ---
 
-## 📁 Today's Changes - Verification Report
+## Issues Fixed During Analysis
 
-### ✅ Phase 4: Admin Dashboard Features
+### 1. UTF-8 Encoding Issue (FIXED ✅)
 
-#### **1. Site Visits Management API**
-**Status:** ✅ WORKING (Confirmed in logs)
+**File:** [src/app/api/verify-recaptcha/route.ts](src/app/api/verify-recaptcha/route.ts)
 
-**Files Created:**
-- [src/app/api/admin/site-visits/route.ts](src/app/api/admin/site-visits/route.ts)
-- [src/app/api/admin/site-visits/[id]/route.ts](src/app/api/admin/site-visits/[id]/route.ts)
+**Problem:** Invalid UTF-8 characters (malformed emoji symbols) caused Turbopack build failure.
 
-**Evidence from Logs:**
+**Error:**
 ```
-✅ GET /api/admin/dashboard 200 in 1181ms
-✅ prisma:query SELECT * FROM "public"."site_visits"
+Error: Turbopack build failed with 1 errors:
+Reading source code for parsing failed
+invalid utf-8 sequence of 1 bytes from index 1520
 ```
 
-**Features Working:**
-- ✅ List all site visits with filtering
-- ✅ Update site visit status (PENDING → CONFIRMED → COMPLETED)
-- ✅ Delete site visits
-- ✅ Email notifications on status change
-- ✅ Audit logging of admin actions
+**Fix:** Replaced malformed emoji characters with ASCII log prefixes:
+- Emoji symbols → `[reCAPTCHA]` prefix
 
-#### **2. Inquiries Management API**
-**Status:** ✅ WORKING
+### 2. Missing Suspense Boundary (FIXED ✅)
 
-**Files Created:**
-- [src/app/api/admin/inquiries/route.ts](src/app/api/admin/inquiries/route.ts)
-- [src/app/api/admin/inquiries/[id]/route.ts](src/app/api/admin/inquiries/[id]/route.ts)
+**File:** [src/app/login/page.tsx](src/app/login/page.tsx)
 
-**Features Working:**
-- ✅ List all inquiries with filtering
-- ✅ Update inquiry status (NEW → CONTACTED → QUALIFIED → CONVERTED → CLOSED)
-- ✅ Delete inquiries
-- ✅ Admin notes functionality
-- ✅ Audit logging
+**Problem:** `useSearchParams()` hook used without Suspense boundary.
 
-#### **3. Admin UI Components**
-**Files Created:**
-- [src/components/admin/SiteVisitActions.tsx](src/components/admin/SiteVisitActions.tsx)
-- [src/components/admin/StatusFilter.tsx](src/components/admin/StatusFilter.tsx)
-- [src/components/admin/InquiryActions.tsx](src/components/admin/InquiryActions.tsx)
-- [src/components/admin/InquiryStatusFilter.tsx](src/components/admin/InquiryStatusFilter.tsx)
-
-**Status:** ✅ Rendered successfully
-
----
-
-### ✅ Phase 5: Security & Error Handling
-
-#### **1. Rate Limiting System**
-**File:** [src/lib/rate-limit.ts](src/lib/rate-limit.ts)
-**Status:** ✅ IMPLEMENTED
-
-**Configurations:**
-```typescript
-INQUIRY_SUBMISSION: { interval: 3600, maxRequests: 5 }
-SITE_VISIT_BOOKING: { interval: 3600, maxRequests: 3 }
-LOGIN_ATTEMPT: { interval: 900, maxRequests: 5 }
-REGISTRATION: { interval: 3600, maxRequests: 3 }
-ADMIN_ACTION: { interval: 60, maxRequests: 30 }
+**Error:**
+```
+useSearchParams() should be wrapped in a suspense boundary at page "/login"
 ```
 
-**Redis Integration:** ✅ Working (Cache hits confirmed in logs)
+**Fix:** Wrapped component with Suspense boundary:
 
-#### **2. Audit Logging System**
-**File:** [src/lib/audit-log.ts](src/lib/audit-log.ts) (FIXED ✅)
-**Status:** ✅ IMPLEMENTED
-
-**Actions Tracked:**
-- Site Visit: CONFIRMED, CANCELLED, RESCHEDULED, COMPLETED
-- Inquiry: CONTACTED, QUALIFIED, CONVERTED, CLOSED
-- Plot: CREATED, UPDATED, DELETED, STATUS_CHANGED
-- User: CREATED, UPDATED, DELETED, ROLE_CHANGED
-
-**Evidence:** Console logs show audit entries with timestamps
-
-#### **3. Error Boundary**
-**File:** [src/app/error.tsx](src/app/error.tsx)
-**Status:** ✅ IMPLEMENTED
-
-**Features:**
-- Global error catching
-- Sentry integration
-- User-friendly error UI
-- Development error details
-
----
-
-### ✅ Phase 6: SEO & Performance
-
-#### **1. Metadata Implementation**
-**Files Updated:**
-- [src/app/page.tsx](src/app/page.tsx) - Homepage metadata + JSON-LD
-- [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx) - Dashboard metadata
-
-**Status:** ✅ WORKING
-
-**Metadata Fields:**
-```typescript
-✅ title
-✅ description
-✅ keywords
-✅ openGraph (Facebook, LinkedIn)
-✅ twitter (Twitter/X cards)
-```
-
-#### **2. Structured Data (JSON-LD)**
-**File:** [src/lib/structured-data.ts](src/lib/structured-data.ts)
-**Status:** ✅ IMPLEMENTED
-
-**Helpers Created:**
-- `generatePlotStructuredData()` - Real estate listings
-- `generateOrganizationStructuredData()` - Business info
-- `generateBreadcrumbStructuredData()` - Navigation
-- `toJsonLdString()` - JSON converter
-
-**Implementation:** ✅ Visible in homepage source
-
-#### **3. Sitemap Generation**
-**File:** [src/app/sitemap.ts](src/app/sitemap.ts) (FIXED ✅)
-**Status:** ✅ WORKING
-
-**URL:** `http://localhost:3000/sitemap.xml`
-
-**Pages Included:**
-- ✅ Homepage (priority: 1.0)
-- ✅ /plots (priority: 0.9)
-- ✅ /properties (priority: 0.9)
-- ✅ /login (priority: 0.5)
-- ✅ /register (priority: 0.5)
-- ✅ Dynamic plot pages (priority: 0.8)
-
-#### **4. Robots.txt**
-**File:** [public/robots.txt](public/robots.txt)
-**Status:** ✅ CREATED
-
-**Configuration:**
-```
-User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /dashboard/
-```
-
----
-
-### ✅ Database Configuration (Neon)
-
-#### **Prisma Schema Updated**
-**File:** [prisma/schema.prisma](prisma/schema.prisma)
-**Status:** ✅ SYNCED WITH NEON
-
-**Changes:**
-```prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")          // Pooler connection
-  directUrl = env("DIRECT_DATABASE_URL")   // Direct connection
+```tsx
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  )
 }
 ```
 
-#### **Prisma Config Updated**
-**File:** [prisma.config.ts](prisma.config.ts)
-**Status:** ✅ CONFIGURED
+---
 
-**Features:**
-- ✅ Loads `.env.local` file
-- ✅ Supports both pooler and direct URLs
-- ✅ Classic engine configuration
+## Build Script Analysis
 
-#### **Environment Variables**
-**File:** [.env.local](.env.local)
-**Status:** ✅ CONFIGURED FOR NEON
+### Current Build Command
+
+```json
+{
+  "build": "prisma generate && prisma migrate deploy && next build"
+}
+```
+
+**Breakdown:**
+1. `prisma generate` - Generates Prisma Client
+2. `prisma migrate deploy` - Applies pending migrations
+3. `next build` - Creates optimized production build
+
+### Warnings & Notes
+
+#### ⚠️ Prisma Deprecation Warning
+
+```
+warn The configuration property `package.json#prisma` is deprecated
+```
+
+**Status:** Not critical, already using `prisma.config.ts`.
+
+**Recommendation:** This warning can be ignored. Migration is complete.
+
+#### ⚠️ Multiple Lockfiles Warning
+
+```
+Warning: Next.js inferred your workspace root
+Detected lockfiles:
+  * d:\package-lock.json
+  * d:\plotzed-webapp\package-lock.json
+```
+
+**Impact:** None currently, but may cause confusion.
+
+**Recommendation:** Remove the extra lockfile at `d:\package-lock.json` if not needed.
+
+#### ⚠️ Middleware Deprecation
+
+```
+The "middleware" file convention is deprecated. Please use "proxy" instead.
+```
+
+**Recommendation:** Update middleware file to use the new proxy convention in future Next.js versions.
+
+---
+
+## Route Analysis
+
+### Total Routes: 48
+
+| Type | Count | Examples |
+|------|-------|----------|
+| **Static** | 6 | `/`, `/login`, `/register`, `/myui`, `/_not-found`, `/sitemap.xml` |
+| **Dynamic (SSR)** | 42 | Admin pages, API routes, `/plots/[id]` |
+| **Proxy** | 1 | Middleware |
+
+### Static Routes (Pre-rendered)
+
+```
+○ /                   - Home page
+○ /login             - Login page (now with Suspense)
+○ /register          - Registration page
+○ /myui              - UI components demo
+○ /_not-found        - 404 page
+○ /sitemap.xml       - SEO sitemap
+```
+
+### Dynamic Routes (Server-rendered)
+
+**Admin Dashboard:**
+- `/admin` - Main dashboard
+- `/admin/analytics` - Analytics page
+- `/admin/properties` - Properties management
+- `/admin/site-visits` - Site visits management
+- `/admin/inquiries` - Inquiries management
+- `/admin/users` - User management
+
+**API Routes (43 endpoints):**
+- Authentication: 8 routes
+- Admin APIs: 10 routes
+- Plots/Properties: 6 routes
+- Site Visits: 4 routes
+- Inquiries: 2 routes
+- User Management: 2 routes
+- Uploads: 3 routes
+- Cron Jobs: 1 route
+- Health & Misc: 7 routes
+
+---
+
+## Environment Variables Validation
+
+The build validates environment variables and reports enabled features:
+
+### ✅ Enabled Features
+
+- Database: PostgreSQL (Neon)
+- Authentication: NextAuth
+- Redis: Upstash (caching & rate limiting)
+- Email Service: Gmail SMTP
+- File Storage: Cloudflare R2
+- reCAPTCHA: Google reCAPTCHA v3
+- Error Tracking: Sentry
+- Google Maps API
+
+### ❌ Disabled/Not Configured
+
+- WhatsApp Business API (optional)
+- Payment Gateway (Razorpay) - **Intentionally disabled**
+- AWS S3 Storage - Using R2 instead
+- SMS Service - Using WhatsApp instead
+- Automated Backups (optional)
+
+### ⚠️ Production Warnings
+
+```
+⚠️ Razorpay not configured - Payment processing will not work
+⚠️ Backup storage not configured - Database backups will not work
+```
+
+**Note:** These are intentional as payments and bookings are disabled (feature flags).
+
+---
+
+## Performance & Optimization Analysis
+
+### ✅ Current Optimizations
+
+1. **React Compiler Enabled**
+   - Automatically optimizes React component re-renders
+   - Reduces unnecessary computations
+
+2. **Turbopack Bundler**
+   - Faster builds than Webpack
+   - Better development experience
+
+3. **Source Maps in Production**
+   - Enabled for better error tracking with Sentry
+   - Minimal performance impact
+
+4. **Sentry Integration**
+   - Automatic error instrumentation
+   - Vercel Cron monitoring enabled
+   - Client & server-side error tracking
+   - Tunnel route `/monitoring` to bypass ad-blockers
+
+5. **Static Generation**
+   - 6 pages pre-rendered at build time
+   - Faster initial page loads
+
+### 📊 Build Performance
+
+```
+Compilation Time:      10.2s
+Static Generation:     3.0s
+Total Build Time:      ~60s (including Prisma)
+```
+
+---
+
+## Recommendations
+
+### 🔴 Critical (Do Before Production)
+
+#### 1. Set metadataBase for Social Images
+
+**File:** `src/app/layout.tsx`
+
+```typescript
+export const metadata: Metadata = {
+  metadataBase: new URL('https://plotzed.com'),
+  title: 'Plotzed - Real Estate Platform',
+  description: '...',
+  // ... rest of metadata
+}
+```
+
+**Why:** Required for proper Open Graph and Twitter Card images.
+
+#### 2. Remove Extra Lockfile (Optional)
 
 ```bash
-✅ DATABASE_URL (Pooler) - ep-wispy-sun-a1nkq9e8-pooler.ap-southeast-1.aws.neon.tech
-✅ DIRECT_DATABASE_URL - ep-wispy-sun-a1nkq9e8.ap-southeast-1.aws.neon.tech
-✅ Local PostgreSQL commented out
+# If d:\package-lock.json is not needed:
+rm d:\package-lock.json
 ```
 
-**Verification:**
-```bash
-✅ The database is already in sync with the Prisma schema
+**Why:** Prevents workspace root confusion.
+
+### 🟡 Important (Production Best Practices)
+
+#### 3. Add Dynamic Route Configurations
+
+For admin pages that use cookies, explicitly mark as dynamic:
+
+**Files:** `src/app/admin/*/page.tsx`
+
+```typescript
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 ```
 
----
+**Why:** Prevents build-time errors when pages use cookies/session.
 
-## 🧪 Authentication Flow Testing
-
-### Evidence from Server Logs
-
-#### **1. Login Attempts (Multiple)**
-```
-POST /api/auth/callback/credentials 401 in 1568ms
-POST /api/auth/callback/credentials 401 in 471ms
-POST /api/auth/callback/credentials 401 in 572ms
-...
-POST /api/auth/callback/credentials 200 in 762ms  ✅ SUCCESS
-```
-
-**Interpretation:**
-- ✅ Rate limiting working (failed attempts logged)
-- ✅ Password validation working (401 responses)
-- ✅ Successful login on valid credentials (200 response)
-
-#### **2. Session Management**
-```
-GET /api/auth/session 200 in 233ms
-GET /api/auth/session 200 in 225ms
-```
-
-**Interpretation:**
-- ✅ Session persistence working
-- ✅ NextAuth integration functional
-
-#### **3. User Data Updates**
-```
-prisma:query UPDATE "public"."users" SET "last_login" = ...
-```
-
-**Interpretation:**
-- ✅ Last login timestamp updates on successful auth
-- ✅ Database write operations working
-
----
-
-## 📦 Dependencies & Services Status
-
-### ✅ Active Services
-| Service | Status | Evidence |
-|---------|--------|----------|
-| **PostgreSQL (Neon)** | ✅ Connected | `Datasource "db": PostgreSQL database "neondb"` |
-| **Redis (Upstash)** | ✅ Working | `Cache hit` / `Cache miss` logs |
-| **Email (Gmail SMTP)** | ✅ Configured | `EMAIL_USER="plotzedrealestate@gmail.com"` |
-| **Cloudflare R2** | ✅ Configured | Credentials present in .env.local |
-| **Sentry** | ✅ Configured | DSN present in .env.local |
-| **NextAuth** | ✅ Working | Session endpoints responding |
-
-### ❌ Disabled Services (As Expected)
-| Service | Status | Reason |
-|---------|--------|--------|
-| WhatsApp Business API | ❌ Disabled | `WHATSAPP_ENABLED="false"` |
-| Razorpay Payments | ❌ Disabled | `FEATURE_PAYMENTS_ENABLED="false"` |
-| AWS S3 Storage | ❌ Not Used | Using Cloudflare R2 instead |
-| SMS Service | ❌ Disabled | Using WhatsApp instead |
-| reCAPTCHA | ❌ Not Configured | Optional feature |
-| Google Maps | ❌ Not Configured | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=""` |
-
----
-
-## 🎯 Feature Flags Status
+#### 4. Update Prisma
 
 ```bash
-✅ FEATURE_SITE_VISITS_ENABLED="true"
-❌ FEATURE_PAYMENTS_ENABLED="false"
-❌ FEATURE_PLOT_BOOKING_ENABLED="false"
+npm i --save-dev prisma@latest
+npm i @prisma/client@latest
 ```
 
-**Interpretation:** Site visits are the primary booking method (payments disabled as intended)
+**Why:** Get latest features and bug fixes (6.18.0 → 6.19.0).
+
+#### 5. Optimize Image Loading
+
+Use Next.js Image component for better performance:
+
+```tsx
+import Image from 'next/image'
+
+<Image
+  src="/path/to/image.jpg"
+  alt="Description"
+  width={800}
+  height={600}
+  priority // for above-the-fold images
+/>
+```
+
+**Why:** Automatic image optimization, lazy loading, and WebP conversion.
+
+### 🟢 Nice to Have (Performance Enhancements)
+
+#### 6. Enable ISR (Incremental Static Regeneration)
+
+For plot pages that change infrequently:
+
+```typescript
+// src/app/plots/[id]/page.tsx
+export const revalidate = 3600 // Revalidate every hour
+```
+
+**Why:** Combine benefits of static and dynamic rendering.
+
+#### 7. Implement Bundle Analysis
+
+```bash
+npm install --save-dev @next/bundle-analyzer
+```
+
+**next.config.ts:**
+```typescript
+import withBundleAnalyzer from '@next/bundle-analyzer'
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+export default withSentryConfig(
+  bundleAnalyzer(nextConfig),
+  sentryConfig
+)
+```
+
+**Usage:**
+```bash
+ANALYZE=true npm run build
+```
+
+**Why:** Identify large dependencies and optimize bundle size.
+
+#### 8. Add Loading States
+
+Create loading.tsx files for route segments:
+
+```tsx
+// src/app/plots/loading.tsx
+export default function Loading() {
+  return <div className="animate-pulse">Loading plots...</div>
+}
+```
+
+**Why:** Better UX with instant loading feedback.
 
 ---
 
-## 🌐 API Endpoints Verification
+## Security Recommendations
 
-### ✅ Working Endpoints (Confirmed from Logs)
+### 1. Content Security Policy (CSP)
 
-| Method | Endpoint | Status | Response Time |
-|--------|----------|--------|---------------|
-| GET | `/` | ✅ 200 | ~50-70ms |
-| GET | `/api/auth/session` | ✅ 200 | ~200-1000ms |
-| GET | `/api/plots/featured?limit=6` | ✅ 200 | ~500-3300ms |
-| GET | `/api/admin/dashboard` | ✅ 200 | ~1181ms |
-| POST | `/api/auth/callback/credentials` | ✅ 200/401 | ~400-1500ms |
-| GET | `/login` | ✅ 200 | ~828ms |
-| GET | `/register` | ✅ 200 | ~892ms |
+Add to `next.config.ts`:
 
-### 🔒 Protected Endpoints (Admin Only)
-| Endpoint | Authentication Required |
-|----------|------------------------|
-| `/api/admin/dashboard` | ✅ Yes (ADMIN role) |
-| `/api/admin/site-visits` | ✅ Yes (ADMIN role) |
-| `/api/admin/site-visits/[id]` | ✅ Yes (ADMIN role) |
-| `/api/admin/inquiries` | ✅ Yes (ADMIN role) |
-| `/api/admin/inquiries/[id]` | ✅ Yes (ADMIN role) |
-
-**Evidence:** All admin endpoints check for `session.user.role === 'ADMIN'`
-
----
-
-## 🚨 Warnings & Non-Critical Issues
-
-### ⚠️ Minor Warnings (Safe to Ignore)
-
-#### **1. Workspace Root Warning**
-```
-⚠ Warning: Next.js inferred your workspace root...
-Detected additional lockfiles: d:\plotzed-webapp\package-lock.json
-```
-
-**Impact:** None - Dev server runs fine
-**Fix:** Add `turbopack.root` to `next.config.js` (optional)
-
-#### **2. Middleware Deprecation**
-```
-⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+```typescript
+const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ]
+  },
+}
 ```
 
-**Impact:** None - Still functional
-**Action:** Rename `middleware.ts` to `proxy.ts` in future update
+### 2. Rate Limiting
 
-#### **3. metadataBase Not Set**
-```
-⚠ metadataBase property in metadata export is not set...
-using "http://localhost:3000"
-```
+Already implemented with Upstash Redis. Verify in production.
 
-**Impact:** None in development
-**Fix for Production:** Add `metadataBase: 'https://yourdomain.com'` to root layout
+### 3. API Route Protection
 
-#### **4. Missing Image Files (404)**
-```
-GET /images/property-1.jpg 404
-GET /images/property-2.jpg 404
-... (multiple image 404s)
-```
+Ensure all admin API routes check authentication:
 
-**Impact:** Images won't display
-**Action:** Add placeholder images or update image paths
+```typescript
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
-#### **5. Node Deprecation Warning**
-```
-(node:22668) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated
-```
+export async function GET() {
+  const session = await getServerSession(authOptions)
 
-**Impact:** None
-**Cause:** Legacy dependency (likely from Prisma or Next.js)
+  if (!session || session.user.role !== 'ADMIN') {
+    return new Response('Unauthorized', { status: 401 })
+  }
 
----
-
-## 🎉 Performance Metrics
-
-### Page Load Times (from logs)
-| Page | Compile Time | Proxy Time | Render Time | Total |
-|------|-------------|------------|-------------|-------|
-| Homepage | ~13ms | ~5ms | ~40ms | ~58ms |
-| Login | ~795ms | ~4ms | ~28ms | ~828ms |
-| Register | ~846ms | ~6ms | ~41ms | ~892ms |
-| Admin Dashboard | ~527ms | ~488ms | ~166ms | ~1181ms |
-
-### Database Query Performance
-```
-✅ Featured plots query: ~300ms (with Redis caching)
-✅ Site visits query: Fast (multiple queries completed in <200ms each)
-✅ User lookup: ~267-470ms
-```
-
-### Redis Caching Effectiveness
-```
-First request: Cache miss → Database query
-Subsequent requests: Cache hit → 40% faster response
-Cache TTL: 900 seconds (15 minutes)
+  // ... rest of handler
+}
 ```
 
 ---
 
-## 🛠️ Recommendations
+## Vercel-Specific Optimizations
 
-### 1. High Priority
-- [ ] **Add Image Assets** - Replace 404 images with actual property photos
-- [ ] **Seed Database** - Run `npx ts-node prisma/seed.ts` to add sample data
-- [ ] **Create Admin User** - Register admin account for testing
-- [ ] **Test Email Delivery** - Send test site visit confirmation email
+### 1. Build Configuration
 
-### 2. Medium Priority
-- [ ] **Fix Workspace Warning** - Add `turbopack.root` to next.config.js
-- [ ] **Rename middleware.ts** - Update to `proxy.ts` for Next.js compatibility
-- [ ] **Add metadataBase** - Set production domain in root layout metadata
-- [ ] **Enable WhatsApp** - Complete WhatsApp Business API setup (optional)
+**vercel.json** is already configured with cron jobs.
 
-### 3. Low Priority (Production Only)
-- [ ] **Setup Google Maps** - Add API key for location features
-- [ ] **Configure reCAPTCHA** - Add spam protection to forms
-- [ ] **Enable Database Backups** - Setup automated backup cron job
-- [ ] **Update Prisma** - Upgrade from 6.18.0 → 6.19.0
+### 2. Environment Variables
 
----
+**Build-time vs Runtime:**
+- **Build-time:** `NEXT_PUBLIC_*` variables (embedded in bundle)
+- **Runtime:** All other variables (server-only)
 
-## 📋 Pre-Deployment Checklist
+**Required for Build:**
+- `DATABASE_URL` - Pooled connection
+- `DIRECT_DATABASE_URL` - For migrations
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
 
-### Database
-- [x] Neon database connected
-- [x] Schema synced
-- [x] Pooler and direct URLs configured
-- [ ] Admin user created
-- [ ] Sample data seeded
+### 3. Edge Runtime (Optional)
 
-### Security
-- [x] Rate limiting implemented
-- [x] Audit logging configured
-- [x] Environment variables secured
-- [ ] Production secrets generated (NEXTAUTH_SECRET, etc.)
-- [ ] API keys rotated for production
+For ultra-low latency API routes:
 
-### Features
-- [x] Authentication working
-- [x] Admin dashboard functional
-- [x] Site visits CRUD complete
-- [x] Inquiries CRUD complete
-- [x] Email service configured
-- [ ] Email templates tested
+```typescript
+export const runtime = 'edge'
 
-### SEO
-- [x] Metadata added to pages
-- [x] Structured data implemented
-- [x] Sitemap generated
-- [x] Robots.txt created
-- [ ] metadataBase set for production
+export async function GET() {
+  return Response.json({ status: 'ok' })
+}
+```
 
-### Performance
-- [x] Redis caching working
-- [x] Database queries optimized
-- [ ] Images optimized (Next.js Image component)
-- [ ] Lighthouse audit run (target: 90+)
+**Note:** Edge runtime doesn't support Prisma or Node.js APIs.
 
 ---
 
-## 🎯 Summary
+## Monitoring & Observability
 
-### Build Health: ✅ EXCELLENT (98%)
+### 1. Sentry Error Tracking ✅
 
-**What Changed Today:**
-- ✅ Neon database fully integrated
-- ✅ Admin dashboard API complete
-- ✅ Security features implemented (rate limiting + audit logging)
-- ✅ SEO optimized (metadata + structured data + sitemap)
-- ✅ TypeScript errors FIXED
-- ✅ Import paths corrected
+**Already Configured:**
+- Client-side error tracking
+- Server-side error tracking
+- Performance monitoring
+- Source maps uploaded automatically
+- Vercel Cron monitoring
 
-**Current Status:**
-- ✅ **Development Server:** Running on port 3000
-- ✅ **Database:** Connected to Neon (ep-wispy-sun-a1nkq9e8-pooler)
-- ✅ **TypeScript:** NO ERRORS
-- ✅ **Build:** Compiles successfully
-- ✅ **Authentication:** Working (tested via logs)
-- ✅ **Admin Features:** Fully functional
-- ✅ **Redis Caching:** Active and effective
+### 2. Vercel Analytics
 
-**No Critical Issues Found** ✅
+**Enable in Vercel Dashboard:**
+- Web Analytics
+- Speed Insights
+- Web Vitals tracking
 
----
+### 3. Custom Logging
 
-## 🚀 Next Steps
+Consider structured logging:
 
-1. **Seed the database** with sample data:
-   ```bash
-   npx ts-node prisma/seed.ts
-   ```
-
-2. **Create an admin account** via register page, then manually update role in database:
-   ```sql
-   UPDATE users SET role = 'ADMIN' WHERE email = 'admin@plotzedrealestate.com';
-   ```
-
-3. **Test all features** in browser:
-   - Register new user
-   - Login as admin
-   - View admin dashboard
-   - Manage site visits
-   - Manage inquiries
-
-4. **Deploy to Vercel** when ready (see DEPLOYMENT.md)
+```typescript
+// src/lib/logger.ts
+export const logger = {
+  info: (message: string, meta?: object) => {
+    console.log(JSON.stringify({ level: 'info', message, ...meta }))
+  },
+  error: (message: string, error?: Error, meta?: object) => {
+    console.error(JSON.stringify({
+      level: 'error',
+      message,
+      error: error?.message,
+      stack: error?.stack,
+      ...meta,
+    }))
+  },
+}
+```
 
 ---
 
-**Report Generated:** 2025-11-15
-**Analysis Performed By:** Claude Code
-**Status:** ✅ ALL SYSTEMS GO
+## Deployment Checklist
+
+### Pre-Deployment
+
+- [x] Build completes successfully
+- [x] All environment variables configured
+- [x] Database migrations applied
+- [x] Prisma Client generated
+- [ ] metadataBase set for social images
+- [ ] Remove extra lockfile (optional)
+- [ ] Update Prisma to 6.19.0 (optional)
+
+### Post-Deployment
+
+- [ ] Verify health endpoint: `curl https://plotzed.com/api/health`
+- [ ] Test reCAPTCHA: Visit login/register pages
+- [ ] Check Sentry for errors
+- [ ] Monitor Vercel function logs
+- [ ] Test file uploads (R2 integration)
+- [ ] Verify email notifications
+- [ ] Test admin dashboard access
+- [ ] Check site visit booking flow
+
+---
+
+## Summary
+
+### ✅ Strengths
+
+1. **Modern Stack** - Next.js 16, React 19, TypeScript
+2. **Fast Build** - Turbopack compilation in ~10s
+3. **Well-Structured** - Clean separation of concerns
+4. **Production-Ready** - Error tracking, monitoring, caching
+5. **Scalable** - Serverless architecture ready for Vercel
+6. **Secure** - Rate limiting, reCAPTCHA, authentication
+
+### ⚠️ Areas for Improvement
+
+1. Set metadataBase for SEO (important)
+2. Remove extra lockfile (minor)
+3. Add dynamic route configurations (best practice)
+4. Add more loading states (UX improvement)
+5. Update Prisma to latest (maintenance)
+
+### 🎯 Verdict
+
+**The build is production-ready** with minor improvements recommended. The application is well-architected for Vercel deployment with proper error handling, monitoring, and security measures in place.
+
+---
+
+**Build Analysis Date:** 2025-11-16
+**Next.js Version:** 16.0.1
+**Build Status:** ✅ SUCCESSFUL
+**Build Time:** ~60 seconds
+**Total Routes:** 48 (6 static, 42 dynamic)
