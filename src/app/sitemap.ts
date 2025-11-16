@@ -3,7 +3,7 @@
 // ================================================
 
 import { MetadataRoute } from 'next'
-import { prisma } from '@/lib/db'
+import { prisma } from '@/lib/prisma'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://plotzed.com'
@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all published plots
   const plots = await prisma.plot.findMany({
     where: {
-      availability_status: {
+      status: {
         in: ['AVAILABLE', 'BOOKED'], // Exclude SOLD from sitemap
       },
     },
@@ -59,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Dynamic plot pages
-  const plotPages: MetadataRoute.Sitemap = plots.map((plot) => ({
+  const plotPages: MetadataRoute.Sitemap = plots.map((plot: { id: string; updated_at: Date }) => ({
     url: `${baseUrl}/plots/${plot.id}`,
     lastModified: plot.updated_at,
     changeFrequency: 'weekly' as const,

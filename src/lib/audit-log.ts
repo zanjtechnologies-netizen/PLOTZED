@@ -2,7 +2,7 @@
 // src/lib/audit-log.ts - Admin Action Audit Logging
 // ================================================
 
-import { prisma } from './db'
+import { prisma } from './prisma'
 
 export enum AuditAction {
   // Site Visit Actions

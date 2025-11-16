@@ -9,6 +9,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SessionProvider from "@/components/providers/SessionProvider";
+import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 
 // Font setup
 const geistSans = Geist({
@@ -64,11 +65,13 @@ export default function RootLayout({
           antialiased bg-[#0C1A3D] text-white
         `}
       >
-        <SessionProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </SessionProvider>
+        <RecaptchaProvider>
+          <SessionProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </SessionProvider>
+        </RecaptchaProvider>
       </body>
     </html>
   );

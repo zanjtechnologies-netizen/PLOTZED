@@ -3,117 +3,75 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
-// User model
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  phone         String?   @unique
-  name          String
-  password_hash String
-  role          UserRole  @default(CUSTOMER)
-
-  // Email Verification
-  email_verified Boolean   @default(false)
-  verification_token String?  @unique
+  id                         String         @id @default(uuid())
+  email                      String         @unique
+  phone                      String?        @unique
+  name                       String
+  password_hash              String
+  role                       UserRole       @default(CUSTOMER)
+  email_verified             Boolean        @default(false)
+  verification_token         String?        @unique
   verification_token_expires DateTime?
-
-  // Password Reset
-  reset_token String?  @unique
-  reset_token_expires DateTime?
-
-  // KYC
-  kyc_verified  Boolean   @default(false)
-  kyc_documents String[]  // S3 URLs
-
-  // OTP
-  otp_secret    String?
-  otp_expires   DateTime?
-
-  // Preferences
-  saved_plots   String[]  // Array of plot IDs
-
-  // Timestamps
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  last_login    DateTime?
-
-  // Relations
-  inquiries     Inquiry[]
-  site_visits   SiteVisit[]
-  refreshTokens RefreshToken[]
+  reset_token                String?        @unique
+  reset_token_expires        DateTime?
+  kyc_verified               Boolean        @default(false)
+  kyc_documents              String[]
+  otp_secret                 String?
+  otp_expires                DateTime?
+  saved_plots                String[]
+  created_at                 DateTime       @default(now())
+  updated_at                 DateTime       @updatedAt
+  last_login                 DateTime?
+  inquiries                  Inquiry[]
+  refreshTokens              RefreshToken[]
+  site_visits                SiteVisit[]
 
   @@index([email])
   @@index([phone])
   @@map("users")
 }
 
-enum UserRole {
-  ADMIN
-  CUSTOMER
-}
-
-// Plot model
 model Plot {
-  id          String     @id @default(uuid())
-  title       String
-  slug        String     @unique
-  description String?    @db.Text
-  
-  // Pricing
-  price       Decimal    @db.Decimal(15, 2)
-  booking_amount Decimal @db.Decimal(15, 2)
-  
-  // Specifications
-  plot_size   Decimal    @db.Decimal(10, 2) // in sq ft
-  dimensions  String?    // e.g., "40x60 ft"
-  facing      String?    // North, South, East, West
-  
-  // Location
-  address     String     @db.Text
-  city        String
-  state       String
-  pincode     String
-  latitude    Decimal?   @db.Decimal(10, 8)
-  longitude   Decimal?   @db.Decimal(11, 8)
-  
-  // Legal
-  rera_number String?
-  approved_layout String? // S3 URL
-  legal_docs  String[]   // S3 URLs
-  
-  // Media
-  images      String[]   // S3 URLs
-  videos      String[]   // S3 URLs
-  tour_360    String?    // 360 tour URL
-  brochure    String?    // PDF URL
-  
-  // Amenities
-  amenities   String[]
-  nearby_places Json?    // {schools: [], hospitals: []}
-  
-  // Status
-  status      PlotStatus @default(AVAILABLE)
-  
-  // SEO
+  id               String      @id @default(uuid())
+  title            String
+  slug             String      @unique
+  description      String?
+  price            Decimal     @db.Decimal(15, 2)
+  booking_amount   Decimal     @db.Decimal(15, 2)
+  plot_size        Decimal     @db.Decimal(10, 2)
+  dimensions       String?
+  facing           String?
+  address          String
+  city             String
+  state            String
+  pincode          String
+  latitude         Decimal?    @db.Decimal(10, 8)
+  longitude        Decimal?    @db.Decimal(11, 8)
+  rera_number      String?
+  approved_layout  String?
+  legal_docs       String[]
+  images           String[]
+  videos           String[]
+  tour_360         String?
+  brochure         String?
+  amenities        String[]
+  nearby_places    Json?
+  status           PlotStatus  @default(AVAILABLE)
   meta_title       String?
   meta_description String?
-  
-  // Featured
-  is_featured Boolean    @default(false)
-  is_published Boolean   @default(true)
-  
-  // Timestamps
-  created_at  DateTime   @default(now())
-  updated_at  DateTime   @updatedAt
-  
-  // Relations
-  inquiries   Inquiry[]
-  site_visits SiteVisit[]
-  
+  is_featured      Boolean     @default(false)
+  is_published     Boolean     @default(true)
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  inquiries        Inquiry[]
+  site_visits      SiteVisit[]
+
   @@index([slug])
   @@index([city])
   @@index([status])
@@ -121,46 +79,117 @@ model Plot {
   @@map("plots")
 }
 
+model Inquiry {
+  id         String        @id @default(uuid())
+  user_id    String?
+  plot_id    String?
+  name       String
+  email      String
+  phone      String
+  message    String
+  source     String?
+  utm_source String?
+  utm_medium String?
+  status     InquiryStatus @default(NEW)
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  plot       Plot?         @relation(fields: [plot_id], references: [id])
+  user       User?         @relation(fields: [user_id], references: [id])
+
+  @@index([status])
+  @@index([created_at])
+  @@map("inquiries")
+}
+
+model SiteVisit {
+  id            String          @id @default(uuid())
+  user_id       String
+  plot_id       String
+  visit_date    DateTime
+  visit_time    String
+  attendees     Int             @default(1)
+  status        SiteVisitStatus @default(PENDING)
+  notes         String?
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  admin_notes   String?
+  cancelled_at  DateTime?
+  completed_at  DateTime?
+  confirmed_at  DateTime?
+  contact_email String?
+  contact_name  String?
+  contact_phone String?
+  feedback      String?
+  rating        Int?
+  plot          Plot            @relation(fields: [plot_id], references: [id])
+  user          User            @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([plot_id])
+  @@index([visit_date])
+  @@index([status])
+  @@map("site_visits")
+}
+
+model BlogPost {
+  id               String    @id @default(uuid())
+  title            String
+  slug             String    @unique
+  content          String
+  excerpt          String?
+  featured_image   String?
+  category         String?
+  tags             String[]
+  meta_title       String?
+  meta_description String?
+  is_published     Boolean   @default(false)
+  published_at     DateTime?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([is_published])
+  @@map("blog_posts")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  user_id     String?
+  action      String
+  entity_type String?
+  entity_id   String?
+  ip_address  String?
+  user_agent  String?
+  metadata    Json?
+  created_at  DateTime @default(now())
+
+  @@index([user_id])
+  @@index([created_at])
+  @@map("activity_logs")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  expires_at DateTime
+  user_id    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("refresh_tokens")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
 enum PlotStatus {
   AVAILABLE
   BOOKED
   SOLD
-}
-
-// Booking and Payment models removed - replaced by SiteVisit model
-// Property purchases now handled through direct sales process after site visits
-
-// Inquiry model
-model Inquiry {
-  id         String        @id @default(uuid())
-  
-  // Relations
-  user_id    String?
-  user       User?         @relation(fields: [user_id], references: [id])
-  plot_id    String?
-  plot       Plot?         @relation(fields: [plot_id], references: [id])
-  
-  // Contact info
-  name       String
-  email      String
-  phone      String
-  message    String        @db.Text
-  
-  // Tracking
-  source     String?       // website, whatsapp, phone
-  utm_source String?
-  utm_medium String?
-  
-  // Status
-  status     InquiryStatus @default(NEW)
-  
-  // Timestamps
-  created_at DateTime      @default(now())
-  updated_at DateTime      @updatedAt
-  
-  @@index([status])
-  @@index([created_at])
-  @@map("inquiries")
 }
 
 enum InquiryStatus {
@@ -171,112 +200,10 @@ enum InquiryStatus {
   CLOSED
 }
 
-// Site Visit model - Enhanced for comprehensive booking management
-model SiteVisit {
-  id              String          @id @default(uuid())
-
-  // Relations
-  user_id         String
-  user            User            @relation(fields: [user_id], references: [id])
-  plot_id         String
-  plot            Plot            @relation(fields: [plot_id], references: [id])
-
-  // Schedule
-  visit_date      DateTime
-  visit_time      String          // e.g., "10:00 AM", "2:00 PM"
-  attendees       Int             @default(1)
-
-  // Contact Information (optional overrides for user contact)
-  contact_name    String?
-  contact_phone   String?
-  contact_email   String?
-
-  // Status & Notes
-  status          SiteVisitStatus @default(PENDING)
-  notes           String?         @db.Text      // Customer notes/special requests
-  admin_notes     String?         @db.Text      // Internal admin notes
-
-  // Feedback (post-visit)
-  feedback        String?         @db.Text
-  rating          Int?            // 1-5 stars
-
-  // Timestamps
-  created_at      DateTime        @default(now())
-  updated_at      DateTime        @updatedAt
-  confirmed_at    DateTime?       // When admin confirmed
-  completed_at    DateTime?       // When visit was completed
-  cancelled_at    DateTime?       // When cancelled
-
-  @@index([user_id])
-  @@index([plot_id])
-  @@index([visit_date])
-  @@index([status])
-  @@map("site_visits")
-}
-
 enum SiteVisitStatus {
   PENDING
   CONFIRMED
   COMPLETED
   CANCELLED
   RESCHEDULED
-}
-
-// Blog Post model (optional, or use WordPress API)
-model BlogPost {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  content     String   @db.Text
-  excerpt     String?
-  featured_image String?
-  category    String?
-  tags        String[]
-  
-  // SEO
-  meta_title       String?
-  meta_description String?
-  
-  // Status
-  is_published Boolean  @default(false)
-  published_at DateTime?
-  
-  // Timestamps
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  
-  @@index([slug])
-  @@index([is_published])
-  @@map("blog_posts")
-}
-
-// Activity Log (audit trail)
-model ActivityLog {
-  id          String   @id @default(uuid())
-  user_id     String?
-  action      String
-  entity_type String?  // plot, booking, payment
-  entity_id   String?
-  ip_address  String?
-  user_agent  String?
-  metadata    Json?
-  created_at  DateTime @default(now())
-  
-  @@index([user_id])
-  @@index([created_at])
-  @@map("activity_logs")
-}
-
-// Refresh Token Model
-model RefreshToken {
-  id         String   @id @default(uuid())
-  token      String   @unique
-  expires_at DateTime
-  user_id    String
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@index([user_id])
-  @@map("refresh_tokens")
 }

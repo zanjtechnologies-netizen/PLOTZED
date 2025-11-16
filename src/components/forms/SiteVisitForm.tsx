@@ -6,6 +6,7 @@
 
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRecaptcha } from '@/hooks/useRecaptcha'
 
 interface SiteVisitFormProps {
   plotId: string
@@ -21,6 +22,7 @@ export default function SiteVisitForm({
   onCancel,
 }: SiteVisitFormProps) {
   const { data: session } = useSession()
+  const { verifyRecaptcha, isVerifying } = useRecaptcha()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
@@ -65,6 +67,15 @@ export default function SiteVisitForm({
     setLoading(true)
 
     try {
+      // Verify reCAPTCHA
+      const verification = await verifyRecaptcha('book_site_visit')
+
+      if (!verification.success) {
+        setError(verification.error || 'Security verification failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
       const payload: any = {
         plot_id: plotId,
         visit_date: formData.visitDate,
@@ -308,10 +319,10 @@ export default function SiteVisitForm({
         )}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || isVerifying}
           className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
         >
-          {loading ? 'Submitting...' : 'Request Site Visit'}
+          {isVerifying ? 'Verifying...' : loading ? 'Submitting...' : 'Request Site Visit'}
         </button>
       </div>
 
