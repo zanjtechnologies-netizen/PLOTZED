@@ -36,7 +36,7 @@ export default function StoriesInsights() {
   ];
 
   return (
-    <section id='blogs&stories'
+    <section id='storiesinsights'
       className="py-20 relative overflow-hidden"
       style={{ backgroundColor: '#112250' }}
     >

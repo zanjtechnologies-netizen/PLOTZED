@@ -16,7 +16,7 @@ export default function Header() {
     { name: 'Properties', href: '#featuredlistings' },
     { name: 'Gallery', href: '#landscapevideo' },
     { name: 'Site Visits', href: '#bookingexperience' },
-    { name: 'Blog', href: '#blogs&stories' },
+    { name: 'Blog&Stories', href: '#storiesinsights' },
     { name: 'Testimonials', href: '#customerexperiences' },
     { name: 'About', href: '#redefineluxury' },
     { name: 'Insights', href: '#journeytoownership' },
