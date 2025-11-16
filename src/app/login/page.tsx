@@ -56,7 +56,7 @@ function LoginForm() {
 
         // Redirect based on role
         if (session?.user?.role === 'ADMIN') {
-          router.push(callbackUrl || '/dashboard')
+          router.push(callbackUrl || '/admin')
         } else {
           // Regular users stay on homepage or go to callback URL
           router.push(callbackUrl || '/')
