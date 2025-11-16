@@ -31,7 +31,9 @@
       "Bash(dir \"d:\\plotzed-webapp\\.env*\" /b)",
       "Bash(echo:*)",
       "Bash(\"d:\\plotzed-webapp\\ENVIRONMENT_FILES_GUIDE.txt\")",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npm audit fix:*)",
+      "Bash(npm audit:*)"
     ],
     "deny": [],
     "ask": []
