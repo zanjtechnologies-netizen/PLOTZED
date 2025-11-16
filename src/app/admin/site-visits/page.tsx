@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // ================================================
 // src/app/admin/site-visits/page.tsx - Site Visits Management
 // ================================================

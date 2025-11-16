@@ -2,6 +2,9 @@
 // src/app/admin/analytics/page.tsx - Analytics Dashboard
 // ================================================
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { BarChart3, TrendingUp, Users, Building2, Eye } from 'lucide-react'
 
 async function getAnalyticsData() {

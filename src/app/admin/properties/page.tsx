@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // ================================================
 // src/app/admin/properties/page.tsx - Properties Management
 // ================================================

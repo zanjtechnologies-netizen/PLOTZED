@@ -2,6 +2,9 @@
 // src/app/admin/page.tsx - Main Admin Dashboard
 // ================================================
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import {
   Building2,
   CalendarCheck,
