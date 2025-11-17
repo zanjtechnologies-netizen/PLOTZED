@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { Menu, X, Phone, Mail, User as UserIcon, LogOut } from 'lucide-react';
+import { Menu, X, Phone, Mail, User as UserIcon, LogOut, Shield } from 'lucide-react';
 
 export default function Header() {
   const { data: session } = useSession();
@@ -194,6 +194,19 @@ export default function Header() {
                     <UserIcon className="w-4 h-4" />
                     Dashboard
                   </Link>
+
+                  {/* Admin Panel - Only for ADMIN users */}
+                  {session.user?.role === 'ADMIN' && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 text-white hover:text-[#D8B893] transition-colors font-medium"
+                      style={{ fontFamily: 'var(--font-libre)' }}
+                    >
+                      <Shield className="w-4 h-4" />
+                      Admin Panel
+                    </Link>
+                  )}
+
                   <button
                     onClick={() => signOut({ callbackUrl: '/' })}
                     className="flex items-center gap-2 px-5 py-2 rounded-full font-semibold text-[#0C1A3D] text-sm transition-colors"
@@ -297,6 +310,20 @@ export default function Header() {
                     <UserIcon className="w-4 h-4" />
                     Dashboard
                   </Link>
+
+                  {/* Admin Panel - Only for ADMIN users */}
+                  {session.user?.role === 'ADMIN' && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center justify-center gap-2 w-full text-center py-3 px-4 rounded-lg text-white hover:text-[#D8B893] transition-colors font-medium border border-[#D8B893]/30"
+                      style={{ fontFamily: 'var(--font-libre)' }}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Shield className="w-4 h-4" />
+                      Admin Panel
+                    </Link>
+                  )}
+
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
