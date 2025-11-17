@@ -86,12 +86,31 @@ export const securityConfig = {
   // Content Security Policy
   contentSecurityPolicy: {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://checkout.razorpay.com'],
+    'script-src': [
+      "'self'",
+      "'unsafe-inline'",
+      "'unsafe-eval'",
+      'https://checkout.razorpay.com',
+      'https://www.google.com',
+      'https://www.gstatic.com',
+    ],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
-    'connect-src': ["'self'", 'https://api.razorpay.com', 'https://*.google.com'],
-    'frame-src': ["'self'", 'https://api.razorpay.com'],
+    'connect-src': [
+      "'self'",
+      'https://api.razorpay.com',
+      'https://*.google.com',
+      'https://www.google.com',
+      'https://www.gstatic.com',
+    ],
+    'frame-src': [
+      "'self'",
+      'https://api.razorpay.com',
+      'https://www.google.com',
+      'https://www.gstatic.com',
+      'https://recaptcha.google.com',
+    ],
   },
 
   // Security Headers

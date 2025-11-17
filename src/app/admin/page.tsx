@@ -16,26 +16,74 @@ import {
 } from 'lucide-react'
 import StatsCard from '@/components/admin/StatsCard'
 import RecentActivity from '@/components/admin/RecentActivity'
+import { prisma } from '@/lib/prisma'
 
 async function getDashboardData() {
   try {
-    const { cookies } = await import('next/headers')
-    const cookieStore = await cookies()
-    const cookieHeader = cookieStore.getAll().map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+    // Fetch data directly from database (more efficient than HTTP fetch)
+    const [
+      totalPlots,
+      availablePlots,
+      bookedPlots,
+      soldPlots,
+      totalCustomers,
+      totalSiteVisits,
+      pendingSiteVisits,
+      pendingInquiries,
+    ] = await Promise.all([
+      prisma.plot.count(),
+      prisma.plot.count({ where: { status: 'AVAILABLE' } }),
+      prisma.plot.count({ where: { status: 'BOOKED' } }),
+      prisma.plot.count({ where: { status: 'SOLD' } }),
+      prisma.user.count({ where: { role: 'CUSTOMER' } }),
+      prisma.siteVisit.count(),
+      prisma.siteVisit.count({ where: { status: 'PENDING' } }),
+      prisma.inquiry.count({ where: { status: 'NEW' } }),
+    ])
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/admin/dashboard`, {
-      cache: 'no-store',
-      headers: {
-        'Cookie': cookieHeader,
+    // Recent activities
+    const recentSiteVisits = await prisma.siteVisit.findMany({
+      take: 5,
+      orderBy: { created_at: 'desc' },
+      include: {
+        user: {
+          select: { name: true, email: true },
+        },
+        plot: {
+          select: { title: true, city: true },
+        },
       },
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch dashboard data')
-    }
+    const recentInquiries = await prisma.inquiry.findMany({
+      take: 5,
+      orderBy: { created_at: 'desc' },
+      include: {
+        user: {
+          select: { name: true, email: true },
+        },
+        plot: {
+          select: { title: true, city: true },
+        },
+      },
+    })
 
-    const data = await response.json()
-    return data.data
+    return {
+      stats: {
+        plots: {
+          total: totalPlots,
+          available: availablePlots,
+          booked: bookedPlots,
+          sold: soldPlots,
+        },
+        customers: totalCustomers,
+        siteVisits: totalSiteVisits,
+        pendingSiteVisits,
+        pendingInquiries,
+      },
+      recentSiteVisits,
+      recentInquiries,
+    }
   } catch (error) {
     console.error('Dashboard data fetch error:', error)
     return null
