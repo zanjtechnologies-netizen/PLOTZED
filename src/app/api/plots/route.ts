@@ -159,7 +159,7 @@ export const POST = withErrorHandling(
       .trim()
       .replace(/[\s-]+/g, '-')
 
-    const { bookingAmount, plotSize, reraNumber, isFeatured, ...restOfPlotData } = plotData
+    const { bookingAmount, plotSize, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
 
     const newPlot = await prisma.plot.create({
       data: {
@@ -169,6 +169,7 @@ export const POST = withErrorHandling(
         plot_size: plotSize,
         rera_number: reraNumber,
         is_featured: isFeatured,
+        is_published: is_published,
       },
     })
 

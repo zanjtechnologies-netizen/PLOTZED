@@ -59,17 +59,21 @@ export const PUT = withErrorHandling(
     const body = await request.json()
     const plotData = updatePlotSchema.parse(body)
 
-    const { bookingAmount, plotSize, reraNumber, isFeatured, ...restOfPlotData } = plotData
+    const { bookingAmount, plotSize, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
+
+    const updateData: any = {
+      ...restOfPlotData,
+    }
+
+    if (bookingAmount !== undefined) updateData.booking_amount = bookingAmount
+    if (plotSize !== undefined) updateData.plot_size = plotSize
+    if (reraNumber !== undefined) updateData.rera_number = reraNumber
+    if (isFeatured !== undefined) updateData.is_featured = isFeatured
+    if (is_published !== undefined) updateData.is_published = is_published
 
     const updatedPlot = await prisma.plot.update({
       where: { id },
-      data: {
-        ...restOfPlotData,
-        booking_amount: bookingAmount,
-        plot_size: plotSize,
-        rera_number: reraNumber,
-        is_featured: isFeatured,
-      },
+      data: updateData,
     })
 
     structuredLogger.info('Plot updated', {

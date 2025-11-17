@@ -1,0 +1,38 @@
+# Environment Files Guide
+
+## File Structure
+
+| File | Purpose | Git Status | Used When |
+|------|---------|------------|-----------|
+| \ | Local PostgreSQL defaults | ❌ Ignored | Local dev with PostgreSQL |
+| \ | Local development (Neon) | ❌ Ignored | Local dev with Neon |
+| \ | Developer template | ✅ Committed | Reference only |
+| \ | Production template | ✅ Committed | Vercel setup reference |
+| \ | Sentry build token | ❌ Ignored | Local builds with source maps |
+
+## Environment Loading Priority
+
+When running \:
+1. \ (highest priority)
+2. \ (if exists)
+3. \ (defaults)
+
+**Important:** \ should NOT exist locally. It's only for Vercel deployment reference.
+
+## Local Development
+
+Use \ for local development:
+\
+## Production (Vercel)
+
+Set variables in Vercel Dashboard, not in files:
+1. Go to: Project Settings → Environment Variables
+2. Copy values from 3. Set environment to: Production
+
+## Current Setup ✅
+
+- \ - Active for local builds
+- \ - Reference for Vercel setup
+- Build uses \ values
+- No conflicts with production config
+

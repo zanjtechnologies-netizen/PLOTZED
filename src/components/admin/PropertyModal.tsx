@@ -151,25 +151,27 @@ export default function PropertyModal({
     try {
       const payload = {
         title: formData.title,
-        description: formData.description,
+        description: formData.description || undefined,
         price: parseFloat(formData.price),
         bookingAmount: parseFloat(formData.booking_amount),
         plotSize: parseFloat(formData.plot_size),
-        dimensions: formData.dimensions,
-        facing: formData.facing,
+        dimensions: formData.dimensions || undefined,
+        facing: formData.facing || undefined,
         address: formData.address,
         city: formData.city,
         state: formData.state,
         pincode: formData.pincode,
         latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
         longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
-        reraNumber: formData.rera_number,
+        reraNumber: formData.rera_number || undefined,
         amenities: formData.amenities,
         images: images,
         status: formData.status,
         isFeatured: formData.is_featured,
         is_published: formData.is_published,
       }
+
+      console.log('Submitting property payload:', payload)
 
       const url = property ? `/api/plots/${property.id}` : '/api/plots'
       const method = property ? 'PUT' : 'POST'
@@ -184,6 +186,8 @@ export default function PropertyModal({
 
       const data = await response.json()
 
+      console.log('API Response:', data)
+
       if (data.success) {
         alert(property ? 'Property updated successfully!' : 'Property created successfully!')
         router.refresh()
@@ -192,7 +196,10 @@ export default function PropertyModal({
         }
         onClose()
       } else {
-        alert(`Error: ${data.error}`)
+        const errorMessage = data.error || 'Unknown error occurred'
+        const validationErrors = data.errors ? JSON.stringify(data.errors, null, 2) : ''
+        alert(`Error: ${errorMessage}\n\n${validationErrors}`)
+        console.error('Validation errors:', data.errors)
       }
     } catch (error) {
       console.error('Submit error:', error)

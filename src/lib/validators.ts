@@ -125,11 +125,12 @@ export const bookingSchema = z.object({
 // Plot creation schema (Admin)
 export const createPlotSchema = z.object({
   title: z.string().min(5),
-  description: z.string().min(20),
+  description: z.string().optional(),
   price: z.number().positive(),
   bookingAmount: z.number().positive(),
   plotSize: z.number().positive(),
   dimensions: z.string().optional(),
+  facing: z.string().optional(),
   address: z.string().min(10),
   city: z.string().min(2),
   state: z.string().min(2),
@@ -137,8 +138,11 @@ export const createPlotSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   reraNumber: z.string().optional(),
-  amenities: z.array(z.string()),
+  amenities: z.array(z.string()).default([]),
+  images: z.array(z.string()).default([]),
+  status: z.enum(['AVAILABLE', 'BOOKED', 'SOLD']).default('AVAILABLE'),
   isFeatured: z.boolean().default(false),
+  is_published: z.boolean().default(true),
 })
 
 // Plot update schema (Admin)
