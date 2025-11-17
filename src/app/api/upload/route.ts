@@ -8,6 +8,7 @@ import { uploadToS3 } from '@/lib/s3'
 import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { BadRequestError, UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
+import { sanitizeFilename } from '@/lib/security-utils'
 
 export const POST = withErrorHandling(
   async (request: NextRequest) => {
@@ -44,7 +45,8 @@ export const POST = withErrorHandling(
     // Generate unique key with folder organization
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(7)
-    const key = `${folder}/${session.user.id}/${timestamp}-${randomString}-${file.name}`
+    const sanitizedFilename = sanitizeFilename(file.name)
+    const key = `${folder}/${session.user.id}/${timestamp}-${randomString}-${sanitizedFilename}`
 
     // Upload to S3
     const url = await uploadToS3(buffer, key, file.type)
