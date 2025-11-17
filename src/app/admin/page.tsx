@@ -102,8 +102,8 @@ export default async function AdminDashboard() {
   }
 
   // Filter out items with missing user or plot data (in case of deleted records)
-  const recentSiteVisits = (data?.recentSiteVisits || []).filter(v => v.user && v.plot)
-  const recentInquiries = (data?.recentInquiries || []).filter(i => i.user && i.plot)
+  const recentSiteVisits = (data?.recentSiteVisits || []).filter((v): v is typeof v & { user: NonNullable<typeof v.user>, plot: NonNullable<typeof v.plot> } => v.user !== null && v.plot !== null)
+  const recentInquiries = (data?.recentInquiries || []).filter((i): i is typeof i & { user: NonNullable<typeof i.user>, plot: NonNullable<typeof i.plot> } => i.user !== null && i.plot !== null)
 
   return (
     <div className="space-y-8">
