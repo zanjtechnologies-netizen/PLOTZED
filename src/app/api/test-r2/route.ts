@@ -4,9 +4,27 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, ListBucketsCommand, PutObjectCommand } from '@aws-sdk/client-s3'
+import { auth } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth()
+
+    if (!session?.user) {
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication required. Please log in.',
+      }, { status: 401 })
+    }
+
+    if (session.user.role !== 'ADMIN') {
+      return NextResponse.json({
+        success: false,
+        error: 'Admin access required',
+      }, { status: 403 })
+    }
+
     // Check environment variables
     const envVars = {
       R2_ENDPOINT: process.env.R2_ENDPOINT ? '✓ SET' : '✗ NOT SET',
@@ -14,6 +32,22 @@ export async function GET(request: NextRequest) {
       R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY ? '✓ SET' : '✗ NOT SET',
       R2_BUCKET: process.env.R2_BUCKET ? '✓ SET' : '✗ NOT SET',
       R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID ? '✓ SET' : '✗ NOT SET',
+    }
+
+    // Check if any variables are missing
+    const missingVars = Object.entries(envVars)
+      .filter(([_, value]) => value === '✗ NOT SET')
+      .map(([key]) => key)
+
+    if (missingVars.length > 0) {
+      return NextResponse.json({
+        success: false,
+        error: `Missing environment variables: ${missingVars.join(', ')}`,
+        r2Status: {
+          environmentVariables: envVars,
+          missingVariables: missingVars,
+        }
+      }, { status: 500 })
     }
 
     // Initialize R2 client
