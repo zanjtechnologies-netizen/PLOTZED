@@ -8,6 +8,7 @@ export const revalidate = 0
 import { MessageSquare, User, Mail, Phone, MapPin, Clock, AlertCircle, CheckCircle, XCircle } from 'lucide-react'
 import InquiryActions from '@/components/admin/InquiryActions'
 import InquiryStatusFilter from '@/components/admin/InquiryStatusFilter'
+import { prisma } from '@/lib/prisma'
 
 const statusIcons: Record<string, any> = {
   NEW: AlertCircle,
@@ -27,28 +28,60 @@ const statusColors: Record<string, string> = {
 
 async function getInquiriesData(status?: string) {
   try {
-    const { cookies } = await import('next/headers')
-    const cookieStore = await cookies()
-    const cookieHeader = cookieStore.getAll().map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
-
-    const url = new URL(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/admin/inquiries`)
-    if (status) {
-      url.searchParams.set('status', status)
+    // Fetch data directly from database (more efficient than HTTP fetch)
+    // Build filter conditions
+    const whereConditions: any = {}
+    if (status && ['NEW', 'CONTACTED', 'QUALIFIED', 'CONVERTED', 'CLOSED'].includes(status)) {
+      whereConditions.status = status
     }
 
-    const response = await fetch(url.toString(), {
-      cache: 'no-store',
-      headers: {
-        Cookie: cookieHeader,
+    // Get statistics
+    const [
+      totalInquiries,
+      newInquiries,
+      contactedInquiries,
+      convertedInquiries,
+    ] = await Promise.all([
+      prisma.inquiry.count(),
+      prisma.inquiry.count({ where: { status: 'NEW' } }),
+      prisma.inquiry.count({ where: { status: 'CONTACTED' } }),
+      prisma.inquiry.count({ where: { status: 'CONVERTED' } }),
+    ])
+
+    // Get inquiries with user and plot details (with optional filtering)
+    const inquiries = await prisma.inquiry.findMany({
+      where: whereConditions,
+      orderBy: { created_at: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        plot: {
+          select: {
+            id: true,
+            title: true,
+            city: true,
+            state: true,
+            price: true,
+          },
+        },
       },
     })
 
-    if (!response.ok) {
-      return { inquiries: [], stats: { total: 0, new: 0, contacted: 0, converted: 0 } }
+    return {
+      stats: {
+        total: totalInquiries,
+        new: newInquiries,
+        contacted: contactedInquiries,
+        converted: convertedInquiries,
+      },
+      inquiries,
     }
-
-    const data = await response.json()
-    return data.data
   } catch (error) {
     console.error('Inquiries fetch error:', error)
     return { inquiries: [], stats: { total: 0, new: 0, contacted: 0, converted: 0 } }
@@ -62,7 +95,8 @@ export default async function InquiriesPage({
 }) {
   const params = await searchParams
   const data = await getInquiriesData(params.status)
-  const inquiries = data.inquiries || []
+  // Filter out inquiries with missing user or plot data (in case of deleted records)
+  const inquiries = (data.inquiries || []).filter((i): i is typeof i & { user: NonNullable<typeof i.user>, plot: NonNullable<typeof i.plot> } => i.user !== null && i.plot !== null)
   const stats = data.stats || { total: 0, new: 0, contacted: 0, converted: 0 }
 
   return (

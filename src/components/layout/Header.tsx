@@ -184,19 +184,10 @@ export default function Header() {
             {/* Auth Buttons */}
             <div className="flex items-center gap-6">
               {session ? (
-                // Authenticated user - show Dashboard and Logout
+                // Authenticated user - show Dashboard/Admin Panel and Logout
                 <>
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center gap-2 text-white hover:text-[#D8B893] transition-colors font-medium"
-                    style={{ fontFamily: 'var(--font-libre)' }}
-                  >
-                    <UserIcon className="w-4 h-4" />
-                    Dashboard
-                  </Link>
-
                   {/* Admin Panel - Only for ADMIN users */}
-                  {session.user?.role === 'ADMIN' && (
+                  {session.user?.role === 'ADMIN' ? (
                     <Link
                       href="/admin"
                       className="flex items-center gap-2 text-white hover:text-[#D8B893] transition-colors font-medium"
@@ -204,6 +195,15 @@ export default function Header() {
                     >
                       <Shield className="w-4 h-4" />
                       Admin Panel
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 text-white hover:text-[#D8B893] transition-colors font-medium"
+                      style={{ fontFamily: 'var(--font-libre)' }}
+                    >
+                      <UserIcon className="w-4 h-4" />
+                      Dashboard
                     </Link>
                   )}
 
@@ -299,20 +299,10 @@ export default function Header() {
             {/* Mobile Auth Buttons */}
             <div className="pt-5 mt-5 border-t border-[#D8B893]/30 space-y-3">
               {session ? (
-                // Authenticated user - show Dashboard and Logout
+                // Authenticated user - show Dashboard/Admin Panel and Logout
                 <>
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center justify-center gap-2 w-full text-center py-3 px-4 rounded-lg text-white hover:text-[#D8B893] transition-colors font-medium border border-[#D8B893]/30"
-                    style={{ fontFamily: 'var(--font-libre)' }}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <UserIcon className="w-4 h-4" />
-                    Dashboard
-                  </Link>
-
-                  {/* Admin Panel - Only for ADMIN users */}
-                  {session.user?.role === 'ADMIN' && (
+                  {/* Admin Panel - Only for ADMIN users, Dashboard for regular users */}
+                  {session.user?.role === 'ADMIN' ? (
                     <Link
                       href="/admin"
                       className="flex items-center justify-center gap-2 w-full text-center py-3 px-4 rounded-lg text-white hover:text-[#D8B893] transition-colors font-medium border border-[#D8B893]/30"
@@ -321,6 +311,16 @@ export default function Header() {
                     >
                       <Shield className="w-4 h-4" />
                       Admin Panel
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center justify-center gap-2 w-full text-center py-3 px-4 rounded-lg text-white hover:text-[#D8B893] transition-colors font-medium border border-[#D8B893]/30"
+                      style={{ fontFamily: 'var(--font-libre)' }}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <UserIcon className="w-4 h-4" />
+                      Dashboard
                     </Link>
                   )}
 

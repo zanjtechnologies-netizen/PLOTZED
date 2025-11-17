@@ -8,6 +8,7 @@ export const revalidate = 0
 import { Calendar, User, MapPin, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import SiteVisitActions from '@/components/admin/SiteVisitActions'
 import StatusFilter from '@/components/admin/StatusFilter'
+import { prisma } from '@/lib/prisma'
 
 const statusIcons: Record<string, any> = {
   PENDING: AlertCircle,
@@ -27,28 +28,69 @@ const statusColors: Record<string, string> = {
 
 async function getSiteVisits(status?: string) {
   try {
-    const { cookies } = await import('next/headers')
-    const cookieStore = await cookies()
-    const cookieHeader = cookieStore.getAll().map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
-
-    const url = new URL(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/admin/site-visits`)
-    if (status) {
-      url.searchParams.set('status', status)
+    // Fetch data directly from database (more efficient than HTTP fetch)
+    // Build filter conditions
+    const whereConditions: any = {}
+    if (status && ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'RESCHEDULED'].includes(status)) {
+      whereConditions.status = status
     }
 
-    const response = await fetch(url.toString(), {
-      cache: 'no-store',
-      headers: {
-        'Cookie': cookieHeader,
+    // Fetch site visits with user and plot details
+    const siteVisits = await prisma.siteVisit.findMany({
+      where: whereConditions,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
+        plot: {
+          select: {
+            id: true,
+            title: true,
+            price: true,
+            plot_size: true,
+            address: true,
+            city: true,
+            state: true,
+            images: true,
+          },
+        },
+      },
+      orderBy: {
+        visit_date: 'desc',
       },
     })
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch site visits')
+    // Get summary statistics
+    const stats = await prisma.siteVisit.groupBy({
+      by: ['status'],
+      _count: {
+        status: true,
+      },
+    })
+
+    const statusCounts = {
+      PENDING: 0,
+      CONFIRMED: 0,
+      COMPLETED: 0,
+      CANCELLED: 0,
+      RESCHEDULED: 0,
     }
 
-    const data = await response.json()
-    return data.data
+    stats.forEach((stat) => {
+      if (stat.status) {
+        statusCounts[stat.status as keyof typeof statusCounts] = stat._count.status
+      }
+    })
+
+    return {
+      siteVisits,
+      stats: statusCounts,
+    }
   } catch (error) {
     console.error('Site visits fetch error:', error)
     return null
@@ -63,7 +105,8 @@ export default async function SiteVisitsPage({
   const params = await searchParams
   const data = await getSiteVisits(params.status)
 
-  const siteVisits = data?.siteVisits || []
+  // Filter out site visits with missing user or plot data (in case of deleted records)
+  const siteVisits = (data?.siteVisits || []).filter((v): v is typeof v & { user: NonNullable<typeof v.user>, plot: NonNullable<typeof v.plot> } => v.user !== null && v.plot !== null)
   const stats = data?.stats || {
     PENDING: 0,
     CONFIRMED: 0,

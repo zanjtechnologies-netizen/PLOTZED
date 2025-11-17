@@ -14,7 +14,7 @@ async function getAnalyticsData() {
     const cookieHeader = cookieStore.getAll().map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/admin/analytics?period=30`,
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/admin/analytics?period=30`,
       {
         cache: 'no-store',
         headers: {

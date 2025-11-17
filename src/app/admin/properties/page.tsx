@@ -8,6 +8,7 @@ export const revalidate = 0
 import { MapPin, IndianRupee, Eye, Edit, Trash2, Plus, CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import PropertiesClient from '@/components/admin/PropertiesClient'
+import { prisma } from '@/lib/prisma'
 
 const statusColors: Record<string, string> = {
   AVAILABLE: 'bg-green-100 text-green-800 border-green-200',
@@ -17,30 +18,24 @@ const statusColors: Record<string, string> = {
 }
 
 async function getPropertiesData() {
-  const { cookies } = await import('next/headers')
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore.getAll().map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+  try {
+    // Fetch data directly from database (more efficient than HTTP fetch)
+    const properties = await prisma.plot.findMany({
+      orderBy: { created_at: 'desc' },
+    })
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/plots`, {
-    cache: 'no-store',
-    headers: {
-      Cookie: cookieHeader,
-    },
-  })
-
-  if (!response.ok) {
+    return {
+      properties,
+      stats: {
+        total: properties.length,
+        available: properties.filter((p) => p.status === 'AVAILABLE').length,
+        booked: properties.filter((p) => p.status === 'BOOKED').length,
+        sold: properties.filter((p) => p.status === 'SOLD').length,
+      },
+    }
+  } catch (error) {
+    console.error('Properties fetch error:', error)
     return { properties: [], stats: { total: 0, available: 0, booked: 0, sold: 0 } }
-  }
-
-  const data = await response.json()
-  return {
-    properties: data.data.plots || [],
-    stats: {
-      total: data.data.plots?.length || 0,
-      available: data.data.plots?.filter((p: any) => p.status === 'AVAILABLE').length || 0,
-      booked: data.data.plots?.filter((p: any) => p.status === 'BOOKED').length || 0,
-      sold: data.data.plots?.filter((p: any) => p.status === 'SOLD').length || 0,
-    },
   }
 }
 
