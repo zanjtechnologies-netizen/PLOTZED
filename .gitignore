@@ -100,7 +100,8 @@ next-env.d.ts
 prisma/dev.db
 prisma/*.db
 prisma/*.db-journal
-prisma/migrations/**/migration.sql
+# NOTE: Migration files MUST be committed so Vercel can run them
+# prisma/migrations/**/migration.sql  # REMOVED - migrations need to be deployed
 
 # ================================================
 # DEPLOYMENT

@@ -76,8 +76,14 @@ export default function PropertiesClient({ properties: initialProperties, stats:
     }
   }
 
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+    setSelectedProperty(null) // Clear selected property when closing
+  }
+
   const handleModalSuccess = () => {
     router.refresh()
+    handleModalClose() // Properly close and clear state
   }
 
   return (
@@ -241,7 +247,7 @@ export default function PropertiesClient({ properties: initialProperties, stats:
 
       <PropertyModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleModalClose}
         property={selectedProperty}
         onSuccess={handleModalSuccess}
       />
