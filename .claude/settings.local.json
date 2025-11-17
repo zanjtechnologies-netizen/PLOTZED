@@ -36,7 +36,8 @@
       "Bash(npm audit:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(dir \"d:\\plotzed-webapp\\src\" /s /b)"
     ],
     "deny": [],
     "ask": []

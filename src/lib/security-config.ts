@@ -94,6 +94,7 @@ export const securityConfig = {
       'https://www.google.com',
       'https://www.gstatic.com',
     ],
+    'worker-src': ["'self'", 'blob:'], // Allow web workers from blob URLs
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
