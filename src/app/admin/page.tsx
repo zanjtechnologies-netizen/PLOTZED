@@ -101,6 +101,10 @@ export default async function AdminDashboard() {
     pendingInquiries: 0,
   }
 
+  // Filter out items with missing user or plot data (in case of deleted records)
+  const recentSiteVisits = (data?.recentSiteVisits || []).filter(v => v.user && v.plot)
+  const recentInquiries = (data?.recentInquiries || []).filter(i => i.user && i.plot)
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
@@ -184,7 +188,7 @@ export default async function AdminDashboard() {
             </a>
           </div>
           <RecentActivity
-            items={data?.recentSiteVisits || []}
+            items={recentSiteVisits}
             type="siteVisit"
           />
         </div>
@@ -198,7 +202,7 @@ export default async function AdminDashboard() {
             </a>
           </div>
           <RecentActivity
-            items={data?.recentInquiries || []}
+            items={recentInquiries}
             type="inquiry"
           />
         </div>
