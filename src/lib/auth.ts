@@ -121,12 +121,13 @@ export const authOptions: NextAuthOptions = {
       // For OAuth providers, ensure email is verified
       if (account?.provider === "google" || account?.provider === "facebook") {
         try {
-          // Update email_verified for OAuth users
+          // Update both email_verified (Boolean) and emailVerified (DateTime) for OAuth users
           // Use updateMany to avoid error if user doesn't exist yet
           await prisma.user.updateMany({
             where: { id: user.id },
             data: {
               email_verified: true,
+              emailVerified: new Date(),
               last_login: new Date(),
             },
           });
