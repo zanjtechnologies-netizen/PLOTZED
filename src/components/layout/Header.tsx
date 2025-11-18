@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { Menu, X, Phone, Mail, User as UserIcon, LogOut, Shield } from 'lucide-react';
 
@@ -9,8 +9,33 @@ export default function Header() {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const dropdownRef = useRef<HTMLLIElement>(null);
 
+  useEffect(()=> {
+    function handleClickOutside(event: MouseEvent){
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target as Node)
+      ){
+        setMoreOpen(false);
+      }
+    }
+    function handleScroll(){
+      setMoreOpen(false);
+    }
+    function handleResize(){
+      setMoreOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
 
+    return() =>{
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleResize);
+    };
+  }, []);
   const navigation = [
     { name: 'Home', href: '#herosection' },
     { name: 'Properties', href: '#featuredlistings' },
@@ -124,7 +149,7 @@ export default function Header() {
   </li>
 
   {/* ⭐ DROPDOWN START */}
-  <li className="relative">
+  <li className="relative" ref={dropdownRef}>
     <button
       onClick={() => setMoreOpen(!moreOpen)}
       className="transition-colors font-medium"
