@@ -27,6 +27,15 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true, // Auto-link if email matches
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name || profile.email?.split('@')[0] || 'User',
+          email: profile.email,
+          image: profile.picture,
+          emailVerified: profile.email_verified ? new Date() : null,
+        }
+      },
     }),
 
     // Facebook OAuth Provider
@@ -34,6 +43,15 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.FACEBOOK_CLIENT_ID || "",
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true, // Auto-link if email matches
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.name || profile.email?.split('@')[0] || 'User',
+          email: profile.email,
+          image: profile.picture?.data?.url,
+          emailVerified: null,
+        }
+      },
     }),
 
     // Credentials Provider (Email/Password)
@@ -176,6 +194,20 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
+
+  debug: process.env.NODE_ENV === "development",
+
+  events: {
+    async createUser(message) {
+      console.log('[NextAuth] User created:', message.user.email);
+    },
+    async linkAccount(message) {
+      console.log('[NextAuth] Account linked:', message.user.email, message.account.provider);
+    },
+    async signIn(message) {
+      console.log('[NextAuth] Sign in:', message.user.email);
+    },
+  },
 };
 
 // ================================================
