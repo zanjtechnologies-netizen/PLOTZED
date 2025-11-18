@@ -10,6 +10,8 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
+import { GlobalSeo } from "@/components/seo";
+import { seoConfig } from "@/lib/seo/config";
 
 // Font setup
 const geistSans = Geist({
@@ -42,10 +44,13 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-// Page metadata
+// Root Layout Metadata (fallback for pages without metadata)
 export const metadata: Metadata = {
-  title: "Plotzed | Luxury Real Estate",
-  description: "Curating premium real estate experiences with timeless design and modern comfort.",
+  title: {
+    default: seoConfig.defaultTitle,
+    template: seoConfig.titleTemplate,
+  },
+  description: seoConfig.description,
 };
 
 // Root Layout
@@ -56,6 +61,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Global SEO: Organization, Website, LocalBusiness schemas */}
+        <GlobalSeo />
+      </head>
       <body
         className={`
           ${geistSans.variable}

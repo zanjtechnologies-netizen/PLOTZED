@@ -36,6 +36,9 @@ export function generateMetadata(data: PageSeoData = {}): Metadata {
     modifiedTime,
   } = data;
 
+  // Next.js Metadata OpenGraph type only accepts 'website' or 'article'
+  const ogType: 'website' | 'article' = type === 'article' ? 'article' : 'website';
+
   const pageTitle = generateTitle(title);
   const canonical = getCanonicalUrl(path);
   const ogImage = image.startsWith('http') ? image : getAbsoluteUrl(image);
@@ -43,7 +46,7 @@ export function generateMetadata(data: PageSeoData = {}): Metadata {
   return {
     title: pageTitle,
     description,
-    keywords: keywords.join(', '),
+    keywords: Array.isArray(keywords) ? [...keywords].join(', ') : keywords.join(', '),
 
     // Basic Meta Tags
     metadataBase: new URL(seoConfig.siteUrl),
@@ -66,7 +69,7 @@ export function generateMetadata(data: PageSeoData = {}): Metadata {
 
     // Open Graph
     openGraph: {
-      type,
+      type: ogType,
       locale: 'en_US',
       url: canonical,
       title: pageTitle,
@@ -160,7 +163,7 @@ export function generateArticleMetadata(article: ArticleSeoData): Metadata {
   return generateMetadata({
     title: article.title,
     description: article.description,
-    keywords: article.tags || seoConfig.keywords,
+    keywords: article.tags || [...seoConfig.keywords],
     image: article.image || seoConfig.defaultOgImage,
     path: `/blog/${article.slug}`,
     type: 'article',
@@ -202,8 +205,12 @@ export function generateListingMetadata(data: ListingSeoData = {}): Metadata {
       ? `₹${minPrice.toLocaleString()} - ₹${maxPrice.toLocaleString()}`
       : minPrice
       ? `Starting from ₹${minPrice.toLocaleString()}`
-      : `Up to ₹${maxPrice.toLocaleString()}`;
-    description += ` | ${priceRange}`;
+      : maxPrice
+      ? `Up to ₹${maxPrice.toLocaleString()}`
+      : '';
+    if (priceRange) {
+      description += ` | ${priceRange}`;
+    }
   }
 
   return generateMetadata({

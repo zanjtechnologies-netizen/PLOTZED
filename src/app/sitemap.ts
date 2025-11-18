@@ -82,32 +82,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: seoConfig.sitemap.priority.propertyDetails,
     }));
 
-    // Fetch properties if Property model exists
-    let propertyPages: MetadataRoute.Sitemap = [];
-    try {
-      const properties = await prisma.property.findMany({
-        select: {
-          id: true,
-          updated_at: true,
-        },
-        orderBy: {
-          updated_at: 'desc',
-        },
-      });
-
-      propertyPages = properties.map((property) => ({
-        url: `${baseUrl}/properties/${property.id}`,
-        lastModified: property.updated_at,
-        changeFrequency: seoConfig.sitemap.changefreq.properties,
-        priority: seoConfig.sitemap.priority.propertyDetails,
-      }));
-    } catch (error) {
-      // Property model might not exist yet
-      console.log('Property model not found, skipping property pages in sitemap');
-    }
+    // TODO: Add properties to sitemap when Property model is created
+    // For now, we only include plots
+    // const propertyPages: MetadataRoute.Sitemap = [];
 
     // Combine all pages
-    return [...staticPages, ...plotPages, ...propertyPages];
+    return [...staticPages, ...plotPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     // Return static pages if database query fails
