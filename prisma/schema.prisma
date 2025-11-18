@@ -21,10 +21,10 @@ model User {
   reset_token                String?        @unique
   reset_token_expires        DateTime?
   kyc_verified               Boolean        @default(false)
-  kyc_documents              String[]
+  kyc_documents              String[]       @default([])
   otp_secret                 String?
   otp_expires                DateTime?
-  saved_plots                String[]
+  saved_plots                String[]       @default([])
   image                      String?        // Profile image from OAuth
   created_at                 DateTime       @default(now())
   updated_at                 DateTime       @updatedAt
