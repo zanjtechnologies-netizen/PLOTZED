@@ -32,8 +32,8 @@ export default function Header() {
 
     return() =>{
       document.removeEventListener("mousedown", handleClickOutside);
-      window.addEventListener("scroll", handleScroll);
-      window.addEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
   const navigation = [
