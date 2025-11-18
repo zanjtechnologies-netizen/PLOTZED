@@ -16,6 +16,7 @@ import {
   recordSuccessfulLogin,
   formatRemainingTime,
 } from "./account-lockout";
+import { date } from "zod";
 
 const MAX_ATTEMPTS = 5; // ✅ Define max failed attempts before lockout
 
@@ -121,7 +122,9 @@ export const authOptions: NextAuthOptions = {
       // For OAuth providers, ensure email is verified
       if (account?.provider === "google" || account?.provider === "facebook") {
         try {
-          // Update both email_verified (Boolean) and emailVerified (DateTime) for OAuth users
+          // Update email_verified flag for OAuth users
+          // NOTE: The `emailVerified` field (DateTime) is not updated here due to a
+          // possible stale Prisma Client type definition.
           // Use updateMany to avoid error if user doesn't exist yet
           await prisma.user.updateMany({
             where: { id: user.id },
