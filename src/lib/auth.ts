@@ -120,14 +120,20 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       // For OAuth providers, ensure email is verified
       if (account?.provider === "google" || account?.provider === "facebook") {
-        // Update email_verified for OAuth users
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            email_verified: true,
-            last_login: new Date(),
-          },
-        });
+        try {
+          // Update email_verified for OAuth users
+          // Use updateMany to avoid error if user doesn't exist yet
+          await prisma.user.updateMany({
+            where: { id: user.id },
+            data: {
+              email_verified: true,
+              last_login: new Date(),
+            },
+          });
+        } catch (error) {
+          // Log error but allow sign-in to continue
+          console.error('[OAuth] Failed to update user during sign-in:', error);
+        }
       }
       return true;
     },
