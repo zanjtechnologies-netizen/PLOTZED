@@ -76,6 +76,16 @@ export const POST = withErrorHandling(
       throw new UnauthorizedError('Invalid email ID/Password')
     }
 
+    // Check if user signed up with OAuth (no password)
+    if (!user.password_hash) {
+      structuredLogger.warn('Password login attempt for OAuth user', {
+        userId: user.id,
+        email,
+        type: 'oauth_user_password_attempt',
+      })
+      throw new UnauthorizedError('Please sign in with your social account (Google or Facebook)')
+    }
+
     // Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password_hash)
 
