@@ -119,17 +119,36 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api')) {
       response = applyCorsHeaders(request, response)
 
-      // Validate API key for protected endpoints (if enabled)
-      if (securityConfig.apiKeys.enabled && !pathname.startsWith('/api/auth')) {
-        if (!validateApiKey(request)) {
-          return NextResponse.json(
-            {
-              success: false,
-              error: 'Invalid or missing API key',
-              code: 'INVALID_API_KEY',
-            },
-            { status: 401 }
-          )
+      // Validate API key for external/admin API access (if enabled)
+      if (securityConfig.apiKeys.enabled) {
+        // Exempt these endpoints from API key requirement:
+        const exemptPaths = [
+          '/api/auth',        // NextAuth endpoints
+          '/api/verify-recaptcha', // reCAPTCHA verification
+          '/api/health',      // Health check
+          '/api/check-env',   // Environment check
+        ]
+
+        const isExempt = exemptPaths.some(path => pathname.startsWith(path))
+
+        // Check if request has valid session token (authenticated user)
+        const hasSessionToken = request.cookies.has('next-auth.session-token') ||
+                               request.cookies.has('__Secure-next-auth.session-token')
+
+        // Require API key only if:
+        // 1. Path is not exempt
+        // 2. User is not authenticated (no session token)
+        if (!isExempt && !hasSessionToken) {
+          if (!validateApiKey(request)) {
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'Authentication required. Please log in or provide a valid API key.',
+                code: 'AUTHENTICATION_REQUIRED',
+              },
+              { status: 401 }
+            )
+          }
         }
       }
     }

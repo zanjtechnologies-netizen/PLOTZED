@@ -128,6 +128,10 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   FACEBOOK_CLIENT_ID: z.string().optional(),
   FACEBOOK_CLIENT_SECRET: z.string().optional(),
+
+  // API Key Authentication (Optional - for external API access)
+  REQUIRE_API_KEY: z.enum(['true', 'false']).optional(),
+  API_KEYS: z.string().optional(),
 })
 
 export type Env = z.infer<typeof envSchema>
@@ -153,6 +157,7 @@ export interface FeatureFlags {
   rateLimiting: boolean
   oauthGoogle: boolean
   oauthFacebook: boolean
+  apiKeyAuth: boolean
 }
 
 export function detectFeatures(env: Env): FeatureFlags {
@@ -172,6 +177,7 @@ export function detectFeatures(env: Env): FeatureFlags {
     rateLimiting: !!(env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN),
     oauthGoogle: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
     oauthFacebook: !!(env.FACEBOOK_CLIENT_ID && env.FACEBOOK_CLIENT_SECRET),
+    apiKeyAuth: !!(env.REQUIRE_API_KEY === 'true' && env.API_KEYS),
   }
 }
 
@@ -240,6 +246,7 @@ function printEnabledFeatures(env: Env): void {
   console.log(`   ✅ Authentication: NextAuth`)
   console.log(`   ${features.oauthGoogle ? '✅' : '❌'} OAuth - Google Sign-In`)
   console.log(`   ${features.oauthFacebook ? '✅' : '❌'} OAuth - Facebook Sign-In`)
+  console.log(`   ${features.apiKeyAuth ? '✅' : '❌'} API Key Authentication`)
   console.log(`   ${features.redis ? '✅' : '❌'} Redis (Caching & Rate Limiting)`)
   console.log(`   ${features.email ? '✅' : '❌'} Email Service`)
   console.log(`   ${features.whatsapp ? '✅' : '❌'} WhatsApp Business API`)
