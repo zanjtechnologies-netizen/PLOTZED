@@ -3,7 +3,10 @@
 // ================================================
 
 import { NextAuthOptions, getServerSession } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { loginSchema } from "./validators";
@@ -17,7 +20,23 @@ import {
 const MAX_ATTEMPTS = 5; // ✅ Define max failed attempts before lockout
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
+    // Google OAuth Provider
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: true, // Auto-link if email matches
+    }),
+
+    // Facebook OAuth Provider
+    FacebookProvider({
+      clientId: process.env.FACEBOOK_CLIENT_ID || "",
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: true, // Auto-link if email matches
+    }),
+
+    // Credentials Provider (Email/Password)
     Credentials({
       name: "Credentials",
       credentials: {
@@ -49,7 +68,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid email or password");
         }
 
-        // 4️⃣ Validate password
+        // 4️⃣ Check if user has password (OAuth users don't have passwords)
+        if (!user.password_hash) {
+          throw new Error("Please sign in with your social account (Google or Facebook)");
+        }
+
+        // 5️⃣ Validate password
         const isPasswordValid = await bcrypt.compare(
           password,
           user.password_hash
@@ -72,10 +96,10 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
-        // 5️⃣ Reset failed attempts
+        // 6️⃣ Reset failed attempts
         await recordSuccessfulLogin(email);
 
-        // 6️⃣ Update last login
+        // 7️⃣ Update last login
         await prisma.user.update({
           where: { id: user.id },
           data: { last_login: new Date() },
@@ -93,10 +117,35 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      // For OAuth providers, ensure email is verified
+      if (account?.provider === "google" || account?.provider === "facebook") {
+        // Update email_verified for OAuth users
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            email_verified: true,
+            last_login: new Date(),
+          },
+        });
+      }
+      return true;
+    },
+
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+      }
+      // For OAuth sign-ins, fetch role from database
+      if (account && (account.provider === "google" || account.provider === "facebook")) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        });
+        if (dbUser) {
+          token.role = dbUser.role;
+        }
       }
       return token;
     },

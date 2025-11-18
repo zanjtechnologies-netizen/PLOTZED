@@ -38,6 +38,19 @@ export const POST = withErrorHandling(
       )
     }
 
+    // Check if user signed up with OAuth (no password)
+    if (!user.password_hash) {
+      structuredLogger.info('Password reset requested for OAuth user', {
+        userId: user.id,
+        email: user.email,
+        type: 'password_reset',
+      })
+      // Don't reveal that this is an OAuth account for security
+      return successResponse(
+        { message: 'If the email exists, a password reset link has been sent.' }
+      )
+    }
+
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex')
     const resetExpires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
