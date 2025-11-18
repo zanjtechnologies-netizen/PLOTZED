@@ -27,15 +27,6 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true, // Auto-link if email matches
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name || profile.email?.split('@')[0] || 'User',
-          email: profile.email,
-          image: profile.picture,
-          emailVerified: profile.email_verified ? new Date() : null,
-        }
-      },
     }),
 
     // Facebook OAuth Provider
@@ -43,15 +34,6 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.FACEBOOK_CLIENT_ID || "",
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true, // Auto-link if email matches
-      profile(profile) {
-        return {
-          id: profile.id,
-          name: profile.name || profile.email?.split('@')[0] || 'User',
-          email: profile.email,
-          image: profile.picture?.data?.url,
-          emailVerified: null,
-        }
-      },
     }),
 
     // Credentials Provider (Email/Password)
