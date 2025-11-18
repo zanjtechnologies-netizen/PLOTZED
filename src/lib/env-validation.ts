@@ -122,6 +122,12 @@ const envSchema = z.object({
   // Admin user seeding (Optional)
   ADMIN_EMAIL: z.string().email().optional(),
   ADMIN_PASSWORD: z.string().min(8).optional(),
+
+  // OAuth Providers (Optional - for social login)
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  FACEBOOK_CLIENT_ID: z.string().optional(),
+  FACEBOOK_CLIENT_SECRET: z.string().optional(),
 })
 
 export type Env = z.infer<typeof envSchema>
@@ -145,6 +151,8 @@ export interface FeatureFlags {
   backups: boolean
   caching: boolean
   rateLimiting: boolean
+  oauthGoogle: boolean
+  oauthFacebook: boolean
 }
 
 export function detectFeatures(env: Env): FeatureFlags {
@@ -162,6 +170,8 @@ export function detectFeatures(env: Env): FeatureFlags {
     backups: !!(env.AWS_S3_BUCKET || env.R2_BUCKET) && !!env.BACKUP_S3_BUCKET,
     caching: !!(env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN),
     rateLimiting: !!(env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN),
+    oauthGoogle: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
+    oauthFacebook: !!(env.FACEBOOK_CLIENT_ID && env.FACEBOOK_CLIENT_SECRET),
   }
 }
 
@@ -228,6 +238,8 @@ function printEnabledFeatures(env: Env): void {
   console.log('\n📋 Enabled Features:')
   console.log(`   ✅ Database: PostgreSQL`)
   console.log(`   ✅ Authentication: NextAuth`)
+  console.log(`   ${features.oauthGoogle ? '✅' : '❌'} OAuth - Google Sign-In`)
+  console.log(`   ${features.oauthFacebook ? '✅' : '❌'} OAuth - Facebook Sign-In`)
   console.log(`   ${features.redis ? '✅' : '❌'} Redis (Caching & Rate Limiting)`)
   console.log(`   ${features.email ? '✅' : '❌'} Email Service`)
   console.log(`   ${features.whatsapp ? '✅' : '❌'} WhatsApp Business API`)
