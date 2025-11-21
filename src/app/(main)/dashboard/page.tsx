@@ -6,7 +6,12 @@ import type { Metadata } from 'next'
 import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import { SiteVisitStatus } from '@prisma/client'
+import Link from 'next/link'
+import { SiteVisitStatus, SiteVisit, Plot } from '@prisma/client'
+
+interface SiteVisitWithPlot extends SiteVisit {
+  plot: Pick<Plot, 'title' | 'price' | 'images' | 'address' | 'city' | 'state'>
+}
 
 export const metadata: Metadata = {
   title: 'My Dashboard | Plotzed',
@@ -94,16 +99,16 @@ export default async function DashboardPage() {
           {upcomingVisits.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">No upcoming visits scheduled.</p>
-              <a
+              <Link
                 href="/properties"
                 className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
               >
                 Browse Properties
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="space-y-4">
-              {upcomingVisits.map((visit: any) => {
+              {upcomingVisits.map((visit: SiteVisitWithPlot) => {
                 const visitDate = new Date(visit.visit_date)
                 const statusColors: Record<SiteVisitStatus, string> = {
                   PENDING: 'bg-yellow-100 text-yellow-800',
@@ -161,7 +166,7 @@ export default async function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-2xl font-bold mb-4">Past Site Visits</h2>
             <div className="space-y-4">
-              {pastVisits.map((visit: any) => {
+              {pastVisits.map((visit: SiteVisitWithPlot) => {
                 const visitDate = new Date(visit.visit_date)
                 const statusColors: Record<SiteVisitStatus, string> = {
                   PENDING: 'bg-yellow-100 text-yellow-800',
