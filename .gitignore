@@ -164,6 +164,12 @@ credentials.json
 # ================================================
 # DOCUMENTATION FILES (Added 2025-11-16)
 # ================================================
-# Ignore all markdown documentation files
+# Ignore all markdown files except important documentation
 *.md
+
+# Keep essential documentation
 !README.md
+!SEO_IMPLEMENTATION_GUIDE.md
+!VERCEL_DEPLOYMENT_GUIDE.md
+!WHATSAPP_SETUP_GUIDE.md
+!ENVIRONMENT_FILES_GUIDE.md

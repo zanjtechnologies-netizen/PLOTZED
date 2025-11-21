@@ -6,8 +6,6 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import { GlobalSeo } from "@/components/seo";
@@ -76,9 +74,7 @@ export default function RootLayout({
       >
         <RecaptchaProvider>
           <SessionProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
+            {children}
           </SessionProvider>
         </RecaptchaProvider>
       </body>
