@@ -10,6 +10,8 @@ import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import { GlobalSeo } from "@/components/seo";
 import { seoConfig } from "@/lib/seo/config";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 // Font setup
 const geistSans = Geist({
@@ -42,15 +44,6 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-// Root Layout Metadata (fallback for pages without metadata)
-export const metadata: Metadata = {
-  title: {
-    default: seoConfig.defaultTitle,
-    template: seoConfig.titleTemplate,
-  },
-  description: seoConfig.description,
-};
-
 // Root Layout
 export default function RootLayout({
   children,
@@ -74,7 +67,11 @@ export default function RootLayout({
       >
         <RecaptchaProvider>
           <SessionProvider>
-            {children}
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
           </SessionProvider>
         </RecaptchaProvider>
       </body>

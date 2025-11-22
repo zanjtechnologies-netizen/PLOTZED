@@ -8,4 +8,4 @@
  * This provides flexibility in URL structure
  */
 
-export { default } from '@/app/(main)/plots/[id]/page'
+export { default } from '@/app/plots/[id]/page'
