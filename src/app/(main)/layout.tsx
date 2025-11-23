@@ -1,5 +1,8 @@
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+// src/app/(main)/layout.tsx
+// Main layout with Header and Footer for regular pages
+
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 export default function MainLayout({
   children,

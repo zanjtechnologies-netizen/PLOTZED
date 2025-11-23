@@ -8,6 +8,8 @@ import {
 import "./globals.css";
 import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
+import { GlobalSeo } from "@/components/seo";
+import { seoConfig } from "@/lib/seo/config";
 
 // Font setup
 const geistSans = Geist({
@@ -40,20 +42,28 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-// Page metadata
+// Root Layout Metadata (fallback for pages without metadata)
 export const metadata: Metadata = {
-  title: "Plotzed | Luxury Real Estate",
-  description: "Curating premium real estate experiences with timeless design and modern comfort.",
+  title: {
+    default: seoConfig.defaultTitle,
+    template: seoConfig.titleTemplate,
+  },
+  description: seoConfig.description,
 };
 
-// Root Layout
+// Root Layout - Minimal, provides only essentials
+// Header/Footer are added by (main) group layout
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth">
+      <head>
+        {/* Global SEO: Organization, Website, LocalBusiness schemas */}
+        <GlobalSeo />
+      </head>
       <body
         className={`
           ${geistSans.variable}
@@ -64,9 +74,7 @@ export default function RootLayout({
         `}
       >
         <RecaptchaProvider>
-          <SessionProvider>
-            {children}
-          </SessionProvider>
+          <SessionProvider>{children}</SessionProvider>
         </RecaptchaProvider>
       </body>
     </html>

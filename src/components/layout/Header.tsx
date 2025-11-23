@@ -152,7 +152,7 @@ export default function Header() {
   <li className="relative" ref={dropdownRef}>
     <button
       onClick={() => setMoreOpen(!moreOpen)}
-      className="transition-colors font-medium"
+      className="transition-colors font-medium" 
       style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
     >
       More ▾

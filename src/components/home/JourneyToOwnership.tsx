@@ -1,4 +1,5 @@
-import { Check, MapPin, Calendar, Clock, ChevronDown } from 'lucide-react';
+import { Check } from 'lucide-react';
+import Image from 'next/image';
 
 export default function JourneyToOwnership() {
   const steps = [
@@ -88,91 +89,35 @@ export default function JourneyToOwnership() {
             </div>
           </div>
 
-          {/* Right Image + Glass Form Card */}
+          {/* Right Image */}
           <div className="relative">
             <div className="relative h-[600px] rounded-3xl overflow-hidden shadow-2xl">
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: "url('/images/journey-ownership.jpg')",
-                }}
+              <Image
+                src="/images/hero-bg-fallback-1.png"
+                alt="Premium plot with scenic view"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 to-transparent" />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#112250]/60 via-transparent to-transparent" />
 
-              {/* Glass form panel */}
-              <div
-                className="absolute top-6 left-6 right-6 rounded-2xl p-4 md:p-6"
-                style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)' }}
-              >
-                <h4 className="text-navy-900 font-semibold mb-4">
-                  Choose your properties
-                </h4>
-                
-
-
-                {/* Overlay Stats */}
-                <div className="mt-4">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6">
-                    <div className="grid grid-cols-3 gap-6 text-center">
-                      <div>
-                        <div className="text-3xl font-bold text-teal-600 mb-1">500+</div>
-                        <div className="text-sm text-gray-600">Properties</div>
-                      </div>
-                      <div>
-                        <div className="text-3xl font-bold text-teal-600 mb-1">98%</div>
-                        <div className="text-sm text-gray-600">Satisfied</div>
-                      </div>
-                      <div>
-                        <div className="text-3xl font-bold text-teal-600 mb-1">15+</div>
-                        <div className="text-sm text-gray-600">Years</div>
-                      </div>
+              {/* Stats overlay at bottom */}
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                  <div className="grid grid-cols-3 gap-6 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-[#006DB8] mb-1">500+</div>
+                      <div className="text-sm text-gray-600">Properties</div>
                     </div>
-
-                    {/* Destination */}
-                    <div className="mt-4">
-                      <div className="flex items-center gap-3 bg-white rounded-xl py-3 border border-gray-200">
-                        <MapPin className="w-5 h-5 text-gray-500" />
-                        <span className="text-gray-500">Destination</span>
-                      </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[#006DB8] mb-1">98%</div>
+                      <div className="text-sm text-gray-600">Satisfied</div>
                     </div>
-
-                    {/* Date of Visit */}
-                    <div className="mt-4">
-                      <div className="flex items-center gap-3 bg-white rounded-xl py-3 border border-gray-200">
-                        <Calendar className="w-5 h-5 text-gray-500" />
-                        <span className="text-gray-500">DD/MM/YYYY</span>
-                      </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[#006DB8] mb-1">15+</div>
+                      <div className="text-sm text-gray-600">Years</div>
                     </div>
-
-                    {/* Timing Slots */}
-                    <div className="mb-6 mt-4">
-                      <div className="flex items-center gap-3 bg-white rounded-xl py-3 border border-gray-200 justify-between">
-                        <div className="flex items-center gap-3">
-                          <Clock className="w-5 h-5 text-gray-500" />
-                          <span className="text-gray-500">Select your time slots</span>
-                        </div>
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
-                      </div>
-                    </div>
-
-                    {/* Link */}
-                    <div className="mb-6">
-                      <a href="#" className="text-navy-900 underline text-sm">
-                        What value do our consultants bring?
-                      </a>
-                    </div>
-
-                    {/* Decorative Elements */}
-                    <div className="absolute -top-6 right-6 w-24 h-24 bg-teal-400/20 rounded-full blur-2xl" />
-                    <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl" />
-
-                    {/* Button */}
-                    <button
-                      className="w-full py-4 rounded-xl font-semibold"
-                      style={{ backgroundColor: '#D8B893', color: '#112250' }}
-                    >
-                      Book for consultants
-                    </button>
                   </div>
                 </div>
               </div>
