@@ -7,6 +7,7 @@ import StoriesInsights from '@/components/home/StoriesInsights';
 import CustomerExperiences from '@/components/home/CustomerExperiences';
 import RedefineLuxury from '@/components/home/RedefineLuxury';
 import Newsletter from '@/components/home/Newsletter';
+import ChatBot from '@/components/chat/ChatBot';
 
 // WhatsApp number (without + symbol, include country code)
 const WHATSAPP_NUMBER = '917708594263';
@@ -32,7 +33,7 @@ function FloatingWhatsApp() {
       href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi, I'm interested in learning more about your premium plots.")}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
+      className="fixed bottom-60 right-6 z-50 w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group"
       aria-label="Chat on WhatsApp"
     >
       <WhatsAppIcon className="w-7 h-7 text-white" />
@@ -48,6 +49,7 @@ export default function HomePage() {
   return (
     <>
       <FloatingWhatsApp />
+      <ChatBot />
       <div className="overflow-hidden">
       {/* Hero (layout_M1YPX) */}
       <HeroSection />
