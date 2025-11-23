@@ -6,7 +6,6 @@ import LandscapeVideo from '@/components/home/LandscapeVideo';
 import StoriesInsights from '@/components/home/StoriesInsights';
 import CustomerExperiences from '@/components/home/CustomerExperiences';
 import RedefineLuxury from '@/components/home/RedefineLuxury';
-import Newsletter from '@/components/home/Newsletter';
 import ChatBot from '@/components/chat/ChatBot';
 
 // WhatsApp number (without + symbol, include country code)
@@ -115,16 +114,6 @@ export default function HomePage() {
         }}
       >
         <RedefineLuxury />
-      </section>
-
-      {/* Footer Section fill_SDZOLB mapping to Newsletter + actual Footer already in layout */}
-      <section
-        style={{
-          padding: "80px 155.2px 0px 155.2px",
-          background: "#112250",
-        }}
-      >
-        <Newsletter />
       </section>
       </div>
     </>

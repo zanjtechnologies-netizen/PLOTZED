@@ -1,4 +1,5 @@
 import { Calendar, Shield, Headphones, Award } from 'lucide-react';
+import Link from 'next/link';
 
 export default function BookingExperience() {
   const features = [
@@ -60,9 +61,12 @@ export default function BookingExperience() {
         {/* CTA */}
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-6">Ready to start your property journey?</p>
-          <button className="bg-navy-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-navy-800 transition-colors">
+          <Link
+            href="/visit"
+            className="inline-block bg-navy-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-navy-800 transition-colors"
+          >
             Book a Consultation
-          </button>
+          </Link>
         </div>
       </div>
     </section>
