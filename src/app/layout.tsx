@@ -10,8 +10,6 @@ import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import { GlobalSeo } from "@/components/seo";
 import { seoConfig } from "@/lib/seo/config";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 
 // Font setup
 const geistSans = Geist({
@@ -44,14 +42,24 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-// Root Layout
+// Root Layout Metadata (fallback for pages without metadata)
+export const metadata: Metadata = {
+  title: {
+    default: seoConfig.defaultTitle,
+    template: seoConfig.titleTemplate,
+  },
+  description: seoConfig.description,
+};
+
+// Root Layout - Minimal, provides only essentials
+// Header/Footer are added by (main) group layout
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
         {/* Global SEO: Organization, Website, LocalBusiness schemas */}
         <GlobalSeo />
@@ -66,13 +74,7 @@ export default function RootLayout({
         `}
       >
         <RecaptchaProvider>
-          <SessionProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          </SessionProvider>
+          <SessionProvider>{children}</SessionProvider>
         </RecaptchaProvider>
       </body>
     </html>
