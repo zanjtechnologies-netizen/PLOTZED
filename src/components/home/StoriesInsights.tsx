@@ -157,11 +157,7 @@ export default function StoriesInsights() {
         {/* View All Button */}
         <div className="text-center">
           <Link
-<<<<<<< HEAD
             href="/insights"
-=======
-            href="/insights/mediterranean-coastal-heritage"
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
             className="inline-block px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:opacity-90"
             style={{
               backgroundColor: '#D8B893',

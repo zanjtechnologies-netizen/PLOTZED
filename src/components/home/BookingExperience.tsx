@@ -1,8 +1,5 @@
 import { Calendar, Shield, Headphones, Award } from 'lucide-react';
-<<<<<<< HEAD
 import Link from 'next/link';
-=======
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
 
 export default function BookingExperience() {
   const features = [
@@ -41,7 +38,7 @@ export default function BookingExperience() {
             Seamless Booking Experience
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            From search to settlement, we’ve streamlined every step of your property journey
+            From search to settlement, we've streamlined every step of your property journey
           </p>
         </div>
 
@@ -64,18 +61,12 @@ export default function BookingExperience() {
         {/* CTA */}
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-6">Ready to start your property journey?</p>
-<<<<<<< HEAD
           <Link
             href="/visit"
             className="inline-block bg-navy-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-navy-800 transition-colors"
           >
             Book a Consultation
           </Link>
-=======
-          <button className="bg-navy-900 text-white px-8 py-4 rounded-full font-semibold hover:bg-navy-800 transition-colors">
-            Book a Consultation
-          </button>
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
         </div>
       </div>
     </section>

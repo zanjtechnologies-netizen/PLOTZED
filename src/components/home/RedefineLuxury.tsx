@@ -44,11 +44,7 @@ export default function RedefineLuxury() {
                   fontFamily: 'var(--font-playfair)',
                 }}
               >
-<<<<<<< HEAD
                 Real Estate
-=======
-                Land Development
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
               </span>
             </h2>
 
@@ -60,37 +56,9 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-<<<<<<< HEAD
-              For over 15 years, Plotzed Real Estate Developers has been a trusted name
-              in premium property development — curating exceptional residential plots,
-              estates, and villas across South India’s most promising destinations.
-=======
-              For more than 3 years, Plotzed has been shaping the future of luxury real estate across South India. As a premier real estate development brand, we specialize exclusively in high-end residential plots, curated estates, and bespoke villa communities designed for those who appreciate space, privacy, and long-term value.
-            </p>
-
-            <p
-              className="text-2xl mb-8 leading-relaxed font-bold italic"
-              style={{
-                color: '#112250',
-                fontFamily: 'var(--font-playfair)',
-                borderLeft: '4px solid #D8B893',
-                paddingLeft: '1rem',
-              }}
-            >
-              At Plotzed, we don’t just sell land —
-              <br />
-              we create legacies.
-            </p>
-
-            <p
-              className="text-lg mb-6 leading-relaxed"
-              style={{
-                color: '#112250cc',
-                fontFamily: 'var(--font-libre)',
-              }}
-            >
-              Our developments are strategically located in emerging and high-value growth corridors, combining modern infrastructure with the natural beauty of serene landscapes. Every project is planned with precision: clear titles, premium amenities, sustainable engineering, and thoughtful community design — ensuring that every investment is secure, future-proof, and lifestyle-enhancing.
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
+              For over 15 years, Plotzed Real Estate Developers has been a trusted name in premium
+              property development — curating exceptional residential plots, estates, and villas
+              across South India's most promising destinations.
             </p>
 
             <p
@@ -100,11 +68,10 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-<<<<<<< HEAD
-              Our vision goes beyond selling land — we craft opportunities where modern
-              design meets natural harmony, creating spaces that inspire both living and
-              investment. Every project is carefully planned to deliver high value,
-              long-term growth, and a lifestyle rooted in sustainability.
+              Our vision goes beyond selling land — we craft opportunities where modern design meets
+              natural harmony, creating spaces that inspire both living and investment. Every
+              project is carefully planned to deliver high value, long-term growth, and a lifestyle
+              rooted in sustainability.
             </p>
 
             <p
@@ -114,11 +81,8 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-              We combine expertise, transparency, and design-driven development to
-              deliver unmatched value.
-=======
-              With a commitment to ethical development, transparent transactions, and refined craftsmanship, Plotzed continues to set new standards in the luxury plotted-development segment.
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
+              We combine expertise, transparency, and design-driven development to deliver
+              unmatched value.
             </p>
 
             {/* Core Values */}
@@ -177,14 +141,9 @@ export default function RedefineLuxury() {
               {images.map((image, index) => (
                 <div
                   key={index}
-<<<<<<< HEAD
                   className={`relative rounded-2xl overflow-hidden shadow-lg ${
                     index === 0 ? 'col-span-2 h-64' : 'h-48'
                   }`}
-=======
-                  className={`relative rounded-2xl overflow-hidden shadow-lg ${index === 0 ? 'col-span-2 h-64' : 'h-48'
-                    }`}
->>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
                 >
                   <div
                     className="absolute inset-0 bg-cover bg-center hover:scale-105 transition-transform duration-500"
@@ -236,5 +195,3 @@ export default function RedefineLuxury() {
     </section>
   );
 }
-
-
