@@ -8,6 +8,7 @@ export default function HeroSection() {
   const propertyTypes = ['Buy', 'Rent', 'Sell'];
 
   return (
+<<<<<<< HEAD
   <section id='herosection'
     className="relative flex items-center justify-center pt-[120px] md:pt-[140px]"
     style={{ height: "775.2px", minHeight: "775.2px" }}
@@ -24,6 +25,24 @@ export default function HeroSection() {
         }}
       />
     </div>
+=======
+    <section id='herosection'
+      className="relative flex items-center justify-center pt-[120px] md:pt-[140px]"
+      style={{ height: "775.2px", minHeight: "775.2px" }}
+    >
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              'linear-gradient(180deg, rgba(17, 34, 80, 0.4) 0%, rgba(17, 34, 80, 0.2) 50%, rgba(17, 34, 80, 0.5) 100%), url(/images/hero-bg-63da63.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      </div>
+>>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
 
       {/* Content */}
       <div className="relative z-10 container-custom text-center">

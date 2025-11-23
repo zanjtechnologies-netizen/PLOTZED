@@ -156,7 +156,11 @@ export async function middleware(request: NextRequest) {
     // ================================================
     // 4. RATE LIMITING FOR API ROUTES
     // ================================================
+<<<<<<< HEAD
     if (pathname.startsWith('/api')) {
+=======
+    if (pathname.startsWith('/api') && process.env.NODE_ENV !== 'development') {
+>>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
       const identifier = getIdentifier(request)
 
       // Determine rate limit type based on path
