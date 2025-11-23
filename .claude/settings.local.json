@@ -39,7 +39,12 @@
       "Bash(git push:*)",
       "Bash(dir \"d:\\plotzed-webapp\\src\" /s /b)",
       "Bash(git ls-tree:*)",
-      "Bash(npx next build:*)"
+      "Bash(if exist \".next\" rmdir /s /q \".next\")",
+      "Bash(powershell -Command \"if (Test-Path ''.next'') { Remove-Item -Recurse -Force ''.next'' }; Write-Host ''Done''\")",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)",
+      "Bash(dir:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []
