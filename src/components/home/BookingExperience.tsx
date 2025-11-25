@@ -38,7 +38,7 @@ export default function BookingExperience() {
             Seamless Booking Experience
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            From search to settlement, we’ve streamlined every step of your property journey
+            From search to settlement, we've streamlined every step of your property journey
           </p>
         </div>
 

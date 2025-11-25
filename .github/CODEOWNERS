@@ -1,0 +1,5 @@
+# Code Owners - Auto-assign PRs to both team members
+# Both developers have full access to entire fullstack codebase
+
+# All files require review from both team members
+* @zanjtechnologies-netizen @ISHWARYAKATHAMBARI

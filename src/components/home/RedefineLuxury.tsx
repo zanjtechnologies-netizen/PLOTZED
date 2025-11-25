@@ -56,9 +56,9 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-              For over 15 years, Plotzed Real Estate Developers has been a trusted name
-              in premium property development — curating exceptional residential plots,
-              estates, and villas across South India’s most promising destinations.
+              For over 15 years, Plotzed Real Estate Developers has been a trusted name in premium
+              property development — curating exceptional residential plots, estates, and villas
+              across South India's most promising destinations.
             </p>
 
             <p
@@ -68,10 +68,10 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-              Our vision goes beyond selling land — we craft opportunities where modern
-              design meets natural harmony, creating spaces that inspire both living and
-              investment. Every project is carefully planned to deliver high value,
-              long-term growth, and a lifestyle rooted in sustainability.
+              Our vision goes beyond selling land — we craft opportunities where modern design meets
+              natural harmony, creating spaces that inspire both living and investment. Every
+              project is carefully planned to deliver high value, long-term growth, and a lifestyle
+              rooted in sustainability.
             </p>
 
             <p
@@ -81,8 +81,8 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-              We combine expertise, transparency, and design-driven development to
-              deliver unmatched value.
+              We combine expertise, transparency, and design-driven development to deliver
+              unmatched value.
             </p>
 
             {/* Core Values */}
@@ -195,5 +195,3 @@ export default function RedefineLuxury() {
     </section>
   );
 }
-
-

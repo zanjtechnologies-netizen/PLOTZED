@@ -3,7 +3,8 @@
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { useState } from 'react';
 import { Playfair_Display, Libre_Baskerville, Inter } from 'next/font/google';
-import { Instagram, Facebook, Twitter } from 'lucide-react'; // ✅ Add real icons
+import { Instagram, Facebook, Youtube, Linkedin } from 'lucide-react';
+import Link from 'next/link';
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -47,7 +48,8 @@ export default function Footer() {
   };
 
   return (
-    <footer id='footer'
+    <footer
+      id="footer"
       className={`${playfair.variable} ${libre.variable} ${inter.variable} bg-[#0C1A3D] text-white pt-20 pb-10`}
     >
       <div className="container-custom">
@@ -81,36 +83,59 @@ export default function Footer() {
               className="text-sm leading-relaxed mb-6 max-w-xs"
               style={{ color: '#C7C9D1', fontFamily: 'var(--font-libre)' }}
             >
-              Curating exceptional real estate developments across India’s most sought-after
+              Curating exceptional real estate developments across India's most sought-after
               locations where modern living meets timeless natural beauty.
             </p>
 
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#D8B893]" />
-                <span>reservations@PlotzedRealEstate.com</span>
+                <span>plotzedrealestate@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#D8B893]" />
-                <span>+1 40 9999909</span>
+                <span>+91 7708594263</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#D8B893]" />
-                <span>Nationwide Service</span>
+                <span>Auroville, India</span>
               </li>
             </ul>
 
-            {/* ✅ Social Icons in Sandal */}
+            {/* Social Icons */}
             <div className="flex gap-4 mt-6">
-              <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors cursor-pointer">
+              <a
+                href="https://www.instagram.com/plotzedrealestate"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
+              >
                 <Instagram className="w-5 h-5 text-[#D8B893]" />
-              </div>
-              <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors cursor-pointer">
+              </a>
+              <a
+                href="https://www.facebook.com/share/19raHNyU5T/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
+              >
                 <Facebook className="w-5 h-5 text-[#D8B893]" />
-              </div>
-              <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors cursor-pointer">
-                <Twitter className="w-5 h-5 text-[#D8B893]" />
-              </div>
+              </a>
+              <a
+                href="https://www.youtube.com/@PLOTZEDREALESTATE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
+              >
+                <Youtube className="w-5 h-5 text-[#D8B893]" />
+              </a>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
+              >
+                <Linkedin className="w-5 h-5 text-[#D8B893]" />
+              </a>
             </div>
           </div>
 
@@ -125,7 +150,6 @@ export default function Footer() {
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
               <li>About Us</li>
               <li>Careers</li>
-              <li>Press</li>
               <li>Partners</li>
             </ul>
           </div>
@@ -142,7 +166,6 @@ export default function Footer() {
               <li>Featured Properties</li>
               <li>New Listings</li>
               <li>Popular Destinations</li>
-              <li>Special Offers</li>
             </ul>
           </div>
 
@@ -156,14 +179,13 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
               <li>Help Center</li>
-              <li>Safety</li>
               <li>Cancellation Policy</li>
               <li>Terms of Service</li>
             </ul>
           </div>
         </div>
 
-        {/* ✅ Newsletter Section — ONLY ONE DIVIDER ABOVE */}
+        {/* Newsletter Section */}
         <div className="text-center mt-12 border-t border-white/10 pt-8">
           <h3
             className="text-2xl font-bold mb-2"
@@ -224,7 +246,7 @@ export default function Footer() {
           )}
         </div>
 
-        {/* ✅ Single Bottom Bar */}
+        {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm mt-12 border-t border-white/10 pt-6 text-gray-400">
           <p style={{ fontFamily: 'var(--font-libre)' }}>
             © 2025 Plotzed Real Estate Developer. All rights reserved.
@@ -233,9 +255,9 @@ export default function Footer() {
             <a href="#" className="hover:text-[#D8B893] transition-colors">
               Privacy Policy
             </a>
-            <a href="#" className="hover:text-[#D8B893] transition-colors">
+            <Link href="/cookie-policy" className="hover:text-[#D8B893] transition-colors">
               Cookie Policy
-            </a>
+            </Link>
             <a href="#" className="hover:text-[#D8B893] transition-colors">
               Sitemap
             </a>
@@ -245,5 +267,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-

@@ -26,7 +26,7 @@ export default function JourneyToOwnership() {
   ];
 
   return (
-    <section id='journeytoownership' className="py-20 bg-white">
+    <section id="journeytoownership" className="py-20 bg-white">
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
@@ -45,33 +45,28 @@ export default function JourneyToOwnership() {
             {/* Steps */}
             <div className="space-y-8">
               {steps.map((step, index) => (
-                <div key={index} className="flex gap-6">
-                  <div key={index} className="flex gap-6 items-start">
-                    {/* Number Badge */}
-                    <div className="flex-shrink-0">
-                      <div
-                        className="w-16 h-16 rounded-xl flex items-center justify-center shadow-sm"
-                        style={{ backgroundColor: '#D8B893' }}
-                      >
-                        <span
-                          className="font-bold text-lg"
-                          style={{ color: '#112250' }}
-                        >
-                          {step.number}
-                        </span>
-                      </div>
+                <div key={index} className="flex gap-6 items-start">
+                  {/* Number Badge */}
+                  <div className="flex-shrink-0">
+                    <div
+                      className="w-16 h-16 rounded-xl flex items-center justify-center shadow-sm"
+                      style={{ backgroundColor: '#D8B893' }}
+                    >
+                      <span className="font-bold text-lg" style={{ color: '#112250' }}>
+                        {step.number}
+                      </span>
                     </div>
+                  </div>
 
-                    {/* Content */}
-                    <div className="flex-1">
-                      <h3
-                        className="text-xl font-bold mb-2"
-                        style={{ color: '#112250', fontFamily: 'var(--font-playfair)' }}
-                      >
-                        {step.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                    </div>
+                  {/* Content */}
+                  <div className="flex-1">
+                    <h3
+                      className="text-xl font-bold mb-2"
+                      style={{ color: '#112250', fontFamily: 'var(--font-playfair)' }}
+                    >
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">{step.description}</p>
                   </div>
                 </div>
               ))}

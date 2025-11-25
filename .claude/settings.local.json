@@ -38,6 +38,7 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(dir \"d:\\plotzed-webapp\\src\" /s /b)",
+<<<<<<< HEAD
       "Bash(git ls-tree:*)",
       "Bash(if exist \".next\" rmdir /s /q \".next\")",
       "Bash(powershell -Command \"if (Test-Path ''.next'') { Remove-Item -Recurse -Force ''.next'' }; Write-Host ''Done''\")",
@@ -45,6 +46,9 @@
       "Bash(git stash:*)",
       "Bash(dir:*)",
       "Bash(git mv:*)"
+=======
+      "Bash(git ls-tree:*)"
+>>>>>>> 82485807befa8b6652d353a9219b02a1a1361183
     ],
     "deny": [],
     "ask": []

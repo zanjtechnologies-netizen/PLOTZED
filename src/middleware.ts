@@ -154,9 +154,9 @@ export async function middleware(request: NextRequest) {
     }
 
     // ================================================
-    // 4. RATE LIMITING FOR API ROUTES
+    // 4. RATE LIMITING FOR API ROUTES (skip in development)
     // ================================================
-    if (pathname.startsWith('/api')) {
+    if (pathname.startsWith('/api') && process.env.NODE_ENV !== 'development') {
       const identifier = getIdentifier(request)
 
       // Determine rate limit type based on path
