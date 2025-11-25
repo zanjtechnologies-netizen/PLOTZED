@@ -1,4 +1,19 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "dev": false
+    }
+  },
+  "github": {
+    "enabled": true,
+    "autoAlias": true,
+    "silent": false,
+    "autoJobCancelation": true
+  },
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
   "crons": [
     {
       "path": "/api/cron/all",

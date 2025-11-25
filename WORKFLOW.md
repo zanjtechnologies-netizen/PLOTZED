@@ -162,6 +162,10 @@ git commit
 
 ## Production Deployment (Main Branch)
 
+⚠️ **IMPORTANT**: Only `main` branch deploys to Vercel production!
+- Pushing to `dev` = ❌ NO deployment
+- Pushing to `main` = ✅ Vercel deploys to https://plotzed.vercel.app
+
 ### When Dev is Stable and Tested
 
 #### Option 1: Merge Dev to Main (Recommended)
@@ -170,13 +174,22 @@ git checkout main
 git pull origin main
 git merge dev --no-ff -m "Release: description of features"
 git push origin main
+# ✅ Vercel automatically deploys to production
 ```
 
 #### Option 2: Create Release PR
 - Create PR: `dev` → `main`
 - Review all changes
 - Merge when approved
-- Vercel auto-deploys main branch
+- ✅ Vercel auto-deploys main branch
+
+#### Testing Before Production
+Since `dev` doesn't auto-deploy, test locally first:
+```bash
+npm run build
+npm run start
+# Test at http://localhost:3000
+```
 
 ---
 
