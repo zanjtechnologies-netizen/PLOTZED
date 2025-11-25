@@ -31,7 +31,11 @@
     "cron:cleanup-logs": "tsx scripts/cron/cleanup-activity-logs.ts",
     "cron:warm-cache": "tsx scripts/cron/warm-cache.ts",
     "cron:all": "npm run cron:cleanup-tokens && npm run cron:expire-bookings && npm run cron:visit-reminders && npm run cron:cleanup-logs && npm run cron:warm-cache",
-    "validate:env": "tsx scripts/validate-env.ts"
+    "validate:env": "tsx scripts/validate-env.ts",
+    "git:sync": "git checkout dev && git pull origin dev && git checkout - && git merge dev",
+    "git:status": "git status && git log --oneline --graph --all -5",
+    "git:clean": "git clean -fd && git checkout .",
+    "git:conflicts": "git diff --name-only --diff-filter=U"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
