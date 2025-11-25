@@ -1,31 +1,5 @@
-# Code Owners - Auto-assign PRs to the right person
+# Code Owners - Auto-assign PRs to both team members
+# Both developers have full access to entire fullstack codebase
 
-# Backend / API / Configuration - Assign to you
-/src/app/api/ @your-github-username
-/src/lib/ @your-github-username
-/src/middleware.ts @your-github-username
-/prisma/ @your-github-username
-/.env.example @your-github-username
-/next.config.mjs @your-github-username
-/src/instrumentation*.ts @your-github-username
-/src/lib/env-validation.ts @your-github-username
-/src/lib/security-config.ts @your-github-username
-/src/lib/rate-limit*.ts @your-github-username
-
-# Frontend / UI / Components - Assign to teammate
-/src/components/ @teammate-github-username
-/src/app/(main)/ @teammate-github-username
-/src/app/(marketing)/ @teammate-github-username
-/public/ @teammate-github-username
-/tailwind.config.ts @teammate-github-username
-
-# Shared Files - Both must review
-/src/app/layout.tsx @your-github-username @teammate-github-username
-/src/types/ @your-github-username @teammate-github-username
-/package.json @your-github-username @teammate-github-username
-/README.md @your-github-username @teammate-github-username
-
-# Cookies Implementation - Your work
-/src/lib/cookies.ts @your-github-username
-/src/components/cookies/ @your-github-username
-/src/app/(main)/cookie-policy/ @your-github-username
+# All files require review from both team members
+* @your-github-username @teammate-github-username

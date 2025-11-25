@@ -1,107 +1,66 @@
-# File Ownership Guide
+# File Coordination Guide
 
-> **Rule**: Only edit files you own. Coordinate before touching shared files.
+> **Rule**: Both developers have full access to entire codebase. Coordinate to avoid conflicts!
 
-## 🔧 Backend Developer (You)
+## 🤝 Shared Fullstack Access
 
-### Full Ownership
+Both you and your teammate can edit **any file** in the webapp. However, to avoid merge conflicts, follow this communication guide:
+
+---
+
+## 📂 File Types & Coordination
+
+### Backend Files (Usually You)
 ```
 src/app/api/                    # All API routes
 src/lib/                        # Utility libraries
 src/middleware.ts               # Request middleware
 prisma/                         # Database schema & migrations
-src/instrumentation-client.ts   # Sentry setup
-src/instrumentation.ts          # Server instrumentation
+src/instrumentation*.ts         # Sentry/monitoring setup
 ```
 
-### Configuration Files
-```
-.env.example                    # Environment template
-next.config.mjs                 # Next.js config
-prisma.config.ts                # Prisma config
-src/lib/env-validation.ts       # Env validation
-src/lib/security-config.ts      # Security headers
-src/lib/rate-limit-redis.ts     # Rate limiting
-src/lib/auth.ts                 # Auth configuration
-```
+**Recommendation**: Notify teammate when making major changes
 
-### Cookie System (Your Recent Work)
-```
-src/lib/cookies.ts              # Cookie utilities
-src/components/cookies/         # Cookie components
-src/app/(main)/cookie-policy/   # Cookie policy page
-```
-
----
-
-## 🎨 Frontend Developer (Teammate)
-
-### Full Ownership
+### Frontend Files (Usually Teammate)
 ```
 src/components/                 # All UI components
-  ├── home/                     # Homepage sections
-  ├── layout/                   # Header, Footer
-  ├── plots/                    # Plot cards, listings
-  └── providers/                # Context providers (review only)
-```
-
-### Pages & Routes
-```
-src/app/(main)/                 # Main route pages
-  ├── page.tsx                  # Homepage
-  ├── properties/               # Properties pages
-  ├── dashboard/                # Dashboard
-  └── */page.tsx                # All page components
-```
-
-### Styling & Assets
-```
+src/app/(main)/*/page.tsx       # Page components
 public/                         # Images, SVGs, fonts
-  ├── images/
-  └── fonts/
 src/app/globals.css             # Global styles
-tailwind.config.ts              # Tailwind configuration
+tailwind.config.ts              # Tailwind config
 ```
 
----
+**Recommendation**: Notify you when making major changes
 
-## ⚠️ Shared Files (Coordinate First!)
-
-### Critical Shared Files
+### Critical Shared Files (Always Coordinate!)
 ```
-src/app/layout.tsx              # Root layout
-src/types/                      # TypeScript types
-package.json                    # Dependencies
+src/app/layout.tsx              # Root layout - affects everyone
+src/types/                      # TypeScript types - affects both
+package.json                    # Dependencies - affects both
 README.md                       # Documentation
 ```
 
-### Communication Required
-Before editing shared files:
-1. **Check**: `git pull origin dev` (make sure it's latest)
-2. **Ask**: "Are you editing [filename]?"
-3. **Wait**: For confirmation
-4. **Edit**: Make your changes
-5. **Push**: ASAP to avoid conflicts
-6. **Notify**: "Updated [filename], please pull"
-
 ---
 
-## 📋 Quick Decision Tree
+## 📋 Before Editing Any File
 
 ```
 ┌─ Need to edit a file?
 │
-├─ Is it in src/app/api/ or src/lib/?
-│  └─ YES → You own it, go ahead ✅
+├─ Step 1: Pull latest
+│  └─ git pull origin dev
 │
-├─ Is it in src/components/ or public/?
-│  └─ YES → Teammate owns it, ask first ⚠️
+├─ Step 2: Check if anyone is working on it
+│  └─ Ask: "Working on [filename]?"
 │
-├─ Is it src/app/layout.tsx or package.json?
-│  └─ YES → Shared file, coordinate! 🚨
+├─ Step 3: Edit & test locally
+│  └─ Make changes, run npm run build
 │
-└─ Not sure?
-   └─ Ask in team chat! 💬
+├─ Step 4: Commit & push quickly
+│  └─ git add . && git commit && git push
+│
+└─ Step 5: Notify
+   └─ "Updated [filename], please pull"
 ```
 
 ---
@@ -210,12 +169,13 @@ git push origin main
 
 ## 🎯 Summary
 
-| File Type | You | Teammate | Action |
-|-----------|-----|----------|--------|
-| API routes | ✅ Own | ❌ No | Edit freely |
-| Components | ❌ No | ✅ Own | Ask first |
-| Layout.tsx | ⚠️ Share | ⚠️ Share | Coordinate |
-| Config files | ✅ Own | ❌ No | Edit freely |
-| Styles/Assets | ❌ No | ✅ Own | Ask first |
+| File Type | Access | Best Practice |
+|-----------|--------|---------------|
+| API routes | Both ✅ | Notify if major changes |
+| Components | Both ✅ | Notify if major changes |
+| Layout.tsx | Both ✅ | Always coordinate first! |
+| Config files | Both ✅ | Always coordinate first! |
+| Styles/Assets | Both ✅ | Notify if major changes |
+| package.json | Both ✅ | Always coordinate first! |
 
-**Golden Rule**: When in doubt, ask! 💬
+**Golden Rule**: Communicate before editing! 💬
