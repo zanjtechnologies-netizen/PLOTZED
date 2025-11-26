@@ -22,6 +22,7 @@ import {
   Loader2,
   X,
 } from 'lucide-react';
+import { WhatsAppButton } from '@/components/chat';
 
 // Types - matches API response from /api/plots
 interface Plot {
@@ -59,7 +60,7 @@ interface FormErrors {
 
 // Constants
 const PHONE_NUMBER = '+91 40 9999909';
-const WHATSAPP_NUMBER = '919999999999'; // Update with actual number
+const WHATSAPP_NUMBER = '917708594263'; // Plotzed Real Estate WhatsApp
 const EMAIL = 'reservations@plotzedrealestate.com';
 const ADDRESS = 'Plotzed Real Estate, Premium Tower, Business District';
 
@@ -866,23 +867,6 @@ function ContactSection() {
 }
 
 // ============================================
-// FLOATING WHATSAPP BUTTON
-// ============================================
-function FloatingWhatsApp() {
-  return (
-    <a
-      href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi, I'm interested in booking a site visit for premium plots.`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110"
-      aria-label="Chat on WhatsApp"
-    >
-      <MessageCircle className="w-7 h-7 text-white" />
-    </a>
-  );
-}
-
-// ============================================
 // STICKY CTA BAR (Mobile Only)
 // ============================================
 function StickyCTA({ onScrollToForm }: { onScrollToForm: () => void }) {
@@ -931,7 +915,11 @@ export default function LandingPage() {
       <WhyChooseUsSection />
       <TestimonialsSection />
       <ContactSection />
-      <FloatingWhatsApp />
+      <WhatsAppButton
+        phoneNumber={`+${WHATSAPP_NUMBER}`}
+        message="Hi, I'm interested in booking a site visit for premium plots."
+        position="left"
+      />
       <StickyCTA onScrollToForm={scrollToForm} />
     </main>
   );
