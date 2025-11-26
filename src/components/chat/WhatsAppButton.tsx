@@ -70,7 +70,7 @@ export default function WhatsAppButton({
       >
         {/* Tooltip */}
         {showTooltip && (
-          <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 w-max max-w-[200px] animate-fade-in">
+          <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 w-max max-w-[200px] animate-fade-in-tooltip">
             <div
               className="relative px-4 py-2.5 rounded-xl shadow-lg text-sm font-medium text-white"
               style={{ backgroundColor: '#0C1A3D' }}
@@ -133,53 +133,6 @@ export default function WhatsAppButton({
           />
         </div>
       </div>
-
-      {/* Custom Animations */}
-      <style jsx>{`
-        @keyframes pulse-slow {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.95;
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes ping-slow {
-          75%, 100% {
-            transform: scale(1.5);
-            opacity: 0;
-          }
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-
-        .animate-ping-slow {
-          animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-
-        .shadow-3xl {
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                      0 0 0 1px rgba(0, 0, 0, 0.05);
-        }
-      `}</style>
     </>
   );
 }
