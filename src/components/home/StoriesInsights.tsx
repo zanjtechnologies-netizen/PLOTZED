@@ -10,7 +10,7 @@ export default function StoriesInsights() {
       excerpt:
         'Discover emerging markets and prime locations for your next property investment.',
       readTime: '5 min read',
-      image: '/images/blog-1.jpg',
+      image: '/images/blog-1.svg',
       link: '/insights/luxury-real-estate-trends',
     },
     {
@@ -20,7 +20,7 @@ export default function StoriesInsights() {
       excerpt:
         "Learn how classic interior design choices can significantly increase your home's worth.",
       readTime: '7 min read',
-      image: '/images/blog-2.jpg',
+      image: '/images/blog-2.svg',
       link: '/insights/interior-design-value',
     },
     {
@@ -30,7 +30,7 @@ export default function StoriesInsights() {
       excerpt:
         'Everything you need to know about buying high-end real estate with confidence.',
       readTime: '10 min read',
-      image: '/images/blog-3.jpg',
+      image: '/images/blog-3.svg',
       link: '/insights/buying-luxury-properties',
     },
   ];

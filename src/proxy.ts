@@ -1,6 +1,7 @@
 // ================================================
-// src/middleware.ts - Next.js Middleware (Consolidated)
+// src/proxy.ts - Next.js Proxy (Consolidated)
 // ================================================
+// Renamed from middleware.ts to proxy.ts for Next.js 16 compatibility
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'

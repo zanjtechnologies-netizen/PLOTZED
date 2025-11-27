@@ -1,9 +1,9 @@
 export default function RedefineLuxury() {
   const images = [
-    { src: '/images/luxury-1.jpg', alt: 'Luxury interior' },
-    { src: '/images/luxury-2.jpg', alt: 'Premium amenities' },
-    { src: '/images/luxury-3.jpg', alt: 'Elegant design' },
-    { src: '/images/luxury-4.jpg', alt: 'Modern architecture' },
+    { src: '/images/luxury-1.svg', alt: 'Luxury interior' },
+    { src: '/images/luxury-2.svg', alt: 'Premium amenities' },
+    { src: '/images/luxury-3.svg', alt: 'Elegant design' },
+    { src: '/images/luxury-4.svg', alt: 'Modern architecture' },
   ];
 
   const stats = [

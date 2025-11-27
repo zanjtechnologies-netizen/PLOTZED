@@ -277,13 +277,13 @@ export default function ArticlePage() {
 
                         {/* Smaller Images Row */}
                         <div className="relative rounded-2xl overflow-hidden h-48 group">
-                            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url(/images/blog-2.jpg)' }} />
+                            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url(/images/blog-2.svg)' }} />
                         </div>
                         <div className="relative rounded-2xl overflow-hidden h-48 group">
-                            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url(/images/blog-3.jpg)' }} />
+                            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url(/images/blog-3.svg)' }} />
                         </div>
                         <div className="relative rounded-2xl overflow-hidden h-48 group">
-                            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url(/images/property-1.jpg)' }} />
+                            <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url(/images/property-1.svg)' }} />
                         </div>
                     </div>
                 </div>

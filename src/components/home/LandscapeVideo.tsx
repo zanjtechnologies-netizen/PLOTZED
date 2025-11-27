@@ -38,7 +38,7 @@ export default function LandscapeVideo() {
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{
-                    backgroundImage: 'url(/images/video-thumbnail.jpg)',
+                    backgroundImage: 'url(/images/video-thumbnail.svg)',
                   }}
                 />
 
