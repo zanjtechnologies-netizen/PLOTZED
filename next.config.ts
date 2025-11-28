@@ -7,6 +7,27 @@ const nextConfig: NextConfig = {
 
   // Enable source maps in production for better error debugging with Sentry
   productionBrowserSourceMaps: true,
+
+  // Image Optimization
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+
+  // Performance Optimizations
+  compress: true,
+  poweredByHeader: false,
+
+  // Experimental Features for Better Performance
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@sentry/nextjs'],
+    webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP'],
+  },
 };
 
 export default withSentryConfig(nextConfig, {

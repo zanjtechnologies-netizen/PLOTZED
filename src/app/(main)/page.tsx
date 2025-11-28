@@ -1,12 +1,27 @@
+import dynamic from 'next/dynamic';
 import HeroSection from '@/components/home/HeroSection';
 import FeaturedListings from '@/components/home/FeaturedListings';
-import BookingExperience from '@/components/home/BookingExperience';
-import JourneyToOwnership from '@/components/home/JourneyToOwnership';
-import LandscapeVideo from '@/components/home/LandscapeVideo';
-import StoriesInsights from '@/components/home/StoriesInsights';
-import CustomerExperiences from '@/components/home/CustomerExperiences';
-import RedefineLuxury from '@/components/home/RedefineLuxury';
-import { ChatBot, WhatsAppButton } from '@/components/chat';
+import { ChatBot, WhatsAppButton } from '@/components/home/ClientComponents';
+
+// Lazy load below-the-fold components for better performance
+const BookingExperience = dynamic(() => import('@/components/home/BookingExperience'), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
+});
+const JourneyToOwnership = dynamic(() => import('@/components/home/JourneyToOwnership'), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
+});
+const LandscapeVideo = dynamic(() => import('@/components/home/LandscapeVideo'), {
+  loading: () => <div className="min-h-[500px] animate-pulse bg-gray-100" />,
+});
+const StoriesInsights = dynamic(() => import('@/components/home/StoriesInsights'), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-800" />,
+});
+const CustomerExperiences = dynamic(() => import('@/components/home/CustomerExperiences'), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
+});
+const RedefineLuxury = dynamic(() => import('@/components/home/RedefineLuxury'), {
+  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
+});
 
 export default function HomePage() {
   return (
@@ -18,69 +33,39 @@ export default function HomePage() {
       />
       <ChatBot />
       <div className="overflow-hidden">
-      {/* Hero (layout_M1YPX) */}
+      {/* Hero Section */}
       <HeroSection />
 
-      {/* DestinationsSection background gradient fill_OCQIKX with padding layout_5IFD3D */}
-      <section
-        style={{
-          padding: "96px 123.2px 0px 123.2px",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(249,250,251,1) 100%)",
-        }}
-      >
+      {/* Featured Listings - White to Gray Gradient */}
+      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-white to-gray-50">
         <FeaturedListings />
       </section>
 
-      {/* BookingsSection layout_543I5W with white fill */}
-      <section
-        style={{
-          padding: "96px 155.2px 0px 155.2px",
-          gap: "64px",
-          background: "#FFFFFF",
-        }}
-      >
+      {/* Booking & Journey Section - White Background */}
+      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">
         <BookingExperience />
         <JourneyToOwnership />
       </section>
 
-      {/* VideoBanner layout_PL6TQW */}
-      <section
-        style={{
-          padding: "96px 155.2px 0px 155.2px",
-          gap: "48px",
-          background: "#FFFFFF",
-        }}
-      >
+      {/* Video Banner Section */}
+      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 bg-white">
         <LandscapeVideo />
       </section>
 
-      {/* BlogSection fill_SDZOLB (#112250) */}
-      <section style={{ background: "#112250" }}>
+      {/* Blog/Stories Section - Dark Navy Background */}
+      <section className="bg-[#112250]">
         <div className="container-custom py-16 md:py-24">
           <StoriesInsights />
         </div>
       </section>
 
-      {/* TestimonialsSection gradient fill_TBM4LT with padding layout_HOSBY7 */}
-      <section
-        style={{
-          padding: "96px 123.2px 0px 123.2px",
-          background:
-            "linear-gradient(180deg, rgba(249,250,251,1) 0%, rgba(255,255,255,1) 100%)",
-        }}
-      >
+      {/* Testimonials Section - Gray to White Gradient */}
+      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-gray-50 to-white">
         <CustomerExperiences />
       </section>
 
-      {/* AboutSection fill_OCQIKX with padding layout_5RM73D */}
-      <section
-        style={{
-          padding: "96px 123.2px 0px 123.2px",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(249,250,251,1) 100%)",
-        }}
-      >
+      {/* About/Luxury Section - White to Gray Gradient */}
+      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-white to-gray-50">
         <RedefineLuxury />
       </section>
       </div>

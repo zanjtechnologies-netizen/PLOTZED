@@ -163,6 +163,11 @@ export const POST = withErrorHandling(
 
           return {
             ...plot,
+            price: plot.price.toNumber(),
+            booking_amount: plot.booking_amount.toNumber(),
+            plot_size: plot.plot_size.toNumber(),
+            latitude: plot.latitude?.toNumber() ?? null,
+            longitude: plot.longitude?.toNumber() ?? null,
             distance: parseFloat(distance.toFixed(2)),
           }
         })
@@ -223,8 +228,18 @@ export const POST = withErrorHandling(
         },
       })
 
+      // Convert Decimal fields to numbers for JSON serialization
+      const serializedPlots = plots.map(plot => ({
+        ...plot,
+        price: plot.price.toNumber(),
+        booking_amount: plot.booking_amount.toNumber(),
+        plot_size: plot.plot_size.toNumber(),
+        latitude: plot.latitude?.toNumber() ?? null,
+        longitude: plot.longitude?.toNumber() ?? null,
+      }))
+
       return successResponse({
-        plots,
+        plots: serializedPlots,
         pagination: {
           page,
           limit,

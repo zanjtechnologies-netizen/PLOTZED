@@ -57,8 +57,16 @@ export const GET = withErrorHandling(
           },
         })
 
+        // Convert Decimal fields to numbers for JSON serialization
+        const serializedPlots = plots.map(plot => ({
+          ...plot,
+          price: plot.price.toNumber(),
+          booking_amount: plot.booking_amount.toNumber(),
+          plot_size: plot.plot_size.toNumber(),
+        }))
+
         return {
-          plots,
+          plots: serializedPlots,
           count: plots.length,
         }
       },

@@ -100,7 +100,10 @@ export const GET = withErrorHandling(
           status: true,
           created_at: true,
         },
-      }),
+      }).then(plots => plots.map(plot => ({
+        ...plot,
+        price: plot.price.toNumber(),
+      }))),
 
       // Site Visit statistics
       prisma.siteVisit.count({
@@ -269,7 +272,7 @@ export const GET = withErrorHandling(
           id: plot.id,
           title: plot.title,
           city: plot.city,
-          price: plot.price,
+          price: plot.price.toNumber(),
           siteVisitsCount: plot._count.site_visits,
         })),
       },

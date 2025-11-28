@@ -24,8 +24,18 @@ async function getPropertiesData() {
       orderBy: { created_at: 'desc' },
     })
 
+    // Convert Decimal objects to numbers for Client Component serialization
+    const serializedProperties = properties.map((property) => ({
+      ...property,
+      price: property.price.toNumber(),
+      booking_amount: property.booking_amount.toNumber(),
+      plot_size: property.plot_size.toNumber(),
+      latitude: property.latitude?.toNumber() ?? null,
+      longitude: property.longitude?.toNumber() ?? null,
+    }))
+
     return {
-      properties,
+      properties: serializedProperties,
       stats: {
         total: properties.length,
         available: properties.filter((p) => p.status === 'AVAILABLE').length,

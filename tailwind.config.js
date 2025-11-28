@@ -84,6 +84,7 @@ module.exports = {
         "pulse-slow": "pulseSlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "fade-in-tooltip": "fadeInTooltip 0.3s ease-out",
         "ping-slow": "pingSlow 2s cubic-bezier(0, 0, 0.2, 1) infinite",
+        "shimmer": "shimmer 2s linear infinite",
       },
 
       keyframes: {
@@ -109,6 +110,10 @@ module.exports = {
         },
         pingSlow: {
           "75%, 100%": { transform: "scale(1.5)", opacity: "0" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
     },

@@ -10,6 +10,7 @@ import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import { GlobalSeo } from "@/components/seo";
 import { seoConfig } from "@/lib/seo/config";
+import WebVitals from "@/components/analytics/WebVitals";
 
 // Font setup
 const geistSans = Geist({
@@ -73,6 +74,7 @@ export default function RootLayout({
           antialiased bg-[#0C1A3D] text-white
         `}
       >
+        <WebVitals />
         <RecaptchaProvider>
           <SessionProvider>{children}</SessionProvider>
         </RecaptchaProvider>

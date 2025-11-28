@@ -116,8 +116,8 @@ const envSchema = z.object({
   RECAPTCHA_SECRET_KEY: z.string().optional(),
 
   // Sentry (Optional but RECOMMENDED for error tracking)
-  SENTRY_DSN: z.string().url().optional(),
-  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+  SENTRY_DSN: z.union([z.string().url(), z.literal('')]).optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.union([z.string().url(), z.literal('')]).optional(),
 
   // Admin user seeding (Optional)
   ADMIN_EMAIL: z.string().email().optional(),

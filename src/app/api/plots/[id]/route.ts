@@ -33,7 +33,17 @@ export const GET = withErrorHandling(
           throw new NotFoundError('Plot not found')
         }
 
-        return { plot }
+        // Convert Decimal fields to numbers for JSON serialization
+        const serializedPlot = {
+          ...plot,
+          price: plot.price.toNumber(),
+          booking_amount: plot.booking_amount.toNumber(),
+          plot_size: plot.plot_size.toNumber(),
+          latitude: plot.latitude?.toNumber() ?? null,
+          longitude: plot.longitude?.toNumber() ?? null,
+        }
+
+        return { plot: serializedPlot }
       },
       CACHE_TTL.LONG // 15 minutes for individual plots
     )
@@ -85,7 +95,17 @@ export const PUT = withErrorHandling(
     // Invalidate plot caches after update
     await cache.invalidatePlotCaches(id)
 
-    return successResponse({ plot: updatedPlot }, 200, 'Plot updated successfully')
+    // Convert Decimal fields to numbers for JSON serialization
+    const serializedPlot = {
+      ...updatedPlot,
+      price: updatedPlot.price.toNumber(),
+      booking_amount: updatedPlot.booking_amount.toNumber(),
+      plot_size: updatedPlot.plot_size.toNumber(),
+      latitude: updatedPlot.latitude?.toNumber() ?? null,
+      longitude: updatedPlot.longitude?.toNumber() ?? null,
+    }
+
+    return successResponse({ plot: serializedPlot }, 200, 'Plot updated successfully')
   },
   'PUT /api/plots/[id]'
 )
