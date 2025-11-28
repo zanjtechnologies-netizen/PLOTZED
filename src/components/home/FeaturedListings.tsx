@@ -24,7 +24,7 @@ export default function FeaturedListings() {
   useEffect(() => {
     async function loadFeaturedPlots() {
       try {
-        const response = await fetch('/api/plots?featured=true&limit=6');
+        const response = await fetch('/api/plots?featured=true&limit=3');
         const result = await response.json();
         if (result.success && result.data?.plots) {
           setPlots(result.data.plots);
@@ -42,45 +42,24 @@ export default function FeaturedListings() {
   const fallbackPlots: FeaturedPlot[] = [
     {
       id: '1',
-      title: 'Premium Villa Plot - Riverside',
-      location: 'Chennai',
-      price: 4500000,
-      images: ['/images/hero-bg-fallback-1.png'],
+      title: 'Casuarina Greens',
+      location: 'Auroville Green Belt, Pondicherry',
+      price: 40500000,
+      images: ['/images/casuarina-greens.jpg'],
     },
     {
       id: '2',
-      title: 'Gated Community Plot',
-      location: 'Coimbatore',
-      price: 3200000,
-      images: ['/images/hero-bg-fallback-2.png'],
+      title: 'Katumode Greens',
+      location: 'Auroville Green Belt, Pondicherry',
+      price: 43200000,
+      images: ['/images/casuarina-greens.jpg'],
     },
     {
       id: '3',
-      title: 'Corner Plot - Prime Location',
-      location: 'Bangalore',
-      price: 5800000,
-      images: ['/images/hero-bg-fallback-3.png'],
-    },
-    {
-      id: '4',
-      title: 'Lake View Premium Plot',
-      location: 'Hyderabad',
-      price: 6500000,
-      images: ['/images/hero-bg-fallback-4.png'],
-    },
-    {
-      id: '5',
-      title: 'RERA Approved Plot',
-      location: 'Chennai',
-      price: 2800000,
-      images: ['/images/hero-bg-fallback-1.png'],
-    },
-    {
-      id: '6',
-      title: 'Highway Touch Plot',
-      location: 'Coimbatore',
-      price: 3900000,
-      images: ['/images/hero-bg-fallback-2.png'],
+      title: 'House Property',
+      location: 'Koonimedu, ECR, Pondicherry',
+      price: 19200000,
+      images: ['/images/house-property.jpg'],
     },
   ];
 
@@ -120,7 +99,7 @@ export default function FeaturedListings() {
         {/* Loading State */}
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg animate-pulse">
                 <div className="h-64 bg-gray-200" />
               </div>
@@ -131,7 +110,7 @@ export default function FeaturedListings() {
         {/* Properties Grid - Simple Overlay Style */}
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {displayPlots.slice(0, 6).map((plot) => (
+            {displayPlots.slice(0, 3).map((plot) => (
               <Link
                 key={plot.id}
                 href={`/properties/${plot.slug || plot.id}`}
@@ -143,6 +122,9 @@ export default function FeaturedListings() {
                     src={plot.images?.[0] || '/images/hero-bg-fallback-1.png'}
                     alt={plot.title}
                     fill
+                    priority={true} // Load featured images with priority
+                    quality={85} // Optimize quality for faster loading
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transform group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#112250]/80 via-[#112250]/30 to-transparent" />

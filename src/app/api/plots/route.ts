@@ -83,11 +83,15 @@ export const GET = withErrorHandling(
         const total = await prisma.plot.count({ where })
 
         // Get plots with pagination and sorting
+        // Featured properties appear first, then sorted by the specified field
         const plots = await prisma.plot.findMany({
           where,
           skip,
           take: limit,
-          orderBy: { [sortBy]: sortOrder },
+          orderBy: [
+            { is_featured: 'desc' }, // Featured properties first
+            { [sortBy]: sortOrder },  // Then by specified sort field
+          ],
           select: {
             id: true,
             title: true,
