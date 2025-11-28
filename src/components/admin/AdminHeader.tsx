@@ -6,6 +6,7 @@
 
 import { signOut } from 'next-auth/react'
 import { Bell, LogOut, User, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 interface AdminHeaderProps {
   user: {
@@ -25,9 +26,12 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
         <div className="flex items-center justify-between">
           {/* Logo & Title */}
           <div className="flex items-center space-x-4">
-            <div className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-xl">
+            <Link
+              href="/"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-xl hover:bg-blue-700 transition-colors cursor-pointer"
+            >
               Plotzed
-            </div>
+            </Link>
             <div>
               <h1 className="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
               <p className="text-sm text-gray-500">Manage your real estate platform</p>
