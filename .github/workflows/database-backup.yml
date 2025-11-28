@@ -22,6 +22,9 @@ jobs:
   backup:
     name: Backup PostgreSQL Database
     runs-on: ubuntu-latest
+    env:
+      BACKUP_NOTIFICATION_EMAIL: ${{ secrets.BACKUP_NOTIFICATION_EMAIL }}
+      BACKUP_S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
 
     steps:
       - name: Checkout code
@@ -81,7 +84,7 @@ jobs:
           done
 
       - name: Send success notification
-        if: success() && secrets.BACKUP_NOTIFICATION_EMAIL != ''
+        if: success() && env.BACKUP_NOTIFICATION_EMAIL != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -102,7 +105,7 @@ jobs:
             View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Send failure notification
-        if: failure() && secrets.BACKUP_NOTIFICATION_EMAIL != ''
+        if: failure() && env.BACKUP_NOTIFICATION_EMAIL != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -129,7 +132,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-          BACKUP_S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
         run: |
           # Install AWS CLI if not already installed
           if ! command -v aws &> /dev/null; then
