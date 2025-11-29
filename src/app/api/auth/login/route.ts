@@ -52,7 +52,7 @@ export const POST = withErrorHandling(
     }
 
     // Check if user exists
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { email },
       select: {
         id: true,
@@ -117,7 +117,7 @@ export const POST = withErrorHandling(
     await recordSuccessfulLogin(email)
 
     // Update last login
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: { last_login: new Date() },
     })
@@ -134,7 +134,7 @@ export const POST = withErrorHandling(
     // Return success with user data (excluding sensitive info)
     return successResponse({
       message: 'Login successful',
-      user: {
+      users: {
         id: user.id,
         email: user.email,
         name: user.name,

@@ -24,7 +24,7 @@ export const POST = withErrorHandling(
     const { token, password } = resetPasswordSchema.parse(body)
 
     // Find user with this reset token
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { reset_token: token },
     })
 
@@ -41,7 +41,7 @@ export const POST = withErrorHandling(
     const password_hash = await bcrypt.hash(password, 12)
 
     // Update user password and clear reset token
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
         password_hash,

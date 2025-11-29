@@ -45,10 +45,10 @@ export const GET = withErrorHandling(async (
 
   const { id } = await params
 
-  const siteVisit = await prisma.siteVisit.findUnique({
+  const siteVisit = await prisma.site_visits.findUnique({
     where: { id },
     include: {
-      user: {
+      users: {
         select: {
           id: true,
           name: true,
@@ -57,7 +57,7 @@ export const GET = withErrorHandling(async (
           created_at: true,
         },
       },
-      plot: {
+      plots: {
         select: {
           id: true,
           title: true,
@@ -115,11 +115,11 @@ export const PUT = withErrorHandling(async (
   const validatedData = updateSiteVisitSchema.parse(body)
 
   // Get existing site visit
-  const existingSiteVisit = await prisma.siteVisit.findUnique({
+  const existingSiteVisit = await prisma.site_visits.findUnique({
     where: { id },
     include: {
-      user: true,
-      plot: true,
+      users: true,
+      plots: true,
     },
   })
 
@@ -160,12 +160,12 @@ export const PUT = withErrorHandling(async (
   }
 
   // Update site visit
-  const updatedSiteVisit = await prisma.siteVisit.update({
+  const updatedSiteVisit = await prisma.site_visits.update({
     where: { id },
     data: updateData,
     include: {
-      user: true,
-      plot: true,
+      users: true,
+      plots: true,
     },
   })
 
@@ -189,14 +189,14 @@ export const PUT = withErrorHandling(async (
       case 'CONFIRMED':
         emailPromises.push(
           sendEmail({
-            to: existingSiteVisit.user.email,
+            to: existingSiteVisit.users.email,
             subject: 'Site Visit Confirmed - Plotzed',
             html: `
               <h2>Your Site Visit has been Confirmed!</h2>
-              <p>Dear ${sanitizeString(existingSiteVisit.user.name)},</p>
+              <p>Dear ${sanitizeString(existingSiteVisit.users.name)},</p>
               <p>We're pleased to confirm your site visit for:</p>
               <ul>
-                <li><strong>Property:</strong> ${sanitizeString(existingSiteVisit.plot.title)}</li>
+                <li><strong>Property:</strong> ${sanitizeString(existingSiteVisit.plots.title)}</li>
                 <li><strong>Date:</strong> ${updatedSiteVisit.visit_date.toLocaleDateString('en-IN', {
                   weekday: 'long',
                   year: 'numeric',
@@ -204,7 +204,7 @@ export const PUT = withErrorHandling(async (
                   day: 'numeric',
                 })}</li>
                 <li><strong>Time:</strong> ${sanitizeString(updatedSiteVisit.visit_time)}</li>
-                <li><strong>Location:</strong> ${sanitizeString(existingSiteVisit.plot.city)}, ${sanitizeString(existingSiteVisit.plot.state)}</li>
+                <li><strong>Location:</strong> ${sanitizeString(existingSiteVisit.plots.city)}, ${sanitizeString(existingSiteVisit.plots.state)}</li>
               </ul>
               <p>Please arrive 10 minutes early. If you need to reschedule, please contact us.</p>
               <p>We look forward to meeting you!</p>
@@ -217,12 +217,12 @@ export const PUT = withErrorHandling(async (
       case 'CANCELLED':
         emailPromises.push(
           sendEmail({
-            to: existingSiteVisit.user.email,
+            to: existingSiteVisit.users.email,
             subject: 'Site Visit Cancelled - Plotzed',
             html: `
               <h2>Site Visit Cancelled</h2>
-              <p>Dear ${sanitizeString(existingSiteVisit.user.name)},</p>
-              <p>We regret to inform you that your site visit for <strong>${sanitizeString(existingSiteVisit.plot.title)}</strong> scheduled on ${updatedSiteVisit.visit_date.toLocaleDateString('en-IN')} has been cancelled.</p>
+              <p>Dear ${sanitizeString(existingSiteVisit.users.name)},</p>
+              <p>We regret to inform you that your site visit for <strong>${sanitizeString(existingSiteVisit.plots.title)}</strong> scheduled on ${updatedSiteVisit.visit_date.toLocaleDateString('en-IN')} has been cancelled.</p>
               ${validatedData.admin_notes ? `<p><strong>Reason:</strong> ${sanitizeString(validatedData.admin_notes)}</p>` : ''}
               <p>If you would like to reschedule, please visit our website or contact us directly.</p>
               <p>We apologize for any inconvenience.</p>
@@ -235,12 +235,12 @@ export const PUT = withErrorHandling(async (
       case 'RESCHEDULED':
         emailPromises.push(
           sendEmail({
-            to: existingSiteVisit.user.email,
+            to: existingSiteVisit.users.email,
             subject: 'Site Visit Rescheduled - Plotzed',
             html: `
               <h2>Your Site Visit has been Rescheduled</h2>
-              <p>Dear ${sanitizeString(existingSiteVisit.user.name)},</p>
-              <p>Your site visit for <strong>${sanitizeString(existingSiteVisit.plot.title)}</strong> has been rescheduled to:</p>
+              <p>Dear ${sanitizeString(existingSiteVisit.users.name)},</p>
+              <p>Your site visit for <strong>${sanitizeString(existingSiteVisit.plots.title)}</strong> has been rescheduled to:</p>
               <ul>
                 <li><strong>New Date:</strong> ${updatedSiteVisit.visit_date.toLocaleDateString('en-IN', {
                   weekday: 'long',
@@ -261,12 +261,12 @@ export const PUT = withErrorHandling(async (
       case 'COMPLETED':
         emailPromises.push(
           sendEmail({
-            to: existingSiteVisit.user.email,
+            to: existingSiteVisit.users.email,
             subject: 'Thank You for Your Visit - Plotzed',
             html: `
               <h2>Thank You for Visiting!</h2>
-              <p>Dear ${sanitizeString(existingSiteVisit.user.name)},</p>
-              <p>Thank you for visiting <strong>${sanitizeString(existingSiteVisit.plot.title)}</strong>.</p>
+              <p>Dear ${sanitizeString(existingSiteVisit.users.name)},</p>
+              <p>Thank you for visiting <strong>${sanitizeString(existingSiteVisit.plots.title)}</strong>.</p>
               <p>We hope you enjoyed the tour. If you have any questions or would like to proceed further, please don't hesitate to contact us.</p>
               <p>We'd love to hear your feedback about your visit experience!</p>
               <p>Best regards,<br>Plotzed Team</p>
@@ -313,11 +313,11 @@ export const DELETE = withErrorHandling(async (
   const { id } = await params
 
   // Get existing site visit
-  const existingSiteVisit = await prisma.siteVisit.findUnique({
+  const existingSiteVisit = await prisma.site_visits.findUnique({
     where: { id },
     include: {
-      user: true,
-      plot: true,
+      users: true,
+      plots: true,
     },
   })
 
@@ -329,7 +329,7 @@ export const DELETE = withErrorHandling(async (
   }
 
   // Soft delete by marking as cancelled
-  const deletedSiteVisit = await prisma.siteVisit.update({
+  const deletedSiteVisit = await prisma.site_visits.update({
     where: { id },
     data: {
       status: 'CANCELLED',
@@ -340,12 +340,12 @@ export const DELETE = withErrorHandling(async (
 
   // Send cancellation email
   sendEmail({
-    to: existingSiteVisit.user.email,
+    to: existingSiteVisit.users.email,
     subject: 'Site Visit Cancelled - Plotzed',
     html: `
       <h2>Site Visit Cancelled</h2>
-      <p>Dear ${existingSiteVisit.user.name},</p>
-      <p>Your site visit for <strong>${existingSiteVisit.plot.title}</strong> scheduled on ${existingSiteVisit.visit_date.toLocaleDateString('en-IN')} has been cancelled.</p>
+      <p>Dear ${existingSiteVisit.users.name},</p>
+      <p>Your site visit for <strong>${existingSiteVisit.plots.title}</strong> scheduled on ${existingSiteVisit.visit_date.toLocaleDateString('en-IN')} has been cancelled.</p>
       <p>If you would like to reschedule, please visit our website or contact us directly.</p>
       <p>We apologize for any inconvenience.</p>
       <p>Best regards,<br>Plotzed Team</p>

@@ -43,10 +43,10 @@ export const GET = withErrorHandling(async (
 
   const { id } = await params
 
-  const inquiry = await prisma.inquiry.findUnique({
+  const inquiry = await prisma.inquiries.findUnique({
     where: { id },
     include: {
-      user: {
+      users: {
         select: {
           id: true,
           name: true,
@@ -55,7 +55,7 @@ export const GET = withErrorHandling(async (
           created_at: true,
         },
       },
-      plot: {
+      plots: {
         select: {
           id: true,
           title: true,
@@ -112,11 +112,11 @@ export const PUT = withErrorHandling(async (
   const validatedData = updateInquirySchema.parse(body)
 
   // Get existing inquiry
-  const existingInquiry = await prisma.inquiry.findUnique({
+  const existingInquiry = await prisma.inquiries.findUnique({
     where: { id },
     include: {
-      user: true,
-      plot: true,
+      users: true,
+      plots: true,
     },
   })
 
@@ -144,12 +144,12 @@ export const PUT = withErrorHandling(async (
   }
 
   // Update inquiry
-  const updatedInquiry = await prisma.inquiry.update({
+  const updatedInquiry = await prisma.inquiries.update({
     where: { id },
     data: updateData,
     include: {
-      user: true,
-      plot: true,
+      users: true,
+      plots: true,
     },
   })
 
@@ -169,8 +169,8 @@ export const PUT = withErrorHandling(async (
   if (
     validatedData.status &&
     validatedData.status !== existingInquiry.status &&
-    existingInquiry.user &&
-    existingInquiry.plot
+    existingInquiry.users &&
+    existingInquiry.plots
   ) {
     const emailPromises = []
 
@@ -178,12 +178,12 @@ export const PUT = withErrorHandling(async (
       case 'CONTACTED':
         emailPromises.push(
           sendEmail({
-            to: existingInquiry.user.email,
+            to: existingInquiry.users.email,
             subject: 'Thank You for Your Inquiry - Plotzed',
             html: `
               <h2>We've Received Your Inquiry!</h2>
-              <p>Dear ${sanitizeString(existingInquiry.user.name)},</p>
-              <p>Thank you for your interest in <strong>${sanitizeString(existingInquiry.plot.title)}</strong>.</p>
+              <p>Dear ${sanitizeString(existingInquiry.users.name)},</p>
+              <p>Thank you for your interest in <strong>${sanitizeString(existingInquiry.plots.title)}</strong>.</p>
               <p>Our team has received your inquiry and will be in touch with you shortly to discuss your requirements.</p>
               <p>If you have any immediate questions, please don't hesitate to contact us.</p>
               <p>Best regards,<br>Plotzed Team</p>
@@ -195,12 +195,12 @@ export const PUT = withErrorHandling(async (
       case 'QUALIFIED':
         emailPromises.push(
           sendEmail({
-            to: existingInquiry.user.email,
+            to: existingInquiry.users.email,
             subject: 'Exciting Update on Your Property Inquiry - Plotzed',
             html: `
               <h2>Great News About Your Inquiry!</h2>
-              <p>Dear ${sanitizeString(existingInquiry.user.name)},</p>
-              <p>We're pleased to inform you that based on your requirements, <strong>${sanitizeString(existingInquiry.plot.title)}</strong> appears to be an excellent match for you!</p>
+              <p>Dear ${sanitizeString(existingInquiry.users.name)},</p>
+              <p>We're pleased to inform you that based on your requirements, <strong>${sanitizeString(existingInquiry.plots.title)}</strong> appears to be an excellent match for you!</p>
               <p>Our property consultant will be reaching out to you soon to schedule a detailed discussion and site visit.</p>
               ${validatedData.admin_notes ? `<p><strong>Note from our team:</strong> ${sanitizeString(validatedData.admin_notes)}</p>` : ''}
               <p>We're excited to help you find your perfect property!</p>
@@ -213,12 +213,12 @@ export const PUT = withErrorHandling(async (
       case 'CONVERTED':
         emailPromises.push(
           sendEmail({
-            to: existingInquiry.user.email,
+            to: existingInquiry.users.email,
             subject: 'Congratulations! - Plotzed',
             html: `
               <h2>Congratulations on Your Decision!</h2>
-              <p>Dear ${sanitizeString(existingInquiry.user.name)},</p>
-              <p>We're thrilled to be part of your journey to owning <strong>${sanitizeString(existingInquiry.plot.title)}</strong>!</p>
+              <p>Dear ${sanitizeString(existingInquiry.users.name)},</p>
+              <p>We're thrilled to be part of your journey to owning <strong>${sanitizeString(existingInquiry.plots.title)}</strong>!</p>
               <p>Our team will guide you through the next steps to make this process smooth and hassle-free.</p>
               <p>Thank you for choosing Plotzed. We look forward to serving you!</p>
               <p>Best regards,<br>Plotzed Team</p>
@@ -230,12 +230,12 @@ export const PUT = withErrorHandling(async (
       case 'CLOSED':
         emailPromises.push(
           sendEmail({
-            to: existingInquiry.user.email,
+            to: existingInquiry.users.email,
             subject: 'Thank You for Considering Plotzed',
             html: `
               <h2>Thank You for Your Interest</h2>
-              <p>Dear ${sanitizeString(existingInquiry.user.name)},</p>
-              <p>Thank you for your inquiry about <strong>${sanitizeString(existingInquiry.plot.title)}</strong>.</p>
+              <p>Dear ${sanitizeString(existingInquiry.users.name)},</p>
+              <p>Thank you for your inquiry about <strong>${sanitizeString(existingInquiry.plots.title)}</strong>.</p>
               <p>While this particular property may not have been the right fit, we have many other excellent properties that might interest you.</p>
               <p>Please feel free to browse our listings or contact us anytime. We'd love to help you find your perfect property!</p>
               <p>Best regards,<br>Plotzed Team</p>

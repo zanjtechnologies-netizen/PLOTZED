@@ -45,10 +45,10 @@ export const GET = withErrorHandling(
     if (kycVerified !== null) where.kyc_verified = kycVerified === 'true'
 
     // Get total count
-    const total = await prisma.user.count({ where })
+    const total = await prisma.users.count({ where })
 
     // Get users
-    const users = await prisma.user.findMany({
+    const users = await prisma.users.findMany({
       where,
       skip,
       take: limit,
@@ -76,9 +76,9 @@ export const GET = withErrorHandling(
     // Get user statistics
     const stats = {
       total: total,
-      customers: await prisma.user.count({ where: { role: 'CUSTOMER' } }),
-      admins: await prisma.user.count({ where: { role: 'ADMIN' } }),
-      verified: await prisma.user.count({ where: { email_verified: true } }),
+      customers: await prisma.users.count({ where: { role: 'CUSTOMER' } }),
+      admins: await prisma.users.count({ where: { role: 'ADMIN' } }),
+      verified: await prisma.users.count({ where: { email_verified: true } }),
     }
 
     return successResponse({
@@ -120,7 +120,7 @@ export const PUT = withErrorHandling(
     if (email_verified !== undefined) updateData.email_verified = email_verified
     if (kyc_verified !== undefined) updateData.kyc_verified = kyc_verified
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id: userId },
       data: updateData,
       select: {
@@ -164,7 +164,7 @@ export const DELETE = withErrorHandling(
     }
 
     // Prevent deleting other admins
-    const userToDelete = await prisma.user.findUnique({
+    const userToDelete = await prisma.users.findUnique({
       where: { id: userId },
       select: { role: true },
     })
@@ -173,7 +173,7 @@ export const DELETE = withErrorHandling(
       throw new ForbiddenError('Cannot delete admin accounts')
     }
 
-    await prisma.user.delete({
+    await prisma.users.delete({
       where: { id: userId },
     })
 

@@ -4,6 +4,7 @@
 export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
+import { randomUUID } from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
@@ -28,13 +29,15 @@ export const POST = withErrorHandling(
     const body = await request.json()
     const validatedData = inquirySchema.parse(body)
 
-    const inquiry = await prisma.inquiry.create({
+    const inquiry = await prisma.inquiries.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         ...validatedData,
         status: 'NEW',
       },
       include: {
-        plot: {
+        plots: {
           select: {
             title: true,
           },
@@ -56,7 +59,7 @@ export const POST = withErrorHandling(
         subject: 'Inquiry Received - Plotzed Real Estate',
         html: emailTemplates.inquiryReceived(
           validatedData.name,
-          inquiry.plot?.title || 'General Inquiry'
+          inquiry.plots?.title || 'General Inquiry'
         ),
       })
     } catch (emailError) {
@@ -77,7 +80,7 @@ export const POST = withErrorHandling(
             validatedData.name,
             validatedData.email,
             validatedData.phone,
-            inquiry.plot?.title || 'General Inquiry',
+            inquiry.plots?.title || 'General Inquiry',
             validatedData.message
           ),
         })
@@ -132,10 +135,10 @@ export const GET = withErrorHandling(
     if (status) where.status = status
 
     const [inquiries, total] = await Promise.all([
-      prisma.inquiry.findMany({
+      prisma.inquiries.findMany({
         where,
         include: {
-          plot: {
+          plots: {
             select: {
               id: true,
               title: true,
@@ -146,7 +149,7 @@ export const GET = withErrorHandling(
         skip,
         take: limit,
       }),
-      prisma.inquiry.count({ where }),
+      prisma.inquiries.count({ where }),
     ])
 
     return successResponse({

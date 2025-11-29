@@ -55,7 +55,7 @@ export const GET = withErrorHandling(
 
     // 5. Fetch site visits and total count in parallel
     const [siteVisits, totalCount] = await Promise.all([
-      prisma.siteVisit.findMany({
+      prisma.site_visits.findMany({
         where,
         skip,
         take: limit,
@@ -63,7 +63,7 @@ export const GET = withErrorHandling(
           visit_date: 'desc',
         },
         include: {
-          plot: {
+          plots: {
             select: {
               id: true,
               title: true,
@@ -75,7 +75,7 @@ export const GET = withErrorHandling(
           },
         },
       }),
-      prisma.siteVisit.count({ where }),
+      prisma.site_visits.count({ where }),
     ])
 
     // 6. Calculate pagination metadata
@@ -96,13 +96,13 @@ export const GET = withErrorHandling(
 
     // 8. Return response
     return successResponse({
-      siteVisits: siteVisits.map((visit) => ({
+      siteVisits: siteVisits.map((visit: any) => ({
         id: visit.id,
         visitDate: visit.visit_date,
         status: visit.status,
         attendees: visit.attendees,
         createdAt: visit.created_at,
-        plot: visit.plot,
+        plots: visit.plot,
       })),
       pagination: {
         page,

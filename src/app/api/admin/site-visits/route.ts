@@ -44,10 +44,10 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 
   // Fetch site visits with user and plot details
   const [siteVisits, totalCount] = await Promise.all([
-    prisma.siteVisit.findMany({
+    prisma.site_visits.findMany({
       where: whereConditions,
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -55,7 +55,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
             phone: true,
           },
         },
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -74,11 +74,11 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
       skip,
       take: limit,
     }),
-    prisma.siteVisit.count({ where: whereConditions }),
+    prisma.site_visits.count({ where: whereConditions }),
   ])
 
   // Get summary statistics
-  const stats = await prisma.siteVisit.groupBy({
+  const stats = await prisma.site_visits.groupBy({
     by: ['status'],
     _count: {
       status: true,
@@ -93,11 +93,16 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
     RESCHEDULED: 0,
   }
 
-  stats.forEach((stat) => {
-    if (stat.status) {
-      statusCounts[stat.status as keyof typeof statusCounts] = stat._count.status
-    }
-  })
+  stats.forEach(
+    (stat: {
+      status: keyof typeof statusCounts | null
+      _count: { status: number }
+    }) => {
+      if (stat.status) {
+        statusCounts[stat.status] = stat._count.status
+      }
+    },
+  )
 
   return NextResponse.json({
     success: true,

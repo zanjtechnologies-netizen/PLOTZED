@@ -19,7 +19,7 @@ export const GET = withErrorHandling(
     const result = await cache.get(
       CACHE_KEYS.PLOT_BY_ID(id),
       async () => {
-        const plot = await prisma.plot.findUnique({
+        const plot = await prisma.plots.findUnique({
           where: { id },
           include: {
             site_visits: {
@@ -81,7 +81,7 @@ export const PUT = withErrorHandling(
     if (isFeatured !== undefined) updateData.is_featured = isFeatured
     if (is_published !== undefined) updateData.is_published = is_published
 
-    const updatedPlot = await prisma.plot.update({
+    const updatedPlot = await prisma.plots.update({
       where: { id },
       data: updateData,
     })
@@ -123,7 +123,7 @@ export const DELETE = withErrorHandling(
     }
 
     const { id } = await params
-    await prisma.plot.delete({
+    await prisma.plots.delete({
       where: { id },
     })
 

@@ -24,7 +24,7 @@ export const GET = withErrorHandling(
       throw new ForbiddenError('You do not have permission to view this profile')
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id },
       select: {
         id: true,
@@ -74,7 +74,7 @@ export const PATCH = withErrorHandling(
     delete body.role
     delete body.kyc_verified
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
       where: { id },
       data: body,
       select: {

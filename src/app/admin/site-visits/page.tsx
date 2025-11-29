@@ -36,10 +36,10 @@ async function getSiteVisits(status?: string) {
     }
 
     // Fetch site visits with user and plot details
-    const siteVisits = await prisma.siteVisit.findMany({
+    const siteVisits = await prisma.site_visits.findMany({
       where: whereConditions,
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -47,7 +47,7 @@ async function getSiteVisits(status?: string) {
             phone: true,
           },
         },
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -66,7 +66,7 @@ async function getSiteVisits(status?: string) {
     })
 
     // Get summary statistics
-    const stats = await prisma.siteVisit.groupBy({
+    const stats = await prisma.site_visits.groupBy({
       by: ['status'],
       _count: {
         status: true,
@@ -81,7 +81,7 @@ async function getSiteVisits(status?: string) {
       RESCHEDULED: 0,
     }
 
-    stats.forEach((stat) => {
+    stats.forEach((stat: { status: string | null; _count: { status: number } }) => {
       if (stat.status) {
         statusCounts[stat.status as keyof typeof statusCounts] = stat._count.status
       }
@@ -105,8 +105,14 @@ export default async function SiteVisitsPage({
   const params = await searchParams
   const data = await getSiteVisits(params.status)
 
+  // Define a type for a single site visit based on what getSiteVisits returns
+  type SiteVisit = NonNullable<typeof data>['siteVisits'][number]
+
   // Filter out site visits with missing user or plot data (in case of deleted records)
-  const siteVisits = (data?.siteVisits || []).filter((v): v is typeof v & { user: NonNullable<typeof v.user>, plot: NonNullable<typeof v.plot> } => v.user !== null && v.plot !== null)
+  const siteVisits = (data?.siteVisits || []).filter(
+    (v: SiteVisit): v is SiteVisit & { users: NonNullable<SiteVisit['users']>; plots: NonNullable<SiteVisit['plots']> } =>
+      v.users !== null && v.plots !== null
+  )
   const stats = data?.stats || {
     PENDING: 0,
     CONFIRMED: 0,
@@ -164,7 +170,7 @@ export default async function SiteVisitsPage({
           </div>
         ) : (
           <div className="divide-y divide-gray-200">
-            {siteVisits.map((visit: any) => {
+            {siteVisits.map((visit: SiteVisit) => {
               const StatusIcon = statusIcons[visit.status]
               return (
                 <div key={visit.id} className="p-6 hover:bg-gray-50 transition">
@@ -173,7 +179,7 @@ export default async function SiteVisitsPage({
                       {/* Property Info */}
                       <div className="flex items-center space-x-3 mb-3">
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {visit.plot.title}
+                          {visit.plots.title}
                         </h3>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium border ${
@@ -202,11 +208,11 @@ export default async function SiteVisitsPage({
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <User className="w-4 h-4 mr-2" />
-                          {visit.user.name} ({visit.attendees} people)
+                          {visit.users.name} ({visit.attendees} people)
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <MapPin className="w-4 h-4 mr-2" />
-                          {visit.plot.city}, {visit.plot.state}
+                          {visit.plots.city}, {visit.plots.state}
                         </div>
                       </div>
 
@@ -214,7 +220,7 @@ export default async function SiteVisitsPage({
                       <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                         <div className="text-xs text-gray-500 mb-1">Customer Contact</div>
                         <div className="text-sm text-gray-900">
-                          {visit.user.email} • {visit.user.phone || 'No phone'}
+                          {visit.users.email} • {visit.users.phone || 'No phone'}
                         </div>
                       </div>
 

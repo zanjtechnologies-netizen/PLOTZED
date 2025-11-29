@@ -37,18 +37,18 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     contactedInquiries,
     convertedInquiries,
   ] = await Promise.all([
-    prisma.inquiry.count(),
-    prisma.inquiry.count({ where: { status: 'NEW' } }),
-    prisma.inquiry.count({ where: { status: 'CONTACTED' } }),
-    prisma.inquiry.count({ where: { status: 'CONVERTED' } }),
+    prisma.inquiries.count(),
+    prisma.inquiries.count({ where: { status: 'NEW' } }),
+    prisma.inquiries.count({ where: { status: 'CONTACTED' } }),
+    prisma.inquiries.count({ where: { status: 'CONVERTED' } }),
   ])
 
   // Get inquiries with user and plot details (with optional filtering)
-  const inquiries = await prisma.inquiry.findMany({
+  const inquiries = await prisma.inquiries.findMany({
     where: whereConditions,
     orderBy: { created_at: 'desc' },
     include: {
-      user: {
+      users: {
         select: {
           id: true,
           name: true,
@@ -56,7 +56,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
           phone: true,
         },
       },
-      plot: {
+      plots: {
         select: {
           id: true,
           title: true,

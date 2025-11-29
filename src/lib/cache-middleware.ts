@@ -15,7 +15,7 @@
  * Usage:
  *   export const GET = withCache(
  *     async (request) => {
- *       const plots = await prisma.plot.findMany()
+ *       const plots = await prisma.plots.findMany()
  *       return successResponse(plots)
  *     },
  *     { ttl: 300, key: 'plots:all' }

@@ -7,10 +7,22 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { SiteVisitStatus, SiteVisit, Plot } from '@prisma/client'
+import { SiteVisitStatus } from '@prisma/client'
 
-interface SiteVisitWithPlot extends SiteVisit {
-  plot: Pick<Plot, 'title' | 'price' | 'images' | 'address' | 'city' | 'state'>
+interface SiteVisitWithPlot {
+  id: string
+  visit_date: Date
+  visit_time: string
+  attendees: number
+  status: SiteVisitStatus
+  plots: {
+    title: string
+    price: any
+    images: string[]
+    address: string
+    city: string
+    state: string
+  }
 }
 
 export const metadata: Metadata = {
@@ -30,12 +42,12 @@ export default async function DashboardPage() {
   }
 
   // Fetch user data with site visits
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { id: session.user.id },
     include: {
       site_visits: {
         include: {
-          plot: {
+          plots: {
             select: {
               title: true,
               price: true,
@@ -53,10 +65,10 @@ export default async function DashboardPage() {
 
   // Separate upcoming and past visits
   const now = new Date()
-  const upcomingVisits = user?.site_visits.filter(visit =>
+  const upcomingVisits = user?.site_visits.filter((visit: any) =>
     new Date(visit.visit_date) >= now && visit.status !== 'CANCELLED' && visit.status !== 'COMPLETED'
   ) || []
-  const pastVisits = user?.site_visits.filter(visit =>
+  const pastVisits = user?.site_visits.filter((visit: any) =>
     new Date(visit.visit_date) < now || visit.status === 'CANCELLED' || visit.status === 'COMPLETED'
   ) || []
 
@@ -125,8 +137,8 @@ export default async function DashboardPage() {
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-lg">{visit.plot.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{visit.plot.city}, {visit.plot.state}</p>
+                        <h3 className="font-semibold text-lg">{visit.plots.title}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{visit.plots.city}, {visit.plots.state}</p>
                         <div className="flex items-center gap-4 text-sm">
                           <span className="font-medium">
                             📅 {visitDate.toLocaleDateString('en-IN', {
@@ -183,8 +195,8 @@ export default async function DashboardPage() {
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-1">
-                        <h3 className="font-semibold">{visit.plot.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{visit.plot.city}, {visit.plot.state}</p>
+                        <h3 className="font-semibold">{visit.plots.title}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{visit.plots.city}, {visit.plots.state}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <span>
                             📅 {visitDate.toLocaleDateString('en-IN', {

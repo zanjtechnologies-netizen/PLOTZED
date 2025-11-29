@@ -20,12 +20,15 @@ const statusColors: Record<string, string> = {
 async function getPropertiesData() {
   try {
     // Fetch data directly from database (more efficient than HTTP fetch)
-    const properties = await prisma.plot.findMany({
+    const properties = await prisma.plots.findMany({
       orderBy: { created_at: 'desc' },
     })
 
+    // Infer the type from the properties array
+    type Plot = (typeof properties)[number]
+
     // Convert Decimal objects to numbers for Client Component serialization
-    const serializedProperties = properties.map((property) => ({
+    const serializedProperties = properties.map((property: Plot) => ({
       ...property,
       price: property.price.toNumber(),
       booking_amount: property.booking_amount.toNumber(),
@@ -38,9 +41,9 @@ async function getPropertiesData() {
       properties: serializedProperties,
       stats: {
         total: properties.length,
-        available: properties.filter((p) => p.status === 'AVAILABLE').length,
-        booked: properties.filter((p) => p.status === 'BOOKED').length,
-        sold: properties.filter((p) => p.status === 'SOLD').length,
+        available: properties.filter((p: Plot) => p.status === 'AVAILABLE').length,
+        booked: properties.filter((p: Plot) => p.status === 'BOOKED').length,
+        sold: properties.filter((p: Plot) => p.status === 'SOLD').length,
       },
     }
   } catch (error) {

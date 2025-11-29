@@ -27,9 +27,9 @@ export const GET = withErrorHandling(
     const limit = parseInt(searchParams.get('limit') || '50')
     const skip = (page - 1) * limit
 
-    const total = await prisma.user.count()
+    const total = await prisma.users.count()
 
-    const users = await prisma.user.findMany({
+    const users = await prisma.users.findMany({
       skip,
       take: limit,
       orderBy: { created_at: 'desc' },

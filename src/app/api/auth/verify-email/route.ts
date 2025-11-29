@@ -21,7 +21,7 @@ export const POST = withErrorHandling(
     const { token } = verifySchema.parse(body)
 
     // Find user with this verification token
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { verification_token: token },
     })
 
@@ -42,7 +42,7 @@ export const POST = withErrorHandling(
     }
 
     // Verify the email
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
         email_verified: true,
@@ -75,7 +75,7 @@ export const GET = withErrorHandling(
     }
 
     // Find user with this verification token
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { verification_token: token },
     })
 
@@ -96,7 +96,7 @@ export const GET = withErrorHandling(
     }
 
     // Verify the email
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
         email_verified: true,

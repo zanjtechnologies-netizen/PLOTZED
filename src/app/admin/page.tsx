@@ -17,6 +17,7 @@ import {
 import StatsCard from '@/components/admin/StatsCard'
 import RecentActivity from '@/components/admin/RecentActivity'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 async function getDashboardData() {
   try {
@@ -31,38 +32,38 @@ async function getDashboardData() {
       pendingSiteVisits,
       pendingInquiries,
     ] = await Promise.all([
-      prisma.plot.count(),
-      prisma.plot.count({ where: { status: 'AVAILABLE' } }),
-      prisma.plot.count({ where: { status: 'BOOKED' } }),
-      prisma.plot.count({ where: { status: 'SOLD' } }),
-      prisma.user.count({ where: { role: 'CUSTOMER' } }),
-      prisma.siteVisit.count(),
-      prisma.siteVisit.count({ where: { status: 'PENDING' } }),
-      prisma.inquiry.count({ where: { status: 'NEW' } }),
+      prisma.plots.count(),
+      prisma.plots.count({ where: { status: 'AVAILABLE' } }),
+      prisma.plots.count({ where: { status: 'BOOKED' } }),
+      prisma.plots.count({ where: { status: 'SOLD' } }),
+      prisma.users.count({ where: { role: 'CUSTOMER' } }),
+      prisma.site_visits.count(),
+      prisma.site_visits.count({ where: { status: 'PENDING' } }),
+      prisma.inquiries.count({ where: { status: 'NEW' } }),
     ])
 
     // Recent activities
-    const recentSiteVisits = await prisma.siteVisit.findMany({
+    const recentSiteVisits = await prisma.site_visits.findMany({
       take: 5,
       orderBy: { created_at: 'desc' },
       include: {
-        user: {
+        users: {
           select: { name: true, email: true },
         },
-        plot: {
+        plots: {
           select: { title: true, city: true },
         },
       },
     })
 
-    const recentInquiries = await prisma.inquiry.findMany({
+    const recentInquiries = await prisma.inquiries.findMany({
       take: 5,
       orderBy: { created_at: 'desc' },
       include: {
-        user: {
+        users: {
           select: { name: true, email: true },
         },
-        plot: {
+        plots: {
           select: { title: true, city: true },
         },
       },
@@ -102,8 +103,12 @@ export default async function AdminDashboard() {
   }
 
   // Filter out items with missing user or plot data (in case of deleted records)
-  const recentSiteVisits = (data?.recentSiteVisits || []).filter((v): v is typeof v & { user: NonNullable<typeof v.user>, plot: NonNullable<typeof v.plot> } => v.user !== null && v.plot !== null)
-  const recentInquiries = (data?.recentInquiries || []).filter((i): i is typeof i & { user: NonNullable<typeof i.user>, plot: NonNullable<typeof i.plot> } => i.user !== null && i.plot !== null)
+  const recentSiteVisits = (data?.recentSiteVisits || []).filter(
+    (v: any) => v.users !== null && v.plots !== null
+  ) as any
+  const recentInquiries = (data?.recentInquiries || []).filter(
+    (i: any) => i.users !== null && i.plots !== null
+  ) as any
 
   return (
     <div className="space-y-8">

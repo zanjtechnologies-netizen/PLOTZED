@@ -4,6 +4,7 @@
 
 import { PrismaClient } from '@prisma/client'
 import * as bcrypt from 'bcryptjs'
+import { randomUUID } from 'crypto'
 
 const prisma = new PrismaClient()
 
@@ -21,6 +22,8 @@ async function main() {
     where: { email: 'plotzedrealestate@gmail.com' },
     update: {},
     create: {
+      id: randomUUID(),
+      updated_at: new Date(),
       email: 'plotzedrealestate@gmail.com',
       password_hash: adminPassword,
       name: 'Admin User',
@@ -45,6 +48,8 @@ async function main() {
       where: { email: 'rajesh.kumar@example.com' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         email: 'rajesh.kumar@example.com',
         password_hash: customerPassword,
         name: 'Rajesh Kumar',
@@ -58,6 +63,8 @@ async function main() {
       where: { email: 'priya.sharma@example.com' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         email: 'priya.sharma@example.com',
         password_hash: customerPassword,
         name: 'Priya Sharma',
@@ -71,6 +78,8 @@ async function main() {
       where: { email: 'amit.patel@example.com' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         email: 'amit.patel@example.com',
         password_hash: customerPassword,
         name: 'Amit Patel',
@@ -99,6 +108,8 @@ async function main() {
       where: { slug: 'casuarina-greens' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Casuarina Greens',
         slug: 'casuarina-greens',
         description: 'Discover the rare opportunity to own premium land in the heart of Auroville\'s green belt, surrounded by lush Casuarina trees and unspoiled landscapes. Each land parcel is thoughtfully planned to provide privacy, long-term value, and an environment perfect for building your dream villa, retreat home, or eco-conscious estate. With proximity to Pondicherry city and major connecting highways, this project blends nature, accessibility, and future appreciation in one exclusive location.',
@@ -136,6 +147,8 @@ async function main() {
       where: { slug: 'katumode-greens' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Katumode Greens',
         slug: 'katumode-greens',
         description: 'This premium plot is located in one of Auroville\'s most sought-after and serene green-belt areas, celebrated for its tranquility and closeness to lifestyle hubs. It is perfectly suited for luxury villa developments, wellness retreats, or hospitality projects, or as a secure long-term investment. Auroville continues to attract global interest for sustainable living, unique community, and spiritual energy, making this a future-proof real estate asset.',
@@ -173,6 +186,8 @@ async function main() {
       where: { slug: 'house-property-koonimedu' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'House Property',
         slug: 'house-property-koonimedu',
         description: 'This premium plot is located in Koonimedu, just off the Pondy-Chennai ECR main road, offering a rare blend of beachside calm and excellent connectivity. With a quick 10-minute drive to the ECR main road, this property is perfectly suited for luxury villa development, wellness retreats, or hospitality projects, or as a secure long-term investment. A serene environment with beaches, resorts, and natural attractions makes this a highly desirable and future-proof real estate asset.',
@@ -210,6 +225,8 @@ async function main() {
       where: { slug: 'luxury-villa-plot-juhu-mumbai' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Luxury Villa Plot in Juhu, Mumbai',
         slug: 'luxury-villa-plot-juhu-mumbai',
         description: 'Premium residential plot in the heart of Juhu with sea-facing views. Perfect for building your dream villa. Located in a gated community with 24/7 security.',
@@ -238,6 +255,8 @@ async function main() {
       where: { slug: 'beachfront-land-calangute-goa' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Beachfront Land in Calangute, Goa',
         slug: 'beachfront-land-calangute-goa',
         description: 'Stunning beachfront property with direct beach access. Ideal for resort or luxury villa development. Clear title, all approvals in place.',
@@ -264,6 +283,8 @@ async function main() {
       where: { slug: 'commercial-plot-whitefield-bangalore' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Commercial Plot in Whitefield, Bangalore',
         slug: 'commercial-plot-whitefield-bangalore',
         description: 'Premium commercial plot in IT hub of Bangalore. Ideal for office complex or retail development. Excellent connectivity to major tech parks.',
@@ -290,6 +311,8 @@ async function main() {
       where: { slug: 'hill-view-plot-shimla' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Hill View Plot in Shimla, Himachal',
         slug: 'hill-view-plot-shimla',
         description: 'Breathtaking mountain views from this premium plot. Perfect for vacation home or resort. Cool climate year-round.',
@@ -316,6 +339,8 @@ async function main() {
       where: { slug: 'agricultural-land-lonavala' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Agricultural Land in Lonavala, Pune',
         slug: 'agricultural-land-lonavala',
         description: 'Prime agricultural land with scenic hill views. Suitable for farmhouse or weekend retreat. Good water supply, all-weather road access.',
@@ -342,6 +367,8 @@ async function main() {
       where: { slug: 'residential-plot-dlf-gurgaon' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Residential Plot in DLF Phase 4, Gurgaon',
         slug: 'residential-plot-dlf-gurgaon',
         description: 'Premium residential plot in prestigious DLF Phase 4. Surrounded by luxury villas and modern amenities. Metro connectivity.',
@@ -368,6 +395,8 @@ async function main() {
       where: { slug: 'lake-view-plot-nainital' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Lake View Plot in Nainital, Uttarakhand',
         slug: 'lake-view-plot-nainital',
         description: 'Scenic plot with stunning lake views. Perfect for building a holiday home. Peaceful location with easy access to town.',
@@ -394,6 +423,8 @@ async function main() {
       where: { slug: 'commercial-plot-connaught-place-delhi' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Commercial Plot in Connaught Place, Delhi',
         slug: 'commercial-plot-connaught-place-delhi',
         description: 'Prime commercial plot in the heart of Delhi. Excellent for retail or office space. High footfall area with metro connectivity.',
@@ -422,6 +453,8 @@ async function main() {
       where: { slug: 'residential-plot-sector-50-noida' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Residential Plot in Sector 50, Noida',
         slug: 'residential-plot-sector-50-noida',
         description: 'Well-located residential plot in established sector. Close to schools, hospitals, and shopping centers. Metro station within walking distance.',
@@ -448,6 +481,8 @@ async function main() {
       where: { slug: 'farmhouse-plot-alibaug' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Farmhouse Plot in Alibaug, Maharashtra',
         slug: 'farmhouse-plot-alibaug',
         description: 'Spacious farmhouse plot near beaches. Perfect weekend getaway location. Coconut and mango trees. Well water available.',
@@ -474,6 +509,8 @@ async function main() {
       where: { slug: 'residential-plot-koramangala-bangalore' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Residential Plot in Koramangala, Bangalore',
         slug: 'residential-plot-koramangala-bangalore',
         description: 'Premium residential plot in upscale Koramangala. Surrounded by IT professionals and modern infrastructure. Great investment opportunity.',
@@ -500,6 +537,8 @@ async function main() {
       where: { slug: 'villa-plot-ecr-chennai' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Villa Plot on ECR, Chennai',
         slug: 'villa-plot-ecr-chennai',
         description: 'Beach-facing villa plot on East Coast Road. Stunning sea views. Gated community with modern amenities and security.',
@@ -528,6 +567,8 @@ async function main() {
       where: { slug: 'commercial-plot-mg-road-pune' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Commercial Plot on MG Road, Pune',
         slug: 'commercial-plot-mg-road-pune',
         description: 'Prime commercial plot on busy MG Road. High visibility location. Perfect for showroom or office space.',
@@ -554,6 +595,8 @@ async function main() {
       where: { slug: 'residential-plot-banjara-hills-hyderabad' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Residential Plot in Banjara Hills, Hyderabad',
         slug: 'residential-plot-banjara-hills-hyderabad',
         description: 'Luxury residential plot in prestigious Banjara Hills. Elite neighborhood with excellent infrastructure.',
@@ -580,6 +623,8 @@ async function main() {
       where: { slug: 'industrial-plot-manesar-gurgaon' },
       update: {},
       create: {
+        id: randomUUID(),
+        updated_at: new Date(),
         title: 'Industrial Plot in Manesar, Gurgaon',
         slug: 'industrial-plot-manesar-gurgaon',
         description: 'Large industrial plot in HSIIDC sector. Perfect for manufacturing unit or warehouse. Good road connectivity.',
@@ -627,6 +672,8 @@ async function main() {
     // PENDING
     prisma.site_visits.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[0].id,
         plot_id: plots[0].id,
         visit_date: tomorrow,
@@ -639,6 +686,8 @@ async function main() {
     // CONFIRMED
     prisma.site_visits.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[1].id,
         plot_id: plots[2].id,
         visit_date: nextWeek,
@@ -651,6 +700,8 @@ async function main() {
     // COMPLETED
     prisma.site_visits.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[2].id,
         plot_id: plots[4].id,
         visit_date: yesterday,
@@ -663,6 +714,8 @@ async function main() {
     // CANCELLED
     prisma.site_visits.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[0].id,
         plot_id: plots[1].id,
         visit_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -675,6 +728,8 @@ async function main() {
     // RESCHEDULED
     prisma.site_visits.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[1].id,
         plot_id: plots[3].id,
         visit_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -697,6 +752,8 @@ async function main() {
     // NEW
     prisma.inquiries.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[0].id,
         plot_id: plots[5].id,
         name: customers[0].name,
@@ -710,6 +767,8 @@ async function main() {
     // CONTACTED
     prisma.inquiries.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: customers[1].id,
         plot_id: plots[6].id,
         name: customers[1].name,
@@ -723,6 +782,8 @@ async function main() {
     // QUALIFIED
     prisma.inquiries.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         name: 'Suresh Menon',
         email: 'suresh.menon@example.com',
         phone: '+919876543220',

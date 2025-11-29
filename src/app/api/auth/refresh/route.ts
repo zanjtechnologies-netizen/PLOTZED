@@ -26,7 +26,7 @@ export const POST = withErrorHandling(
     }
 
     // Verify user still exists and is active
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: session.user.id },
       select: {
         id: true,
@@ -42,7 +42,7 @@ export const POST = withErrorHandling(
     }
 
     // Update last login
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: { last_login: new Date() },
     })
@@ -56,7 +56,7 @@ export const POST = withErrorHandling(
     // NextAuth will automatically handle the token refresh
     return successResponse({
       message: 'Session refreshed successfully',
-      user: {
+      users: {
         id: user.id,
         email: user.email,
         name: user.name,
@@ -81,7 +81,7 @@ export const GET = withErrorHandling(
     }
 
     // Verify user still exists
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: session.user.id },
       select: {
         id: true,
@@ -99,7 +99,7 @@ export const GET = withErrorHandling(
 
     return successResponse({
       authenticated: true,
-      user: {
+      users: {
         id: user.id,
         email: user.email,
         name: user.name,

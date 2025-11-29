@@ -4,6 +4,7 @@
 export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
+import { randomUUID } from 'crypto'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
@@ -32,10 +33,10 @@ export const GET = withErrorHandling(
 
     const { id } = await params
 
-    const inquiry = await prisma.inquiry.findUnique({
+    const inquiry = await prisma.inquiries.findUnique({
       where: { id },
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -43,7 +44,7 @@ export const GET = withErrorHandling(
             phone: true,
           },
         },
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -81,11 +82,11 @@ export const PATCH = withErrorHandling(
     const body = await request.json()
     const validatedData = updateInquirySchema.parse(body)
 
-    const inquiry = await prisma.inquiry.update({
+    const inquiry = await prisma.inquiries.update({
       where: { id },
       data: validatedData,
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -93,7 +94,7 @@ export const PATCH = withErrorHandling(
             phone: true,
           },
         },
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -105,8 +106,9 @@ export const PATCH = withErrorHandling(
     })
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
+        id: randomUUID(),
         user_id: session.user.id,
         action: 'INQUIRY_UPDATED',
         entity_type: 'inquiry',
@@ -142,13 +144,14 @@ export const DELETE = withErrorHandling(
 
     const { id } = await params
 
-    await prisma.inquiry.delete({
+    await prisma.inquiries.delete({
       where: { id },
     })
 
     // Log activity
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
+        id: randomUUID(),
         user_id: session.user.id,
         action: 'INQUIRY_DELETED',
         entity_type: 'inquiry',

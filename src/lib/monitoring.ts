@@ -1,6 +1,7 @@
 // src/lib/monitoring.ts
 
 import { prisma } from './prisma'
+import { randomUUID } from 'crypto'
 
 interface SecurityEvent {
   type: 'failed_login' | 'suspicious_activity' | 'rate_limit_exceeded' | 'unauthorized_access'
@@ -12,8 +13,9 @@ interface SecurityEvent {
 
 export async function logSecurityEvent(event: SecurityEvent) {
   try {
-    await prisma.activityLog.create({
+    await prisma.activity_logs.create({
       data: {
+        id: randomUUID(),
         action: event.type,
         user_id: event.user_id,
         ip_address: event.ip_address,
@@ -44,7 +46,7 @@ async function sendSecurityAlert(event: SecurityEvent) {
 
 // Detect suspicious patterns
 export async function detectSuspiciousActivity(userId: string): Promise<boolean> {
-  const recentLogs = await prisma.activityLog.findMany({
+  const recentLogs = await prisma.activity_logs.findMany({
     where: {
       user_id: userId,
       created_at: {
@@ -60,7 +62,7 @@ export async function detectSuspiciousActivity(userId: string): Promise<boolean>
   }
 
   // Check for failed logins
-  const failedLogins = recentLogs.filter(log => log.action === 'failed_login')
+  const failedLogins = recentLogs.filter((log: any) => log.action === 'failed_login')
   if (failedLogins.length > 5) {
     return true
   }

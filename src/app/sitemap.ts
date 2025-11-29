@@ -59,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch all published plots (exclude SOLD from public sitemap)
-    const plots = await prisma.plot.findMany({
+    const plots = await prisma.plots.findMany({
       where: {
         status: {
           in: ['AVAILABLE', 'BOOKED'],

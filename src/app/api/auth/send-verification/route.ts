@@ -23,7 +23,7 @@ export const POST = withErrorHandling(
     const { email } = sendVerificationSchema.parse(body)
 
     // Find user
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { email },
     })
 
@@ -48,7 +48,7 @@ export const POST = withErrorHandling(
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
 
     // Update user with verification token
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
         verification_token: verificationToken,
