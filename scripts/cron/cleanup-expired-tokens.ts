@@ -45,7 +45,7 @@ async function cleanupExpiredTokens(): Promise<CleanupResult> {
 
     // Clean up expired email verification tokens
     console.log('🔍 Cleaning expired verification tokens...')
-    const verificationResult = await prisma.user.updateMany({
+    const verificationResult = await prisma.users.updateMany({
       where: {
         verification_token: { not: null },
         verification_token_expires: { lt: now },
@@ -60,7 +60,7 @@ async function cleanupExpiredTokens(): Promise<CleanupResult> {
 
     // Clean up expired password reset tokens
     console.log('🔍 Cleaning expired reset tokens...')
-    const resetResult = await prisma.user.updateMany({
+    const resetResult = await prisma.users.updateMany({
       where: {
         reset_token: { not: null },
         reset_token_expires: { lt: now },

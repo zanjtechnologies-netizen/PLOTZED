@@ -41,10 +41,10 @@ export const GET = withErrorHandling(
 
     const { id } = await params
 
-    const siteVisit = await prisma.siteVisit.findUnique({
+    const siteVisit = await prisma.site_visits.findUnique({
       where: { id },
       include: {
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -56,7 +56,7 @@ export const GET = withErrorHandling(
             price: true,
           },
         },
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -106,16 +106,16 @@ export const PATCH = withErrorHandling(
     const validatedData = updateSiteVisitSchema.parse(body)
 
     // Fetch existing site visit
-    const existingSiteVisit = await prisma.siteVisit.findUnique({
+    const existingSiteVisit = await prisma.site_visits.findUnique({
       where: { id },
       include: {
-        plot: {
+        plots: {
           select: {
             title: true,
             address: true,
           },
         },
-        user: {
+        users: {
           select: {
             name: true,
             email: true,
@@ -168,11 +168,11 @@ export const PATCH = withErrorHandling(
     }
 
     // Update site visit
-    const updatedSiteVisit = await prisma.siteVisit.update({
+    const updatedSiteVisit = await prisma.site_visits.update({
       where: { id },
       data: updateData,
       include: {
-        plot: {
+        plots: {
           select: {
             title: true,
             address: true,
@@ -192,13 +192,13 @@ export const PATCH = withErrorHandling(
     // Send notification email if rescheduled
     if (validatedData.visit_date || validatedData.visit_time) {
       try {
-        if (existingSiteVisit.user.email) {
+        if (existingSiteVisit.users.email) {
           await sendEmail({
-            to: existingSiteVisit.user.email,
+            to: existingSiteVisit.users.email,
             subject: 'Site Visit Rescheduled - Plotzed Real Estate',
             html: emailTemplates.siteVisitConfirmation({
-              customerName: existingSiteVisit.user.name,
-              propertyName: updatedSiteVisit.plot.title,
+              customerName: existingSiteVisit.users.name,
+              propertyName: updatedSiteVisit.plots.title,
               visitDate: new Date(updatedSiteVisit.visit_date).toLocaleDateString('en-IN', {
                 weekday: 'long',
                 year: 'numeric',
@@ -245,15 +245,15 @@ export const DELETE = withErrorHandling(
     const { id } = await params
 
     // Fetch existing site visit
-    const siteVisit = await prisma.siteVisit.findUnique({
+    const siteVisit = await prisma.site_visits.findUnique({
       where: { id },
       include: {
-        plot: {
+        plots: {
           select: {
             title: true,
           },
         },
-        user: {
+        users: {
           select: {
             name: true,
             email: true,
@@ -285,7 +285,7 @@ export const DELETE = withErrorHandling(
     }
 
     // Update status to CANCELLED instead of deleting (for audit trail)
-    await prisma.siteVisit.update({
+    await prisma.site_visits.update({
       where: { id },
       data: {
         status: 'CANCELLED',
@@ -301,14 +301,14 @@ export const DELETE = withErrorHandling(
 
     // Send cancellation email
     try {
-      if (siteVisit.user.email) {
+      if (siteVisit.users.email) {
         await sendEmail({
-          to: siteVisit.user.email,
+          to: siteVisit.users.email,
           subject: 'Site Visit Cancelled - Plotzed Real Estate',
           html: `
             <h2>Site Visit Cancelled</h2>
-            <p>Dear ${siteVisit.user.name},</p>
-            <p>Your site visit for <strong>${siteVisit.plot.title}</strong> has been cancelled.</p>
+            <p>Dear ${siteVisit.users.name},</p>
+            <p>Your site visit for <strong>${siteVisit.plots.title}</strong> has been cancelled.</p>
             <p>If you would like to reschedule, please contact us or book a new visit through our website.</p>
             <p>Best regards,<br>Plotzed Real Estate Team</p>
           `,

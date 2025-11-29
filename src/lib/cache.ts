@@ -15,7 +15,7 @@
  *
  * Usage:
  *   const plots = await cache.get('plots:all', async () => {
- *     return await prisma.plot.findMany()
+ *     return await prisma.plots.findMany()
  *   }, 300) // Cache for 5 minutes
  */
 
@@ -342,7 +342,7 @@ export async function warmCache(): Promise<void> {
 
     try {
       // Cache featured plots
-      const featuredPlots = await prisma.plot.findMany({
+      const featuredPlots = await prisma.plots.findMany({
         where: { is_featured: true, status: 'AVAILABLE' },
         take: 10,
         orderBy: { created_at: 'desc' },
@@ -350,7 +350,7 @@ export async function warmCache(): Promise<void> {
       await set(CACHE_KEYS.PLOTS_FEATURED, featuredPlots, CACHE_TTL.LONG)
 
       // Cache available plots
-      const availablePlots = await prisma.plot.findMany({
+      const availablePlots = await prisma.plots.findMany({
         where: { status: 'AVAILABLE' },
         take: 50,
         orderBy: { created_at: 'desc' },

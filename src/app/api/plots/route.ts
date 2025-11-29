@@ -4,6 +4,7 @@
 export const runtime = "nodejs";
 
 import { NextRequest } from 'next/server'
+import { randomUUID } from 'crypto'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { createPlotSchema } from '@/lib/validators'
@@ -80,11 +81,11 @@ export const GET = withErrorHandling(
       cacheKey,
       async () => {
         // Get total count for pagination
-        const total = await prisma.plot.count({ where })
+        const total = await prisma.plots.count({ where })
 
         // Get plots with pagination and sorting
         // Featured properties appear first, then sorted by the specified field
-        const plots = await prisma.plot.findMany({
+        const plots = await prisma.plots.findMany({
           where,
           skip,
           take: limit,
@@ -122,7 +123,7 @@ export const GET = withErrorHandling(
         })
 
         // Convert Decimal fields to numbers for JSON serialization
-        const serializedPlots = plots.map(plot => ({
+        const serializedPlots = plots.map((plot: any) => ({
           ...plot,
           price: plot.price.toNumber(),
           booking_amount: plot.booking_amount.toNumber(),
@@ -175,8 +176,10 @@ export const POST = withErrorHandling(
 
     const { bookingAmount, plotSize, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
 
-    const newPlot = await prisma.plot.create({
+    const newPlot = await prisma.plots.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         ...restOfPlotData,
         slug,
         booking_amount: bookingAmount,

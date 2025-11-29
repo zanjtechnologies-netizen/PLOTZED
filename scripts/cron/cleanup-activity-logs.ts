@@ -48,7 +48,7 @@ async function cleanupActivityLogs(): Promise<CleanupResult> {
 
     console.log(`🔍 Deleting logs older than: ${cutoffDate.toISOString()}`)
 
-    const result = await prisma.activityLog.deleteMany({
+    const result = await prisma.activity_logs.deleteMany({
       where: {
         created_at: { lt: cutoffDate },
       },

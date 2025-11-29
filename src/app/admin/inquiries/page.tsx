@@ -42,18 +42,18 @@ async function getInquiriesData(status?: string) {
       contactedInquiries,
       convertedInquiries,
     ] = await Promise.all([
-      prisma.inquiry.count(),
-      prisma.inquiry.count({ where: { status: 'NEW' } }),
-      prisma.inquiry.count({ where: { status: 'CONTACTED' } }),
-      prisma.inquiry.count({ where: { status: 'CONVERTED' } }),
+      prisma.inquiries.count(),
+      prisma.inquiries.count({ where: { status: 'NEW' } }),
+      prisma.inquiries.count({ where: { status: 'CONTACTED' } }),
+      prisma.inquiries.count({ where: { status: 'CONVERTED' } }),
     ])
 
     // Get inquiries with user and plot details (with optional filtering)
-    const inquiries = await prisma.inquiry.findMany({
+    const inquiries = await prisma.inquiries.findMany({
       where: whereConditions,
       orderBy: { created_at: 'desc' },
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             name: true,
@@ -61,7 +61,7 @@ async function getInquiriesData(status?: string) {
             phone: true,
           },
         },
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -93,10 +93,15 @@ export default async function InquiriesPage({
 }: {
   searchParams: Promise<{ status?: string }>
 }) {
+  type InquiryWithUserAndPlot = Awaited<ReturnType<typeof getInquiriesData>>['inquiries'][number]
+
   const params = await searchParams
   const data = await getInquiriesData(params.status)
   // Filter out inquiries with missing user or plot data (in case of deleted records)
-  const inquiries = (data.inquiries || []).filter((i): i is typeof i & { user: NonNullable<typeof i.user>, plot: NonNullable<typeof i.plot> } => i.user !== null && i.plot !== null)
+  const inquiries = (data.inquiries || []).filter(
+    (i: InquiryWithUserAndPlot): i is typeof i & { users: NonNullable<typeof i.users>; plots: NonNullable<typeof i.plots> } =>
+      i.users !== null && i.plots !== null
+  )
   const stats = data.stats || { total: 0, new: 0, contacted: 0, converted: 0 }
 
   return (
@@ -148,7 +153,7 @@ export default async function InquiriesPage({
                       {/* Property Info */}
                       <div className="flex items-center space-x-3 mb-3">
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {inquiry.plot.title}
+                          {inquiry.plots.title}
                         </h3>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium border ${
@@ -170,19 +175,19 @@ export default async function InquiriesPage({
                       <div className="grid grid-cols-2 gap-4 mt-4">
                         <div className="flex items-center text-sm text-gray-600">
                           <User className="w-4 h-4 mr-2" />
-                          {inquiry.user.name}
+                          {inquiry.users.name}
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <Mail className="w-4 h-4 mr-2" />
-                          {inquiry.user.email}
+                          {inquiry.users.email}
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <Phone className="w-4 h-4 mr-2" />
-                          {inquiry.user.phone || 'N/A'}
+                          {inquiry.users.phone || 'N/A'}
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
                           <MapPin className="w-4 h-4 mr-2" />
-                          {inquiry.plot.city}, {inquiry.plot.state}
+                          {inquiry.plots.city}, {inquiry.plots.state}
                         </div>
                       </div>
 

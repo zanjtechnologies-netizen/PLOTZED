@@ -11,6 +11,7 @@ import { sendEmail, emailTemplates } from '@/lib/email'
 import { createdResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
+import { randomUUID } from 'crypto'
 
 const siteVisitSchema = z.object({
   plot_id: z.string().uuid(),
@@ -36,8 +37,10 @@ export const POST = withErrorHandling(
     const body = await request.json()
     const validatedData = siteVisitSchema.parse(body)
 
-    const siteVisit = await prisma.siteVisit.create({
+    const siteVisit = await prisma.site_visits.create({
       data: {
+        id: randomUUID(),
+        updated_at: new Date(),
         user_id: session.user.id,
         plot_id: validatedData.plot_id,
         visit_date: new Date(validatedData.visit_date),
@@ -51,7 +54,7 @@ export const POST = withErrorHandling(
         status: 'PENDING',
       },
       include: {
-        plot: {
+        plots: {
           select: {
             title: true,
             address: true,
@@ -69,7 +72,7 @@ export const POST = withErrorHandling(
     })
 
     // Send confirmation email
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: session.user.id },
       select: { name: true, email: true },
     })
@@ -81,7 +84,7 @@ export const POST = withErrorHandling(
           subject: 'Site Visit Scheduled - Plotzed Real Estate',
           html: emailTemplates.siteVisitConfirmation({
             customerName: user.name,
-            propertyName: siteVisit.plot.title,
+            propertyName: siteVisit.plots.title,
             visitDate: new Date(siteVisit.visit_date).toLocaleDateString('en-IN', {
               weekday: 'long',
               year: 'numeric',
@@ -118,10 +121,10 @@ export const GET = withErrorHandling(
       throw new UnauthorizedError('Please login to view site visits')
     }
 
-    const siteVisits = await prisma.siteVisit.findMany({
+    const siteVisits = await prisma.site_visits.findMany({
       where: { user_id: session.user.id },
       include: {
-        plot: {
+        plots: {
           select: {
             title: true,
             address: true,

@@ -23,7 +23,7 @@ export const POST = withErrorHandling(
     const { email } = forgotPasswordSchema.parse(body)
 
     // Find user
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { email },
     })
 
@@ -56,7 +56,7 @@ export const POST = withErrorHandling(
     const resetExpires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 
     // Update user with reset token
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
         reset_token: resetToken,

@@ -21,6 +21,7 @@
 
 import { PrismaClient } from '@prisma/client'
 import { sendEmail } from '@/lib/email'
+import { randomUUID } from 'crypto'
 
 const prisma = new PrismaClient()
 
@@ -52,7 +53,7 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
     console.log(`   Start: ${reminderWindowStart.toISOString()}`)
     console.log(`   End: ${reminderWindowEnd.toISOString()}`)
 
-    const upcomingSiteVisits = await prisma.siteVisit.findMany({
+    const upcomingSiteVisits = await prisma.site_visits.findMany({
       where: {
         visit_date: {
           gte: reminderWindowStart,
@@ -63,7 +64,8 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
         // We'll add a 'reminder_sent' field to track this
       },
       include: {
-        user: {
+
+        users: {
           select: {
             id: true,
             name: true,
@@ -71,7 +73,7 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
             phone: true,
           },
         },
-        plot: {
+        plots: {
           select: {
             id: true,
             title: true,
@@ -104,8 +106,8 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
     // Process each site visit
     for (const siteVisit of upcomingSiteVisits) {
       console.log(`\n📅 Processing site visit ${siteVisit.id}:`)
-      console.log(`   User: ${siteVisit.user?.name}`)
-      console.log(`   Plot: ${siteVisit.plot.title}`)
+      console.log(`   User: ${siteVisit.users?.name}`)
+      console.log(`   Plot: ${siteVisit.plots.title}`)
       console.log(`   Date: ${siteVisit.visit_date.toLocaleDateString('en-IN')}`)
       console.log(`   Time: ${siteVisit.visit_time}`)
 
@@ -118,8 +120,8 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
           day: 'numeric',
         })
 
-        const userEmail = siteVisit.user?.email
-        const userName = siteVisit.user?.name
+        const userEmail = siteVisit.users?.email
+        const userName = siteVisit.users?.name
 
         // Send email reminder
         if (userEmail) {
@@ -137,7 +139,7 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
 
                   <div style="background: #F3F4F6; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <h3 style="margin-top: 0; color: #1F2937;">Visit Details</h3>
-                    <p style="margin: 5px 0;"><strong>Property:</strong> ${siteVisit.plot.title}</p>
+                    <p style="margin: 5px 0;"><strong>Property:</strong> ${siteVisit.plots.title}</p>
                     <p style="margin: 5px 0;"><strong>Date:</strong> ${formattedDate}</p>
                     <p style="margin: 5px 0;"><strong>Time:</strong> ${siteVisit.visit_time}</p>
                     ${siteVisit.attendees ? `<p style="margin: 5px 0;"><strong>Attendees:</strong> ${siteVisit.attendees}</p>` : ''}
@@ -145,9 +147,9 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
 
                   <div style="background: #FEF3C7; padding: 15px; border-radius: 8px; border-left: 4px solid #F59E0B; margin: 20px 0;">
                     <h4 style="margin-top: 0; color: #92400E;">Location</h4>
-                    <p style="margin: 5px 0;">${siteVisit.plot.address}</p>
-                    <p style="margin: 5px 0;">${siteVisit.plot.city}, ${siteVisit.plot.state}</p>
-                    ${siteVisit.plot.address ? `<p style="margin-top: 10px;"><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteVisit.plot.address)}" style="color: #4F46E5; text-decoration: none;">📍 Get Directions</a></p>` : ''}
+                    <p style="margin: 5px 0;">${siteVisit.plots.address}</p>
+                    <p style="margin: 5px 0;">${siteVisit.plots.city}, ${siteVisit.plots.state}</p>
+                    ${siteVisit.plots.address ? `<p style="margin-top: 10px;"><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteVisit.plots.address)}" style="color: #4F46E5; text-decoration: none;">📍 Get Directions</a></p>` : ''}
                   </div>
 
                   ${siteVisit.notes ? `
@@ -186,11 +188,11 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
         }
 
         // Send SMS reminder (if configured and phone available)
-        const userPhone = siteVisit.user?.phone
+        const userPhone = siteVisit.users?.phone
         if (userPhone && process.env.SMS_API_KEY) {
           try {
             // TODO: Implement SMS sending
-            // const smsMessage = `Reminder: Site visit tomorrow at ${siteVisit.visit_time} for ${siteVisit.plot.title}. Location: ${siteVisit.plot.address}. Questions? Call us at +91 98765 43210`
+            // const smsMessage = `Reminder: Site visit tomorrow at ${siteVisit.visit_time} for ${siteVisit.plots.title}. Location: ${siteVisit.plots.address}. Questions? Call us at +91 98765 43210`
             // await sendSMS(userPhone, smsMessage)
 
             smsSent++
@@ -202,8 +204,9 @@ async function sendSiteVisitReminders(): Promise<ReminderResult> {
         }
 
         // Log activity
-        await prisma.activityLog.create({
+        await prisma.activity_logs.create({
           data: {
+            id: randomUUID(),
             user_id: siteVisit.user_id || null,
             action: 'SITE_VISIT_REMINDER_SENT',
             entity_type: 'site_visit',

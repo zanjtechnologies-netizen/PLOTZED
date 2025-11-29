@@ -60,7 +60,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // 3️⃣ Check if user exists
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
           where: { email },
         });
 
@@ -101,7 +101,7 @@ export const authOptions: NextAuthOptions = {
         await recordSuccessfulLogin(email);
 
         // 7️⃣ Update last login
-        await prisma.user.update({
+        await prisma.users.update({
           where: { id: user.id },
           data: { last_login: new Date() },
         });
@@ -126,7 +126,7 @@ export const authOptions: NextAuthOptions = {
           // NOTE: The `emailVerified` field (DateTime) is not updated here due to a
           // possible stale Prisma Client type definition.
           // Use updateMany to avoid error if user doesn't exist yet
-          await prisma.user.updateMany({
+          await prisma.users.updateMany({
             where: { id: user.id },
             data: {
               email_verified: true,
@@ -149,7 +149,7 @@ export const authOptions: NextAuthOptions = {
       }
       // For OAuth sign-ins, fetch role from database
       if (account && (account.provider === "google" || account.provider === "facebook")) {
-        const dbUser = await prisma.user.findUnique({
+        const dbUser = await prisma.users.findUnique({
           where: { id: token.id as string },
           select: { role: true },
         });

@@ -7,6 +7,7 @@ import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client';
 import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
 import { ForbiddenError, UnauthorizedError } from '@/lib/errors'
 import { structuredLogger } from '@/lib/structured-logger'
@@ -74,21 +75,21 @@ export const GET = withErrorHandling(
       inquiryByStatus,
     ] = await Promise.all([
       // Plot statistics
-      prisma.plot.groupBy({
+      prisma.plots.groupBy({
         by: ['status'],
         _count: true,
       }),
 
-      prisma.plot.groupBy({
+      prisma.plots.groupBy({
         by: ['city'],
         _count: true,
         orderBy: { _count: { id: 'desc' } },
         take: 10,
       }),
 
-      prisma.plot.count({ where: { is_published: true } }),
+      prisma.plots.count({ where: { is_published: true } }),
 
-      prisma.plot.findMany({
+      prisma.plots.findMany({
         where: { created_at: { gte: startDate } },
         orderBy: { created_at: 'desc' },
         take: 5,
@@ -100,22 +101,24 @@ export const GET = withErrorHandling(
           status: true,
           created_at: true,
         },
-      }).then(plots => plots.map(plot => ({
-        ...plot,
-        price: plot.price.toNumber(),
-      }))),
+      }).then((plots: { id: string; title: string; city: string; status: string; created_at: Date; price: { toNumber: () => number } }[]) =>
+        plots.map((plot) => ({
+          ...plot,
+          price: plot.price.toNumber(),
+        })),
+      ),
 
       // Site Visit statistics
-      prisma.siteVisit.count({
+      prisma.site_visits.count({
         where: { created_at: { gte: startDate } },
       }),
 
-      prisma.siteVisit.groupBy({
+      prisma.site_visits.groupBy({
         by: ['status'],
         _count: true,
       }),
 
-      prisma.siteVisit.findMany({
+      prisma.site_visits.findMany({
         where: { created_at: { gte: startDate } },
         orderBy: { created_at: 'desc' },
         take: 10,
@@ -124,36 +127,36 @@ export const GET = withErrorHandling(
           status: true,
           visit_date: true,
           created_at: true,
-          user: {
+          users: {
             select: { name: true, email: true },
           },
-          plot: {
+          plots: {
             select: { title: true, city: true },
           },
         },
       }),
 
       // User statistics
-      prisma.user.count(),
+      prisma.users.count(),
 
-      prisma.user.count({
+      prisma.users.count({
         where: { created_at: { gte: startDate } },
       }),
 
       // Inquiry statistics
-      prisma.inquiry.count({
+      prisma.inquiries.count({
         where: { created_at: { gte: startDate } },
       }),
 
-      prisma.inquiry.groupBy({
+      prisma.inquiries.groupBy({
         by: ['status'],
         _count: true,
       }),
     ])
 
     // Calculate conversion rates
-    const totalInquiries = await prisma.inquiry.count()
-    const convertedInquiries = await prisma.inquiry.count({
+    const totalInquiries = await prisma.inquiries.count()
+    const convertedInquiries = await prisma.inquiries.count({
       where: { status: 'CONVERTED' },
     })
     const conversionRate = totalInquiries > 0
@@ -161,7 +164,7 @@ export const GET = withErrorHandling(
       : '0.00'
 
     // Top performing plots (most site visits)
-    const topPlots = await prisma.plot.findMany({
+    const topPlots = await prisma.plots.findMany({
       where: {
         site_visits: { some: {} },
       },
@@ -181,8 +184,8 @@ export const GET = withErrorHandling(
     })
 
     // 6. Calculate additional metrics
-    const totalPlotsCount = await prisma.plot.count()
-    const activePlots = await prisma.plot.count({
+    const totalPlotsCount = await prisma.plots.count()
+    const activePlots = await prisma.plots.count({
       where: { status: 'AVAILABLE' },
     })
 
@@ -190,7 +193,7 @@ export const GET = withErrorHandling(
     const previousPeriodStart = new Date()
     previousPeriodStart.setDate(previousPeriodStart.getDate() - (period * 2))
 
-    const previousSiteVisits = await prisma.siteVisit.count({
+    const previousSiteVisits = await prisma.site_visits.count({
       where: {
         created_at: {
           gte: previousPeriodStart,
@@ -204,7 +207,7 @@ export const GET = withErrorHandling(
       : siteVisitStats > 0 ? '100.00' : '0.00'
 
     // User growth rate
-    const previousUsers = await prisma.user.count({
+    const previousUsers = await prisma.users.count({
       where: {
         created_at: {
           gte: previousPeriodStart,
@@ -258,17 +261,17 @@ export const GET = withErrorHandling(
       plots: {
         total: totalPlotsCount,
         active: activePlots,
-        byStatus: plotStats.map((stat) => ({
+        byStatus: plotStats.map((stat: { status: string; _count: number }) => ({
           status: stat.status,
           count: stat._count,
         })),
-        byCity: plotsByCity.map((city) => ({
+        byCity: plotsByCity.map((city: any) => ({
           city: city.city,
           count: city._count,
         })),
         published: plotsByStatus,
         recent: recentPlots,
-        topPerforming: topPlots.map((plot) => ({
+        topPerforming: topPlots.map((plot: { id: string; title: string; city: string; price: { toNumber: () => number }; _count: { site_visits: number } }) => ({
           id: plot.id,
           title: plot.title,
           city: plot.city,
@@ -279,17 +282,17 @@ export const GET = withErrorHandling(
 
       siteVisits: {
         total: siteVisitStats,
-        byStatus: siteVisitsByStatus.map((visit) => ({
+        byStatus: siteVisitsByStatus.map((visit: { status: string; _count: number }) => ({
           status: visit.status,
           count: visit._count,
         })),
-        recent: recentSiteVisits.map((visit) => ({
+        recent: recentSiteVisits.map((visit: { id: string; status: string; visit_date: Date; created_at: Date; users: { name: string | null; email: string | null } | null; plots: { title: string; city: string } | null; }) => ({
           id: visit.id,
           status: visit.status,
           visitDate: visit.visit_date,
           createdAt: visit.created_at,
-          user: visit.user,
-          plot: visit.plot,
+          users: visit.users,
+          plots: visit.plots,
         })),
       },
 
@@ -303,7 +306,7 @@ export const GET = withErrorHandling(
         total: inquiryStats,
         totalAllTime: totalInquiries,
         converted: convertedInquiries,
-        byStatus: inquiryByStatus.map((inquiry) => ({
+        byStatus: inquiryByStatus.map((inquiry: { status: string; _count: number }) => ({
           status: inquiry.status,
           count: inquiry._count,
         })),

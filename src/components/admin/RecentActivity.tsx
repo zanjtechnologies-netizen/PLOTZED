@@ -9,11 +9,11 @@ interface ActivityItem {
   status: string
   created_at?: Date
   createdAt?: Date
-  user: {
+  users: {
     name: string
     email: string
   }
-  plot: {
+  plots: {
     title: string
     city: string
   }
@@ -67,7 +67,7 @@ export default function RecentActivity({ items, type }: RecentActivityProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-900 truncate">
-                {item.user.name}
+                {item.users.name}
               </p>
               <span
                 className={`text-xs px-2 py-1 rounded-full ${
@@ -78,10 +78,10 @@ export default function RecentActivity({ items, type }: RecentActivityProps) {
               </span>
             </div>
             <p className="text-sm text-gray-600 truncate mt-1">
-              {item.plot.title}
+              {item.plots.title}
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              {item.plot.city} •{' '}
+              {item.plots.city} •{' '}
               {new Date(item.created_at || item.createdAt!).toLocaleDateString()}
             </p>
           </div>

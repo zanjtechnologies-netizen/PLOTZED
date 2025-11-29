@@ -6,6 +6,7 @@ export const runtime = "nodejs";
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { successResponse, withErrorHandling } from '@/lib/api-error-handler'
+import { Decimal } from '@prisma/client/runtime/library'
 import { cache, CACHE_KEYS, CACHE_TTL } from '@/lib/cache'
 
 export const GET = withErrorHandling(
@@ -30,7 +31,7 @@ export const GET = withErrorHandling(
     const result = await cache.get(
       cacheKey,
       async () => {
-        const plots = await prisma.plot.findMany({
+        const plots = await prisma.plots.findMany({
           where,
           take: limit,
           orderBy: { created_at: 'desc' },
@@ -58,7 +59,7 @@ export const GET = withErrorHandling(
         })
 
         // Convert Decimal fields to numbers for JSON serialization
-        const serializedPlots = plots.map(plot => ({
+        const serializedPlots = plots.map((plot: { price: Decimal, booking_amount: Decimal, plot_size: Decimal }) => ({
           ...plot,
           price: plot.price.toNumber(),
           booking_amount: plot.booking_amount.toNumber(),
