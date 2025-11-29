@@ -17,7 +17,7 @@ async function main() {
 
   const adminPassword = await bcrypt.hash('Admin@123456', 10)
 
-  const admin = await prisma.user.upsert({
+  const admin = await prisma.users.upsert({
     where: { email: 'plotzedrealestate@gmail.com' },
     update: {},
     create: {
@@ -41,7 +41,7 @@ async function main() {
   const customerPassword = await bcrypt.hash('Customer@123', 10)
 
   const customers = await Promise.all([
-    prisma.user.upsert({
+    prisma.users.upsert({
       where: { email: 'rajesh.kumar@example.com' },
       update: {},
       create: {
@@ -54,7 +54,7 @@ async function main() {
         kyc_verified: true,
       },
     }),
-    prisma.user.upsert({
+    prisma.users.upsert({
       where: { email: 'priya.sharma@example.com' },
       update: {},
       create: {
@@ -67,7 +67,7 @@ async function main() {
         kyc_verified: false,
       },
     }),
-    prisma.user.upsert({
+    prisma.users.upsert({
       where: { email: 'amit.patel@example.com' },
       update: {},
       create: {
@@ -95,7 +95,7 @@ async function main() {
     // ================================================
 
     // 1. CASUARINA GREENS
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'casuarina-greens' },
       update: {},
       create: {
@@ -132,7 +132,7 @@ async function main() {
     }),
 
     // 2. KATUMODE GREENS
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'katumode-greens' },
       update: {},
       create: {
@@ -169,7 +169,7 @@ async function main() {
     }),
 
     // 3. HOUSE PROPERTY - KOONIMEDU
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'house-property-koonimedu' },
       update: {},
       create: {
@@ -206,7 +206,7 @@ async function main() {
     }),
 
     // AVAILABLE PLOTS (8)
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'luxury-villa-plot-juhu-mumbai' },
       update: {},
       create: {
@@ -234,7 +234,7 @@ async function main() {
         meta_description: 'Premium 2000 sq ft villa plot in Juhu with sea-facing views. Gated community with modern amenities.',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'beachfront-land-calangute-goa' },
       update: {},
       create: {
@@ -260,7 +260,7 @@ async function main() {
         rera_number: 'P52100000042',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'commercial-plot-whitefield-bangalore' },
       update: {},
       create: {
@@ -286,7 +286,7 @@ async function main() {
         rera_number: 'PRM/KA/RERA/1251/309/PR/171117/001654',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'hill-view-plot-shimla' },
       update: {},
       create: {
@@ -312,7 +312,7 @@ async function main() {
         rera_number: 'HPRERA-SML-SML-0120-0014',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'agricultural-land-lonavala' },
       update: {},
       create: {
@@ -338,7 +338,7 @@ async function main() {
         rera_number: 'P51700000089',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'residential-plot-dlf-gurgaon' },
       update: {},
       create: {
@@ -364,7 +364,7 @@ async function main() {
         rera_number: 'RC/REP/HARERA/GGM/2019/23',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'lake-view-plot-nainital' },
       update: {},
       create: {
@@ -390,7 +390,7 @@ async function main() {
         rera_number: 'URERA/2020/45',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'commercial-plot-connaught-place-delhi' },
       update: {},
       create: {
@@ -418,7 +418,7 @@ async function main() {
     }),
 
     // BOOKED PLOTS (4)
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'residential-plot-sector-50-noida' },
       update: {},
       create: {
@@ -444,7 +444,7 @@ async function main() {
         rera_number: 'UPRERAPRJ15145',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'farmhouse-plot-alibaug' },
       update: {},
       create: {
@@ -470,7 +470,7 @@ async function main() {
         rera_number: 'P51700000234',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'residential-plot-koramangala-bangalore' },
       update: {},
       create: {
@@ -496,7 +496,7 @@ async function main() {
         rera_number: 'PRM/KA/RERA/1251/309/PR/180517/001988',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'villa-plot-ecr-chennai' },
       update: {},
       create: {
@@ -524,7 +524,7 @@ async function main() {
     }),
 
     // SOLD PLOTS (3)
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'commercial-plot-mg-road-pune' },
       update: {},
       create: {
@@ -550,7 +550,7 @@ async function main() {
         rera_number: 'P52100018053',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'residential-plot-banjara-hills-hyderabad' },
       update: {},
       create: {
@@ -576,7 +576,7 @@ async function main() {
         rera_number: 'P02400003456',
       },
     }),
-    prisma.plot.upsert({
+    prisma.plots.upsert({
       where: { slug: 'industrial-plot-manesar-gurgaon' },
       update: {},
       create: {
@@ -625,7 +625,7 @@ async function main() {
 
   const siteVisits = await Promise.all([
     // PENDING
-    prisma.siteVisit.create({
+    prisma.site_visits.create({
       data: {
         user_id: customers[0].id,
         plot_id: plots[0].id,
@@ -637,7 +637,7 @@ async function main() {
       },
     }),
     // CONFIRMED
-    prisma.siteVisit.create({
+    prisma.site_visits.create({
       data: {
         user_id: customers[1].id,
         plot_id: plots[2].id,
@@ -649,7 +649,7 @@ async function main() {
       },
     }),
     // COMPLETED
-    prisma.siteVisit.create({
+    prisma.site_visits.create({
       data: {
         user_id: customers[2].id,
         plot_id: plots[4].id,
@@ -661,7 +661,7 @@ async function main() {
       },
     }),
     // CANCELLED
-    prisma.siteVisit.create({
+    prisma.site_visits.create({
       data: {
         user_id: customers[0].id,
         plot_id: plots[1].id,
@@ -673,7 +673,7 @@ async function main() {
       },
     }),
     // RESCHEDULED
-    prisma.siteVisit.create({
+    prisma.site_visits.create({
       data: {
         user_id: customers[1].id,
         plot_id: plots[3].id,
@@ -695,7 +695,7 @@ async function main() {
 
   const inquiries = await Promise.all([
     // NEW
-    prisma.inquiry.create({
+    prisma.inquiries.create({
       data: {
         user_id: customers[0].id,
         plot_id: plots[5].id,
@@ -708,7 +708,7 @@ async function main() {
       },
     }),
     // CONTACTED
-    prisma.inquiry.create({
+    prisma.inquiries.create({
       data: {
         user_id: customers[1].id,
         plot_id: plots[6].id,
@@ -721,7 +721,7 @@ async function main() {
       },
     }),
     // QUALIFIED
-    prisma.inquiry.create({
+    prisma.inquiries.create({
       data: {
         name: 'Suresh Menon',
         email: 'suresh.menon@example.com',
