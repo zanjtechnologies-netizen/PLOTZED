@@ -52,7 +52,7 @@ export default function FeaturedListings() {
       title: 'Katumode Greens',
       location: 'Auroville Green Belt, Pondicherry',
       price: 43200000,
-      images: ['/images/casuarina-greens.jpg'],
+      images: ['/images/katumode-greens.jpg'],
     },
     {
       id: '3',
@@ -122,6 +122,7 @@ export default function FeaturedListings() {
                     src={plot.images?.[0] || '/images/hero-bg-fallback-1.png'}
                     alt={plot.title}
                     fill
+                    unoptimized={true} // Bypass Next.js optimization
                     priority={true} // Load featured images with priority
                     quality={85} // Optimize quality for faster loading
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
