@@ -21,6 +21,8 @@ import {
   ArrowRight,
   Loader2,
   X,
+  Download,
+  Send,
 } from 'lucide-react';
 import { WhatsAppButton } from '@/components/chat';
 
@@ -47,8 +49,10 @@ interface FormData {
   name: string;
   phone: string;
   email: string;
-  plotSize: string;
-  budget: string;
+  address: string;
+  timeline: string;
+  purpose: string;
+  financeAssistance: string;
   message: string;
 }
 
@@ -56,29 +60,31 @@ interface FormErrors {
   name?: string;
   phone?: string;
   email?: string;
+  address?: string;
 }
 
 // Constants
-const PHONE_NUMBER = '+91 40 9999909';
+const PHONE_NUMBER = '+917708594263';
 const WHATSAPP_NUMBER = '917708594263'; // Plotzed Real Estate WhatsApp
-const EMAIL = 'reservations@plotzedrealestate.com';
+const EMAIL = 'plotzedrealestate@gmail.com';
 const ADDRESS = 'Plotzed Real Estate, Premium Tower, Business District';
 
-const PLOT_SIZES = [
-  { value: '', label: 'Select Plot Size' },
-  { value: '30x40', label: '30x40 (1200 sq.ft)' },
-  { value: '40x60', label: '40x60 (2400 sq.ft)' },
-  { value: '60x40', label: '60x40 (2400 sq.ft)' },
-  { value: '50x80', label: '50x80 (4000 sq.ft)' },
-  { value: 'custom', label: 'Custom Size' },
+const TIMELINE_OPTIONS = [
+  { value: '', label: 'Select Timeline' },
+  { value: 'immediate', label: 'Immediate' },
+  { value: '3-6months', label: '3-6 Months' },
 ];
 
-const BUDGET_RANGES = [
-  { value: '', label: 'Select Budget Range' },
-  { value: '10-20L', label: '₹10 - 20 Lakhs' },
-  { value: '20-30L', label: '₹20 - 30 Lakhs' },
-  { value: '30-50L', label: '₹30 - 50 Lakhs' },
-  { value: '50L+', label: '₹50 Lakhs+' },
+const PURPOSE_OPTIONS = [
+  { value: '', label: 'Select Purpose' },
+  { value: 'investment', label: 'Investment' },
+  { value: 'personal', label: 'Personal Use' },
+];
+
+const FINANCE_OPTIONS = [
+  { value: '', label: 'Select Option' },
+  { value: 'yes', label: 'Yes, I need finance assistance' },
+  { value: 'no', label: 'No, I have my own funding' },
 ];
 
 // Utility functions
@@ -236,118 +242,74 @@ function BenefitsSection() {
 }
 
 // ============================================
-// FEATURED PLOTS SECTION
+// PROPERTY SHOWCASE SECTION (Overlay Hero)
 // ============================================
-function FeaturedPlotsSection({ onScrollToForm }: { onScrollToForm: () => void }) {
-  const [plots, setPlots] = useState<Plot[]>([]);
-  const [loading, setLoading] = useState(true);
+function PropertyShowcaseSection() {
+  return (
+    <section className="relative py-20 sm:py-28 overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/house-property.jpg"
+          alt="Premium Properties"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#112250]/90 via-[#0a1a3a]/85 to-[#006DB8]/80" />
+      </div>
 
-  useEffect(() => {
-    async function fetchPlots() {
-      try {
-        const response = await fetch('/api/plots?status=AVAILABLE&limit=6');
-        if (response.ok) {
-          const result = await response.json();
-          // API returns { success: true, data: { plots: [...] } }
-          const plotsData = result.data?.plots || result.plots || [];
-          setPlots(Array.isArray(plotsData) ? plotsData : []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch plots:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPlots();
-  }, []);
+      {/* Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+          <Building2 className="w-4 h-4 text-[#D8B893]" />
+          <span className="text-white/90 text-sm font-medium">Exclusive Properties</span>
+        </div>
 
-  if (loading) {
-    return (
-      <section className="py-16 sm:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-playfair text-3xl sm:text-4xl font-bold text-center text-[#112250] mb-12">
-            Featured Plots
-          </h2>
-          <div className="flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-[#006DB8]" />
+        {/* Heading */}
+        <h2 className="font-playfair text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          Discover Your
+          <span className="block text-[#D8B893]">Dream Property</span>
+        </h2>
+
+        {/* Description */}
+        <p className="text-lg sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+          Explore premium plots and properties in prime locations.
+          <span className="block mt-2 font-semibold text-white">
+            Zero Brokerage • RERA Approved • Clear Titles
+          </span>
+        </p>
+
+        {/* CTA Button */}
+        <Link
+          href="/properties"
+          className="group inline-flex items-center gap-3 bg-[#D8B893] hover:bg-[#c9a77e] text-[#112250] font-bold text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl shadow-lg"
+        >
+          View All Properties
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </Link>
+
+        {/* Trust Indicators */}
+        <div className="mt-12 flex flex-wrap justify-center gap-8 sm:gap-12">
+          <div className="flex items-center gap-2 text-white/90">
+            <CheckCircle2 className="w-5 h-5 text-[#D8B893]" />
+            <span className="text-sm sm:text-base">100+ Properties</span>
+          </div>
+          <div className="flex items-center gap-2 text-white/90">
+            <Shield className="w-5 h-5 text-[#D8B893]" />
+            <span className="text-sm sm:text-base">Verified Listings</span>
+          </div>
+          <div className="flex items-center gap-2 text-white/90">
+            <Star className="w-5 h-5 text-[#D8B893]" />
+            <span className="text-sm sm:text-base">Premium Locations</span>
           </div>
         </div>
-      </section>
-    );
-  }
-
-  if (plots.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className="py-16 sm:py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="font-playfair text-3xl sm:text-4xl font-bold text-[#112250] mb-4">
-            Featured Plots
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore our handpicked premium plots in prime locations
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {plots.slice(0, 6).map((plot) => (
-            <div
-              key={plot.id}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100"
-            >
-              {/* Image */}
-              <div className="relative h-48 bg-gradient-to-br from-[#112250] to-[#006DB8] overflow-hidden">
-                {plot.images?.[0] ? (
-                  <Image
-                    src={plot.images[0]}
-                    alt={plot.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Building2 className="w-16 h-16 text-white/30" />
-                  </div>
-                )}
-                {/* Price Badge */}
-                <div className="absolute top-4 right-4 bg-[#D8B893] text-[#112250] font-bold px-3 py-1 rounded-full text-sm">
-                  {formatPrice(plot.price)}
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-5">
-                <h3 className="font-semibold text-lg text-[#112250] mb-2">
-                  {plot.title}
-                </h3>
-                <div className="space-y-2 text-gray-600 text-sm mb-4">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#006DB8]" />
-                    <span>{plot.city || 'Premium Location'}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-[#006DB8]" />
-                    <span>
-                      {plot.dimensions} | {plot.plot_size} sq.ft
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={onScrollToForm}
-                  className="w-full bg-[#112250] hover:bg-[#006DB8] text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  Schedule Visit
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
+
+      {/* Decorative Elements */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
     </section>
   );
 }
@@ -360,8 +322,10 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
     name: '',
     phone: '',
     email: '',
-    plotSize: '',
-    budget: '',
+    address: '',
+    timeline: '',
+    purpose: '',
+    financeAssistance: '',
     message: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -404,6 +368,10 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
       newErrors.email = 'Please enter a valid email address';
     }
 
+    if (!formData.address.trim()) {
+      newErrors.address = 'Address is required';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -418,10 +386,12 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
     try {
       // Format message to include additional form fields
       const messageLines = [
-        `Site Visit Request from Landing Page`,
+        `Site Visit Request from Visit Page`,
         ``,
-        formData.plotSize ? `Preferred Plot Size: ${formData.plotSize}` : '',
-        formData.budget ? `Budget Range: ${formData.budget}` : '',
+        `Address: ${formData.address}`,
+        formData.timeline ? `Timeline to Buy: ${formData.timeline === 'immediate' ? 'Immediate' : '3-6 Months'}` : '',
+        formData.purpose ? `Purchase Purpose: ${formData.purpose === 'investment' ? 'Investment' : 'Personal Use'}` : '',
+        formData.financeAssistance ? `Finance Assistance: ${formData.financeAssistance === 'yes' ? 'Yes, I need finance assistance' : 'No, I have my own funding'}` : '',
         formData.message ? `Additional Notes: ${formData.message}` : '',
       ].filter(Boolean).join('\n');
 
@@ -432,8 +402,8 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
           name: formData.name,
           phone: formData.phone, // API expects 10-digit number without prefix
           email: formData.email,
-          message: messageLines || 'Site Visit Request from Landing Page',
-          source: 'landing-page',
+          message: messageLines || 'Site Visit Request from Visit Page',
+          source: 'visit-page',
         }),
       });
 
@@ -443,8 +413,10 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
           name: '',
           phone: '',
           email: '',
-          plotSize: '',
-          budget: '',
+          address: '',
+          timeline: '',
+          purpose: '',
+          financeAssistance: '',
           message: '',
         });
       } else {
@@ -533,21 +505,39 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
-            {/* Plot Size & Budget Row */}
+            {/* Address */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Home Address <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter your complete address"
+                className={`w-full px-4 py-3 rounded-lg border ${
+                  errors.address ? 'border-red-500' : 'border-gray-300'
+                } focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all`}
+              />
+              {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+            </div>
+
+            {/* Timeline & Purpose Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Preferred Plot Size
+                  Timeline to Buy
                 </label>
                 <select
-                  name="plotSize"
-                  value={formData.plotSize}
+                  name="timeline"
+                  value={formData.timeline}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all bg-white"
                 >
-                  {PLOT_SIZES.map((size) => (
-                    <option key={size.value} value={size.value}>
-                      {size.label}
+                  {TIMELINE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -555,21 +545,40 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Budget Range
+                  Purchase Purpose
                 </label>
                 <select
-                  name="budget"
-                  value={formData.budget}
+                  name="purpose"
+                  value={formData.purpose}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all bg-white"
                 >
-                  {BUDGET_RANGES.map((range) => (
-                    <option key={range.value} value={range.value}>
-                      {range.label}
+                  {PURPOSE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
               </div>
+            </div>
+
+            {/* Finance Assistance */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Do you need finance assistance?
+              </label>
+              <select
+                name="financeAssistance"
+                value={formData.financeAssistance}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all bg-white"
+              >
+                {FINANCE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Message */}
@@ -719,77 +728,6 @@ function WhyChooseUsSection() {
   );
 }
 
-// ============================================
-// TESTIMONIALS SECTION
-// ============================================
-function TestimonialsSection() {
-  const testimonials = [
-    {
-      name: 'Rajesh Kumar',
-      role: 'IT Professional',
-      quote:
-        'Excellent experience! The team was transparent about everything. Bought a 40x60 plot and the documentation was hassle-free. Highly recommended!',
-      rating: 5,
-    },
-    {
-      name: 'Priya Sharma',
-      role: 'Business Owner',
-      quote:
-        'Found my dream plot through Plotzed. Zero brokerage saved me a lot of money. The site visit was well-organized and informative.',
-      rating: 5,
-    },
-    {
-      name: 'Anil Mehta',
-      role: 'Doctor',
-      quote:
-        'As a first-time property buyer, I was nervous. But the team guided me through every step. Now I own a beautiful plot in a prime location.',
-      rating: 5,
-    },
-  ];
-
-  return (
-    <section className="py-16 sm:py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="font-playfair text-3xl sm:text-4xl font-bold text-[#112250] mb-4">
-            What Our Customers Say
-          </h2>
-          <p className="text-gray-600">Join 100+ happy families who trusted us</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-
-              {/* Quote */}
-              <p className="text-gray-600 mb-6 leading-relaxed">&quot;{testimonial.quote}&quot;</p>
-
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-[#112250] rounded-full flex items-center justify-center text-white font-bold">
-                  {testimonial.name.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-semibold text-[#112250]">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ============================================
 // CONTACT SECTION
@@ -844,6 +782,29 @@ function ContactSection() {
               <p className="text-white font-semibold text-sm">{ADDRESS}</p>
             </div>
           </div>
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-12">
+          {/* Get Brochure Button */}
+          <a
+            href="mailto:plotzedrealestate@gmail.com?subject=Request for Property Brochure&body=Hi, I would like to receive the property brochure."
+            className="group flex items-center justify-center gap-3 bg-[#D8B893] hover:bg-[#c9a77e] text-[#112250] font-bold px-6 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
+          >
+            <Download className="w-5 h-5" />
+            Get the Brochure
+          </a>
+
+          {/* WhatsApp Instant Details Button */}
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I want instant details about your premium properties.')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold px-6 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
+          >
+            <Send className="w-5 h-5" />
+            Get Instant WhatsApp Details
+          </a>
         </div>
 
         {/* Footer */}
@@ -910,15 +871,14 @@ export default function LandingPage() {
     <main className="min-h-screen">
       <HeroSection onScrollToForm={scrollToForm} />
       <BenefitsSection />
-      <FeaturedPlotsSection onScrollToForm={scrollToForm} />
+      <PropertyShowcaseSection />
       <LeadCaptureForm formRef={formRef} />
       <WhyChooseUsSection />
-      <TestimonialsSection />
       <ContactSection />
       <WhatsAppButton
         phoneNumber={`+${WHATSAPP_NUMBER}`}
         message="Hi, I'm interested in booking a site visit for premium plots."
-        position="left"
+        position="right"
       />
       <StickyCTA onScrollToForm={scrollToForm} />
     </main>
