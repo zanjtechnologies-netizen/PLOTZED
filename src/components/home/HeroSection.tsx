@@ -19,7 +19,7 @@ export default function HeroSection() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
-              'linear-gradient(180deg, rgba(17, 34, 80, 0.7) 0%, rgba(17, 34, 80, 0.5) 50%, rgba(17, 34, 80, 0.8) 100%), url(/images/hero-bg-fallback-1.png)',
+              'linear-gradient(180deg, rgba(17, 34, 80, 0.3) 0%, rgba(17, 34, 80, 0.2) 50%, rgba(17, 34, 80, 0.3) 100%), url(/images/hero-bg-63da63.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

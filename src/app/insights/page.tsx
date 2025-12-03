@@ -23,6 +23,39 @@ export default function InsightsPage() {
   const articles = [
     {
       id: '1',
+      badge: 'MARKET SPOTLIGHT',
+      title: 'Pondicherry White Town — A Rising Luxury Investment Destination',
+      excerpt:
+        'Known for its colonial heritage, seaside charm, and boutique-stay culture, White Town attracts premium buyers and investors.',
+      readTime: '5 min read',
+      date: 'Nov 30, 2025',
+      image: '/images/white-town-1.jpg',
+      link: '/insights/white-town-luxury-investment',
+    },
+    {
+      id: '2',
+      badge: 'MARKET SPOTLIGHT',
+      title: 'Auroville — An Emerging Hub for Sustainable Luxury Living',
+      excerpt:
+        'Known for its greenery, peaceful environment, and global culture, Auroville attracts conscious investors seeking lifestyle value.',
+      readTime: '5 min read',
+      date: 'Nov 30, 2025',
+      image: '/images/auroville-1.jpg',
+      link: '/insights/auroville-sustainable-luxury',
+    },
+    {
+      id: '3',
+      badge: 'MARKET SPOTLIGHT',
+      title: 'Matrimandir — The Spiritual Heart of Auroville',
+      excerpt:
+        'An iconic meditation space with a distinctive golden dome, symbolizing peace, inner reflection, and human unity.',
+      readTime: '5 min read',
+      date: 'Nov 30, 2025',
+      image: '/images/matrimandir-3.jpg',
+      link: '/insights/matrimandir-spiritual-heart',
+    },
+    {
+      id: '4',
       badge: 'CULTURAL DISCOVERY',
       title: 'Mediterranean Coastal Heritage',
       excerpt:
@@ -33,7 +66,7 @@ export default function InsightsPage() {
       link: '/insights/mediterranean-coastal-heritage',
     },
     {
-      id: '2',
+      id: '5',
       badge: 'INTERIOR DESIGN',
       title: 'Timeless Designs That Elevate Property Value',
       excerpt:
@@ -44,7 +77,7 @@ export default function InsightsPage() {
       link: '/insights/interior-design-value',
     },
     {
-      id: '3',
+      id: '6',
       badge: "BUYER'S GUIDE",
       title: 'A Complete Guide to Purchasing Luxury Properties',
       excerpt:
@@ -62,10 +95,10 @@ export default function InsightsPage() {
       <div className="bg-[#112250] text-white py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#112250]/80 to-[#112250]" />
-        
+
         <div className="container-custom mx-auto relative z-10 text-center">
           <h1 className="font-playfair text-5xl md:text-6xl font-bold mb-6 text-[#D8B893]">
-            Insights & Stories
+            Blogs & Stories
           </h1>
           <p className="font-libre text-xl text-gray-300 max-w-2xl mx-auto">
             Curated articles on luxury travel, refined living, and the art of the perfect escape

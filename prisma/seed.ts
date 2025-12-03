@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto'
 
 const prisma = new PrismaClient()
 
+
 async function main() {
   console.log('🌱 Starting database seed...\n')
 
@@ -23,7 +24,6 @@ async function main() {
     update: {},
     create: {
       id: randomUUID(),
-      updated_at: new Date(),
       email: 'plotzedrealestate@gmail.com',
       password_hash: adminPassword,
       name: 'Admin User',
@@ -31,6 +31,7 @@ async function main() {
       role: 'ADMIN',
       email_verified: true,
       kyc_verified: true,
+      updated_at: new Date(),
     },
   })
 
@@ -49,7 +50,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         email: 'rajesh.kumar@example.com',
         password_hash: customerPassword,
         name: 'Rajesh Kumar',
@@ -57,6 +57,7 @@ async function main() {
         role: 'CUSTOMER',
         email_verified: true,
         kyc_verified: true,
+        updated_at: new Date(),
       },
     }),
     prisma.users.upsert({
@@ -64,7 +65,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         email: 'priya.sharma@example.com',
         password_hash: customerPassword,
         name: 'Priya Sharma',
@@ -72,6 +72,7 @@ async function main() {
         role: 'CUSTOMER',
         email_verified: true,
         kyc_verified: false,
+        updated_at: new Date(),
       },
     }),
     prisma.users.upsert({
@@ -79,7 +80,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         email: 'amit.patel@example.com',
         password_hash: customerPassword,
         name: 'Amit Patel',
@@ -87,6 +87,7 @@ async function main() {
         role: 'CUSTOMER',
         email_verified: false,
         kyc_verified: false,
+        updated_at: new Date(),
       },
     }),
   ])
@@ -109,7 +110,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Casuarina Greens',
         slug: 'casuarina-greens',
         description: 'Discover the rare opportunity to own premium land in the heart of Auroville\'s green belt, surrounded by lush Casuarina trees and unspoiled landscapes. Each land parcel is thoughtfully planned to provide privacy, long-term value, and an environment perfect for building your dream villa, retreat home, or eco-conscious estate. With proximity to Pondicherry city and major connecting highways, this project blends nature, accessibility, and future appreciation in one exclusive location.',
@@ -139,6 +139,7 @@ async function main() {
         rera_number: 'PY/RERA/2024/001',
         meta_title: 'Casuarina Greens - Premium Land in Auroville Green Belt | Plotzed',
         meta_description: '1.86 acres premium land in Auroville Green Belt, Pondicherry. 380 ft frontage, legally verified, perfect for villa construction.',
+        updated_at: new Date(),
       },
     }),
 
@@ -148,7 +149,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Katumode Greens',
         slug: 'katumode-greens',
         description: 'This premium plot is located in one of Auroville\'s most sought-after and serene green-belt areas, celebrated for its tranquility and closeness to lifestyle hubs. It is perfectly suited for luxury villa developments, wellness retreats, or hospitality projects, or as a secure long-term investment. Auroville continues to attract global interest for sustainable living, unique community, and spiritual energy, making this a future-proof real estate asset.',
@@ -174,10 +174,11 @@ async function main() {
           'Ready for Immediate Sale',
           'Secure Location'
         ],
-        images: ['/images/casuarina-greens.jpg'], // Using same land image
+        images: ['/images/katumode-greens.jpg'],
         rera_number: 'PY/RERA/2024/002',
         meta_title: 'Katumode Greens - Auroville Green Belt Premium Plot | Plotzed',
         meta_description: '1.35 acres premium plot in Auroville Green Belt, Pondicherry. 750 ft frontage, legally verified, ideal for luxury development.',
+        updated_at: new Date(),
       },
     }),
 
@@ -187,7 +188,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'House Property',
         slug: 'house-property-koonimedu',
         description: 'This premium plot is located in Koonimedu, just off the Pondy-Chennai ECR main road, offering a rare blend of beachside calm and excellent connectivity. With a quick 10-minute drive to the ECR main road, this property is perfectly suited for luxury villa development, wellness retreats, or hospitality projects, or as a secure long-term investment. A serene environment with beaches, resorts, and natural attractions makes this a highly desirable and future-proof real estate asset.',
@@ -217,6 +217,7 @@ async function main() {
         rera_number: 'PY/RERA/2024/003',
         meta_title: 'House Property Koonimedu - ECR Pondicherry | Plotzed',
         meta_description: '2 BHK house property in Koonimedu, ECR Pondicherry. 100m from ECR Main Road, beach access, perfect for serene living.',
+        updated_at: new Date(),
       },
     }),
 
@@ -226,7 +227,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Luxury Villa Plot in Juhu, Mumbai',
         slug: 'luxury-villa-plot-juhu-mumbai',
         description: 'Premium residential plot in the heart of Juhu with sea-facing views. Perfect for building your dream villa. Located in a gated community with 24/7 security.',
@@ -249,6 +249,7 @@ async function main() {
         rera_number: 'P51700000001',
         meta_title: 'Luxury Villa Plot in Juhu, Mumbai | Plotzed',
         meta_description: 'Premium 2000 sq ft villa plot in Juhu with sea-facing views. Gated community with modern amenities.',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -256,7 +257,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Beachfront Land in Calangute, Goa',
         slug: 'beachfront-land-calangute-goa',
         description: 'Stunning beachfront property with direct beach access. Ideal for resort or luxury villa development. Clear title, all approvals in place.',
@@ -277,6 +277,7 @@ async function main() {
         amenities: ['Beach Access', 'Water Supply', 'Electricity', 'Road Access'],
         images: ['/images/property-2.svg'],
         rera_number: 'P52100000042',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -284,7 +285,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Commercial Plot in Whitefield, Bangalore',
         slug: 'commercial-plot-whitefield-bangalore',
         description: 'Premium commercial plot in IT hub of Bangalore. Ideal for office complex or retail development. Excellent connectivity to major tech parks.',
@@ -305,6 +305,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Road Access', 'Metro Nearby', 'IT Park Nearby'],
         images: ['/images/property-3.svg'],
         rera_number: 'PRM/KA/RERA/1251/309/PR/171117/001654',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -312,7 +313,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Hill View Plot in Shimla, Himachal',
         slug: 'hill-view-plot-shimla',
         description: 'Breathtaking mountain views from this premium plot. Perfect for vacation home or resort. Cool climate year-round.',
@@ -333,6 +333,7 @@ async function main() {
         amenities: ['Mountain View', 'Water Supply', 'Electricity', 'Road Access'],
         images: ['/images/property-4.svg'],
         rera_number: 'HPRERA-SML-SML-0120-0014',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -340,7 +341,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Agricultural Land in Lonavala, Pune',
         slug: 'agricultural-land-lonavala',
         description: 'Prime agricultural land with scenic hill views. Suitable for farmhouse or weekend retreat. Good water supply, all-weather road access.',
@@ -361,6 +361,7 @@ async function main() {
         amenities: ['Water Supply', 'Road Access', 'Scenic Views'],
         images: ['/images/property-5.svg'],
         rera_number: 'P51700000089',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -368,7 +369,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Residential Plot in DLF Phase 4, Gurgaon',
         slug: 'residential-plot-dlf-gurgaon',
         description: 'Premium residential plot in prestigious DLF Phase 4. Surrounded by luxury villas and modern amenities. Metro connectivity.',
@@ -389,6 +389,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Metro Nearby', 'Shopping Mall Nearby', 'Gated Community'],
         images: ['/images/property-6.svg'],
         rera_number: 'RC/REP/HARERA/GGM/2019/23',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -396,7 +397,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Lake View Plot in Nainital, Uttarakhand',
         slug: 'lake-view-plot-nainital',
         description: 'Scenic plot with stunning lake views. Perfect for building a holiday home. Peaceful location with easy access to town.',
@@ -417,6 +417,7 @@ async function main() {
         amenities: ['Lake View', 'Water Supply', 'Electricity', 'Road Access'],
         images: [],
         rera_number: 'URERA/2020/45',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -424,7 +425,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Commercial Plot in Connaught Place, Delhi',
         slug: 'commercial-plot-connaught-place-delhi',
         description: 'Prime commercial plot in the heart of Delhi. Excellent for retail or office space. High footfall area with metro connectivity.',
@@ -445,6 +445,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Metro Station', 'High Footfall', 'Prime Location'],
         images: [],
         rera_number: 'DL/RERA/2021/001',
+        updated_at: new Date(),
       },
     }),
 
@@ -454,7 +455,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Residential Plot in Sector 50, Noida',
         slug: 'residential-plot-sector-50-noida',
         description: 'Well-located residential plot in established sector. Close to schools, hospitals, and shopping centers. Metro station within walking distance.',
@@ -475,6 +475,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Metro Nearby', 'School Nearby', 'Hospital Nearby'],
         images: [],
         rera_number: 'UPRERAPRJ15145',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -482,7 +483,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Farmhouse Plot in Alibaug, Maharashtra',
         slug: 'farmhouse-plot-alibaug',
         description: 'Spacious farmhouse plot near beaches. Perfect weekend getaway location. Coconut and mango trees. Well water available.',
@@ -503,6 +503,7 @@ async function main() {
         amenities: ['Well Water', 'Electricity', 'Beach Nearby', 'Fruit Trees'],
         images: [],
         rera_number: 'P51700000234',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -510,7 +511,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Residential Plot in Koramangala, Bangalore',
         slug: 'residential-plot-koramangala-bangalore',
         description: 'Premium residential plot in upscale Koramangala. Surrounded by IT professionals and modern infrastructure. Great investment opportunity.',
@@ -531,6 +531,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Metro Nearby', 'Shopping Mall', 'IT Parks Nearby'],
         images: [],
         rera_number: 'PRM/KA/RERA/1251/309/PR/180517/001988',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -538,7 +539,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Villa Plot on ECR, Chennai',
         slug: 'villa-plot-ecr-chennai',
         description: 'Beach-facing villa plot on East Coast Road. Stunning sea views. Gated community with modern amenities and security.',
@@ -559,6 +559,7 @@ async function main() {
         amenities: ['Beach View', 'Gated Community', 'Water Supply', 'Electricity', 'Club House'],
         images: [],
         rera_number: 'TN/29/Building/0123/2020',
+        updated_at: new Date(),
       },
     }),
 
@@ -568,7 +569,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Commercial Plot on MG Road, Pune',
         slug: 'commercial-plot-mg-road-pune',
         description: 'Prime commercial plot on busy MG Road. High visibility location. Perfect for showroom or office space.',
@@ -589,6 +589,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'High Visibility', 'Main Road Facing'],
         images: [],
         rera_number: 'P52100018053',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -596,7 +597,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Residential Plot in Banjara Hills, Hyderabad',
         slug: 'residential-plot-banjara-hills-hyderabad',
         description: 'Luxury residential plot in prestigious Banjara Hills. Elite neighborhood with excellent infrastructure.',
@@ -617,6 +617,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Gated Community', 'Club House', 'Shopping Mall Nearby'],
         images: [],
         rera_number: 'P02400003456',
+        updated_at: new Date(),
       },
     }),
     prisma.plots.upsert({
@@ -624,7 +625,6 @@ async function main() {
       update: {},
       create: {
         id: randomUUID(),
-        updated_at: new Date(),
         title: 'Industrial Plot in Manesar, Gurgaon',
         slug: 'industrial-plot-manesar-gurgaon',
         description: 'Large industrial plot in HSIIDC sector. Perfect for manufacturing unit or warehouse. Good road connectivity.',
@@ -645,6 +645,7 @@ async function main() {
         amenities: ['Water Supply', 'Electricity', 'Road Access', 'Industrial Zone'],
         images: [],
         rera_number: 'RC/REP/HARERA/GGM/2018/142',
+        updated_at: new Date(),
       },
     }),
   ])
@@ -673,7 +674,6 @@ async function main() {
     prisma.site_visits.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[0].id,
         plot_id: plots[0].id,
         visit_date: tomorrow,
@@ -681,13 +681,13 @@ async function main() {
         attendees: 2,
         notes: 'Interested in sea-facing villa plot. Want to discuss payment plans.',
         status: 'PENDING',
+        updated_at: new Date(),
       },
     }),
     // CONFIRMED
     prisma.site_visits.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[1].id,
         plot_id: plots[2].id,
         visit_date: nextWeek,
@@ -695,13 +695,13 @@ async function main() {
         attendees: 3,
         notes: 'Looking for commercial space for IT company. Bringing business partner.',
         status: 'CONFIRMED',
+        updated_at: new Date(),
       },
     }),
     // COMPLETED
     prisma.site_visits.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[2].id,
         plot_id: plots[4].id,
         visit_date: yesterday,
@@ -709,13 +709,13 @@ async function main() {
         attendees: 1,
         notes: 'Want to build farmhouse for weekend getaways.',
         status: 'COMPLETED',
+        updated_at: new Date(),
       },
     }),
     // CANCELLED
     prisma.site_visits.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[0].id,
         plot_id: plots[1].id,
         visit_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -723,13 +723,13 @@ async function main() {
         attendees: 2,
         notes: 'Interested in beachfront property.',
         status: 'CANCELLED',
+        updated_at: new Date(),
       },
     }),
     // RESCHEDULED
     prisma.site_visits.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[1].id,
         plot_id: plots[3].id,
         visit_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -737,6 +737,7 @@ async function main() {
         attendees: 2,
         notes: 'Want to see mountain view plot. Considering vacation home.',
         status: 'RESCHEDULED',
+        updated_at: new Date(),
       },
     }),
   ])
@@ -753,7 +754,6 @@ async function main() {
     prisma.inquiries.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[0].id,
         plot_id: plots[5].id,
         name: customers[0].name,
@@ -762,13 +762,13 @@ async function main() {
         message: 'I am interested in this DLF Gurgaon property. Can you provide more details about the payment plans and available amenities? Also, is home loan assistance available?',
         status: 'NEW',
         source: 'website',
+        updated_at: new Date(),
       },
     }),
     // CONTACTED
     prisma.inquiries.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         user_id: customers[1].id,
         plot_id: plots[6].id,
         name: customers[1].name,
@@ -777,13 +777,13 @@ async function main() {
         message: 'Looking for a vacation home plot in Nainital. Is this property near the main lake? What are the annual maintenance charges?',
         status: 'CONTACTED',
         source: 'website',
+        updated_at: new Date(),
       },
     }),
     // QUALIFIED
     prisma.inquiries.create({
       data: {
         id: randomUUID(),
-        updated_at: new Date(),
         name: 'Suresh Menon',
         email: 'suresh.menon@example.com',
         phone: '+919876543220',
@@ -791,6 +791,7 @@ async function main() {
         status: 'QUALIFIED',
         source: 'phone',
         plot_id: plots[0].id,
+        updated_at: new Date(),
       },
     }),
   ])

@@ -52,7 +52,7 @@ export default function FeaturedListings() {
       title: 'Katumode Greens',
       location: 'Auroville Green Belt, Pondicherry',
       price: 43200000,
-      images: ['/images/casuarina-greens.jpg'],
+      images: ['/images/katumode-greens.jpg'],
     },
     {
       id: '3',
@@ -109,7 +109,7 @@ export default function FeaturedListings() {
 
         {/* Properties Grid - Simple Overlay Style */}
         {!loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">
             {displayPlots.slice(0, 3).map((plot) => (
               <Link
                 key={plot.id}
@@ -117,11 +117,12 @@ export default function FeaturedListings() {
                 className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
               >
                 {/* Property Image with Overlay */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-80 overflow-hidden">
                   <Image
                     src={plot.images?.[0] || '/images/hero-bg-fallback-1.png'}
                     alt={plot.title}
                     fill
+                    unoptimized={true} // Bypass Next.js optimization
                     priority={true} // Load featured images with priority
                     quality={85} // Optimize quality for faster loading
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -160,7 +161,7 @@ export default function FeaturedListings() {
         <div className="text-center">
           <Link
             href="/properties"
-            className="inline-block px-8 py-4 rounded-full font-semibold transition-colors hover:opacity-90"
+            className="inline-block px-10 py-4 rounded-full font-semibold text-lg transition-colors hover:opacity-90"
             style={{ backgroundColor: '#112250', color: '#FFFFFF' }}
           >
             Explore All Listings

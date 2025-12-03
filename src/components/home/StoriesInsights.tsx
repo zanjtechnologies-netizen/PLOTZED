@@ -5,33 +5,33 @@ export default function StoriesInsights() {
   const insights = [
     {
       id: '1',
-      badge: 'MARKET TRENDS',
-      title: 'Top Regions to Invest in Luxury Real Estate',
+      badge: 'MARKET SPOTLIGHT',
+      title: 'Pondicherry White Town — A Rising Luxury Investment Destination',
       excerpt:
-        'Discover emerging markets and prime locations for your next property investment.',
+        'Known for its colonial heritage, seaside charm, and boutique-stay culture, White Town attracts premium buyers and investors.',
       readTime: '5 min read',
-      image: '/images/blog-1.svg',
-      link: '/insights/luxury-real-estate-trends',
+      image: '/images/white-town-1.jpg',
+      link: '/insights/white-town-luxury-investment',
     },
     {
       id: '2',
-      badge: 'INTERIOR DESIGN',
-      title: 'Timeless Designs That Elevate Property Value',
+      badge: 'MARKET SPOTLIGHT',
+      title: 'Auroville — An Emerging Hub for Sustainable Luxury Living',
       excerpt:
-        "Learn how classic interior design choices can significantly increase your home's worth.",
-      readTime: '7 min read',
-      image: '/images/blog-2.svg',
-      link: '/insights/interior-design-value',
+        'Known for its greenery, peaceful environment, and global culture, Auroville attracts conscious investors seeking lifestyle value.',
+      readTime: '5 min read',
+      image: '/images/auroville-1.jpg',
+      link: '/insights/auroville-sustainable-luxury',
     },
     {
       id: '3',
-      badge: "BUYER'S GUIDE",
-      title: 'A Complete Guide to Purchasing Luxury Properties',
+      badge: 'MARKET SPOTLIGHT',
+      title: 'Matrimandir — The Spiritual Heart of Auroville',
       excerpt:
-        'Everything you need to know about buying high-end real estate with confidence.',
-      readTime: '10 min read',
-      image: '/images/blog-3.svg',
-      link: '/insights/buying-luxury-properties',
+        'An iconic meditation space with a distinctive golden dome, symbolizing peace, inner reflection, and human unity.',
+      readTime: '5 min read',
+      image: '/images/matrimandir-3.jpg',
+      link: '/insights/matrimandir-spiritual-heart',
     },
   ];
 
@@ -92,7 +92,7 @@ export default function StoriesInsights() {
                   className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
                   style={{ backgroundImage: `url(${insight.image})` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#112250] via-[#112250]/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#112250]/40 via-[#112250]/20 to-transparent" />
 
                 {/* Badge */}
                 <div className="absolute top-4 left-4">

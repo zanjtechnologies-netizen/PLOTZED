@@ -237,9 +237,13 @@ export default function KatumodeGreensPage() {
                                         <button className="w-full py-4 bg-[#3B4B7A] text-white rounded-full font-bold hover:bg-[#4B5B8A] transition-colors uppercase tracking-wide">
                                             Call Us
                                         </button>
-                                        <button className="w-full py-4 bg-[#3B4B7A] text-white rounded-full font-bold hover:bg-[#4B5B8A] transition-colors uppercase tracking-wide">
+                                        <a
+                                            href="/brochures/katumode-greens.pdf"
+                                            download="Katumode-Greens-Brochure.pdf"
+                                            className="w-full py-4 bg-[#3B4B7A] text-white rounded-full font-bold hover:bg-[#4B5B8A] transition-colors uppercase tracking-wide flex items-center justify-center"
+                                        >
                                             Download Brochure
-                                        </button>
+                                        </a>
                                     </div>
 
                                     <div className="mt-6 text-center text-xs text-gray-400">

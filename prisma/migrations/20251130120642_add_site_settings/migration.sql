@@ -1,0 +1,30 @@
+-- CreateTable
+CREATE TABLE "site_settings" (
+    "id" TEXT NOT NULL DEFAULT 'global',
+    "site_name" TEXT NOT NULL DEFAULT 'PLOTZED',
+    "tagline" TEXT,
+    "company_email" TEXT,
+    "company_phone" TEXT,
+    "company_address" TEXT,
+    "whatsapp_number" TEXT,
+    "facebook_url" TEXT,
+    "twitter_url" TEXT,
+    "instagram_url" TEXT,
+    "linkedin_url" TEXT,
+    "youtube_url" TEXT,
+    "about_us" TEXT,
+    "footer_text" TEXT,
+    "meta_title" TEXT,
+    "meta_description" TEXT,
+    "meta_keywords" TEXT,
+    "logo_url" TEXT,
+    "favicon_url" TEXT,
+    "google_analytics_id" TEXT,
+    "google_maps_api_key" TEXT,
+    "business_hours" JSONB,
+    "settings" JSONB,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "site_settings_pkey" PRIMARY KEY ("id")
+);

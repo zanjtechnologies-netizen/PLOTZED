@@ -33,41 +33,43 @@ export default function HomePage() {
       />
       <ChatBot />
       <div className="overflow-hidden">
-      {/* Hero Section */}
-      <HeroSection />
+        {/* Hero Section */}
+        <HeroSection />
 
-      {/* Featured Listings - White to Gray Gradient */}
-      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-white to-gray-50">
-        <FeaturedListings />
-      </section>
+        {/* Featured Listings - White to Gray Gradient */}
+        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-white to-gray-50">
+          <FeaturedListings />
+        </section>
 
-      {/* Booking & Journey Section - White Background */}
-      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">
-        <BookingExperience />
-        <JourneyToOwnership />
-      </section>
+        {/* Booking & Journey Section - White Background */}
+        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">
+          <BookingExperience />
+          <JourneyToOwnership />
+        </section>
 
-      {/* Video Banner Section */}
-      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 bg-white">
-        <LandscapeVideo />
-      </section>
+        {/* Video Banner Section */}
+        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 bg-white">
+          <LandscapeVideo />
+        </section>
 
-      {/* Blog/Stories Section - Dark Navy Background */}
-      <section className="bg-[#112250]">
-        <div className="container-custom py-16 md:py-24">
-          <StoriesInsights />
-        </div>
-      </section>
+        {/* Blog/Stories Section - Dark Navy Background */}
+        <section className="bg-[#112250]">
+          <div className="container-custom py-16 md:py-24">
+            <StoriesInsights />
+          </div>
+        </section>
 
-      {/* Testimonials Section - Gray to White Gradient */}
-      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-gray-50 to-white">
+        {/* Spacer between Blogs and Testimonials */}
+        <div className="bg-white py-8" />
+
+        {/* Testimonials Section - Full Width */}
         <CustomerExperiences />
-      </section>
 
-      {/* About/Luxury Section - White to Gray Gradient */}
-      <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-white to-gray-50">
-        <RedefineLuxury />
-      </section>
+
+        {/* About/Luxury Section - White to Gray Gradient */}
+        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-32 bg-gradient-to-b from-white to-gray-50">
+          <RedefineLuxury />
+        </section>
       </div>
     </>
   );
