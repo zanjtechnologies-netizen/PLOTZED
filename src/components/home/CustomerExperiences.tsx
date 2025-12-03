@@ -181,7 +181,7 @@ export default function CustomerExperiences() {
           className="text-4xl md:text-5xl font-bold mb-4 text-white"
           style={{ fontFamily: 'var(--font-playfair)' }}
         >
-          Client Testimonials
+          Testimonials
         </h2>
         <div className="w-24 h-1 mx-auto mb-6" style={{ backgroundColor: '#D8B893' }} />
         <p
