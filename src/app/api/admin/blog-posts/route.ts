@@ -1,16 +1,16 @@
 // src/app/api/admin/blog-posts/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
+import { z } from "zod";
 
 // Validation schema
 const blogPostSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  slug: z.string().min(1, 'Slug is required'),
-  content: z.string().min(1, 'Content is required'),
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
+  content: z.string().min(1, "Content is required"),
   excerpt: z.string().optional(),
   featured_image: z.string().optional(),
   category: z.string().optional(),
@@ -25,16 +25,16 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const published = searchParams.get('published');
-    const category = searchParams.get('category');
-    const search = searchParams.get('search');
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const published = searchParams.get("published");
+    const category = searchParams.get("category");
+    const search = searchParams.get("search");
 
     const skip = (page - 1) * limit;
 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const where: any = {};
 
     if (published !== null && published !== undefined) {
-      where.is_published = published === 'true';
+      where.is_published = published === "true";
     }
 
     if (category) {
@@ -51,16 +51,16 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { content: { contains: search, mode: 'insensitive' } },
-        { excerpt: { contains: search, mode: 'insensitive' } },
+        { title: { contains: search, mode: "insensitive" } },
+        { content: { contains: search, mode: "insensitive" } },
+        { excerpt: { contains: search, mode: "insensitive" } },
       ];
     }
 
     const [posts, total] = await Promise.all([
       prisma.blog_posts.findMany({
         where,
-        orderBy: { created_at: 'desc' },
+        orderBy: { created_at: "desc" },
         skip,
         take: limit,
       }),
@@ -80,9 +80,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching blog posts:', error);
+    console.error("Error fetching blog posts:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch blog posts' },
+      { success: false, error: "Failed to fetch blog posts" },
       { status: 500 }
     );
   }
@@ -93,8 +93,8 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     if (existingPost) {
       return NextResponse.json(
-        { success: false, error: 'A blog post with this slug already exists' },
+        { success: false, error: "A blog post with this slug already exists" },
         { status: 400 }
       );
     }
@@ -117,13 +117,14 @@ export async function POST(request: NextRequest) {
         id: randomUUID(),
         ...validatedData,
         published_at: validatedData.is_published ? new Date() : null,
+        updated_at: new Date(),
       },
     });
 
     return NextResponse.json({
       success: true,
       data: blogPost,
-      message: 'Blog post created successfully',
+      message: "Blog post created successfully",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -133,9 +134,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('Error creating blog post:', error);
+    console.error("Error creating blog post:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to create blog post' },
+      { success: false, error: "Failed to create blog post" },
       { status: 500 }
     );
   }

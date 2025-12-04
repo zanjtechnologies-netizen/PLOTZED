@@ -90,6 +90,7 @@ export async function PUT(request: NextRequest) {
         data: {
           id: 'global',
           ...validatedData,
+          createdAt: new Date(),  
         },
       });
 

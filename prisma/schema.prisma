@@ -55,7 +55,7 @@ model blog_posts {
   is_published     Boolean   @default(false)
   published_at     DateTime?
   created_at       DateTime  @default(now())
-  updated_at       DateTime
+  updated_at       DateTime  
 
   @@index([is_published])
   @@index([slug])
@@ -203,6 +203,46 @@ model users {
   @@index([email])
   @@index([phone])
 }
+
+model testimonials{
+  id         String   @id @default(cuid())
+  name       String
+  content    String   @db.Text
+  role       String?
+  rating     Int?
+  company    String?
+  avatar_url String?
+  image      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model site_settings {
+  id                    String   @id
+  site_name             String?
+  tagline               String?  @db.Text
+  company_email         String?  @unique
+  company_phone         String?
+  company_address       String?
+  facebook_url          String?
+  twitter_url           String?
+  instagram_url         String?
+  linkedin_url          String?
+  youtube_url           String?
+  about_us              String?  @db.Text
+  logo_url              String?
+  favicon_url           String?
+  google_analytics_id   String?
+  business_hours        String?
+  footer_text           String?
+  meta_title            String?
+  meta_description      String?
+  meta_keywords         String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+
 
 model verification_tokens {
   identifier String
