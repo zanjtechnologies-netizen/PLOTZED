@@ -41,9 +41,15 @@ export default function HomePage() {
           <FeaturedListings />
         </section>
 
-        {/* Booking & Journey Section - White Background */}
-        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">
+        {/* Booking  - White Background */}
+        <section style={{ backgroundColor: "#F3E8D9" }}>
+        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 ">
           <BookingExperience />
+        </section>
+      </section>
+
+        {/*  Journey Section - White Background */}
+        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">
           <JourneyToOwnership />
         </section>
 
@@ -53,7 +59,8 @@ export default function HomePage() {
         </section>
 
         {/* Blog/Stories Section - Dark Navy Background */}
-        <section className="bg-[#112250]">
+        
+          <section style={{ backgroundColor: "#F3E8D9" }}>
           <div className="container-custom py-16 md:py-24">
             <StoriesInsights />
           </div>

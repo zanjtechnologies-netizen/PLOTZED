@@ -149,8 +149,6 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
               <li>About Us</li>
-              <li>Careers</li>
-              <li>Partners</li>
             </ul>
           </div>
 
@@ -178,7 +176,6 @@ export default function Footer() {
               Support
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
-              <li>Help Center</li>
               <li>Cancellation Policy</li>
               <li>Terms of Service</li>
             </ul>
@@ -249,7 +246,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm mt-12 border-t border-white/10 pt-6 text-gray-400">
           <p style={{ fontFamily: 'var(--font-libre)' }}>
-            © 2025 Plotzed Real Estate Developer. All rights reserved.
+            © 2023 Plotzed Real Estate Developer. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <a href="#" className="hover:text-[#D8B893] transition-colors">

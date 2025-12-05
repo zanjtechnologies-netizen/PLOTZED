@@ -83,7 +83,7 @@ export default function FeaturedListings() {
   };
 
   return (
-    <section id="featuredlistings" className="py-20 bg-gray-50">
+    <section id="featuredlistings" className="py-20 bg-gray-50 px-4 ">
       <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -109,15 +109,15 @@ export default function FeaturedListings() {
 
         {/* Properties Grid - Simple Overlay Style */}
         {!loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16 px-4">
             {displayPlots.slice(0, 3).map((plot) => (
               <Link
                 key={plot.id}
                 href={`/properties/${plot.slug || plot.id}`}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                className="group bg-white rounded-3xl overflow-hidden shadow-2x1 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 w-full max-w-x1"
               >
                 {/* Property Image with Overlay */}
-                <div className="relative h-80 overflow-hidden">
+                <div className="relative h-[340px] overflow-hidden">
                   <Image
                     src={plot.images?.[0] || '/images/hero-bg-fallback-1.png'}
                     alt={plot.title}
@@ -139,7 +139,7 @@ export default function FeaturedListings() {
                   </button>
 
                   {/* Property Info Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="absolute bottom-0 left-0 right-0 p-8">
                     <div className="flex items-center text-white/80 mb-2">
                       <MapPin className="w-4 h-4 mr-2" />
                       <span className="text-sm">{getLocation(plot)}</span>

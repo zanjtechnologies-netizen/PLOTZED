@@ -19,7 +19,7 @@ const testimonialUpdateSchema = z.object({
 // GET - Get single testimonial
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise <{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -29,7 +29,7 @@ export async function GET(
     }
 
     const testimonial = await prisma.testimonials.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!testimonial) {
@@ -55,7 +55,7 @@ export async function GET(
 // PUT - Update testimonial
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params:Promise <{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -65,7 +65,7 @@ export async function PUT(
     }
 
     const existingTestimonial = await prisma.testimonials.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingTestimonial) {
@@ -79,7 +79,7 @@ export async function PUT(
     const validatedData = testimonialUpdateSchema.parse(body);
 
     const testimonial = await prisma.testimonials.update({
-      where: { id: params.id },
+      where: { id:(await params).id },
       data: {
         ...validatedData,
       },
@@ -109,7 +109,7 @@ export async function PUT(
 // DELETE - Delete testimonial
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise <{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -119,7 +119,7 @@ export async function DELETE(
     }
 
     const existingTestimonial = await prisma.testimonials.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingTestimonial) {
@@ -130,7 +130,7 @@ export async function DELETE(
     }
 
     await prisma.testimonials.delete({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     return NextResponse.json({

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     const testimonials = await prisma.testimonials.findMany({
       where,
-      orderBy: [{ is_featured: 'desc' }, { created_at: 'desc' }],
+      orderBy: [/*{ is_featured: 'desc' },*/ { createdAt: 'desc' }],
       take: limit,
       select: {
         id: true,
@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
         content: true,
         rating: true,
         avatar_url: true,
-        is_featured: true,
-        created_at: true,
+        //is_featured: true,
+        createdAt: true,
       },
     });
 

@@ -4,8 +4,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { promises } from 'dns';
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+export const preferredRegion = "auto";
 const blogPostUpdateSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
   slug: z.string().min(1, 'Slug is required').optional(),
@@ -22,7 +25,7 @@ const blogPostUpdateSchema = z.object({
 // GET - Get single blog post
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise <{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -32,7 +35,7 @@ export async function GET(
     }
 
     const blogPost = await prisma.blog_posts.findUnique({
-      where: { id: context.params.id },
+      where: { id: (await params).id },
     });
 
     if (!blogPost) {
@@ -58,7 +61,7 @@ export async function GET(
 // PUT - Update blog post
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise <{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -68,7 +71,7 @@ export async function PUT(
     }
 
     const existingPost = await prisma.blog_posts.findUnique({
-      where: { id: context.params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingPost) {
@@ -107,7 +110,7 @@ export async function PUT(
     }
 
     const blogPost = await prisma.blog_posts.update({
-      where: { id: context.params.id },
+      where: { id: (await params).id },
       data: updateData,
     });
 
@@ -135,7 +138,7 @@ export async function PUT(
 // DELETE - Delete blog post
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise <{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -145,7 +148,7 @@ export async function DELETE(
     }
 
     const existingPost = await prisma.blog_posts.findUnique({
-      where: { id: context.params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingPost) {
@@ -156,7 +159,7 @@ export async function DELETE(
     }
 
     await prisma.blog_posts.delete({
-      where: { id: context.params.id },
+      where: { id: (await params).id },
     });
 
     return NextResponse.json({
