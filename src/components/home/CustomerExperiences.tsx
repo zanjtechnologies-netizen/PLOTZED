@@ -163,14 +163,17 @@ export default function CustomerExperiences() {
   return (
     <section
       id="customerexperiences"
-      className="py-24 relative overflow-hidden"
+      className="py-24 relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{
-        background: 'linear-gradient(180deg, #112250 0%, #1a3570 100%)',
+        backgroundImage: "url('/images/testimonials-bg.jpg')",
       }}
     >
+      {/* Dark overlay */}
+    <div className="absolute inset-0 bg-gradient-to-b from-[#112250]/80 to-[#0a1536]/85 z-0" />
+
       {/* Subtle Background Pattern */}
       <div
-        className="absolute inset-0 opacity-5"
+        className="absolute inset-0 opacity-10 z-0"
         style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(216,184,147,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(216,184,147,0.3) 0%, transparent 50%)',
         }}

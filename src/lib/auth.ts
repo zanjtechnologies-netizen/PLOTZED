@@ -21,7 +21,8 @@ import { date } from "zod";
 const MAX_ATTEMPTS = 5; // ✅ Define max failed attempts before lockout
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // PrismaAdapter disabled - using manual OAuth handling (works perfectly)
+  // adapter: PrismaAdapter(prisma),
   providers: [
     // Google OAuth Provider
     GoogleProvider({
@@ -119,24 +120,84 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile }) {
-      // For OAuth providers, ensure email is verified
+      // Manual OAuth handling - PrismaAdapter doesn't work due to initialization issues
       if (account?.provider === "google" || account?.provider === "facebook") {
         try {
-          // Update email_verified flag for OAuth users
-          // NOTE: The `emailVerified` field (DateTime) is not updated here due to a
-          // possible stale Prisma Client type definition.
-          // Use updateMany to avoid error if user doesn't exist yet
-          await prisma.users.updateMany({
-            where: { id: user.id },
-            data: {
-              email_verified: true,
-              emailVerified: new Date(),
-              last_login: new Date(),
+          const email = user.email || profile?.email;
+          if (!email) {
+            console.error('[OAuth] No email provided');
+            return false;
+          }
+
+          // Check if user already exists
+          let dbUser = await prisma.users.findUnique({
+            where: { email },
+          });
+
+          if (!dbUser) {
+            // Create new user for OAuth
+            dbUser = await prisma.users.create({
+              data: {
+                id: user.id,
+                email,
+                name: user.name || 'User',
+                email_verified: true,
+                emailVerified: new Date(),
+                role: 'CUSTOMER',
+                image: user.image,
+                updated_at: new Date(),
+              },
+            });
+            console.log('[OAuth] Created new user:', email);
+          } else {
+            // Update existing user
+            await prisma.users.update({
+              where: { id: dbUser.id },
+              data: {
+                email_verified: true,
+                emailVerified: new Date(),
+                last_login: new Date(),
+                image: user.image || dbUser.image,
+              },
+            });
+            // Update user.id to match database user
+            user.id = dbUser.id;
+            console.log('[OAuth] Updated existing user:', email);
+          }
+
+          // Check if account link exists
+          const existingAccount = await prisma.accounts.findUnique({
+            where: {
+              provider_providerAccountId: {
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+              },
             },
           });
+
+          if (!existingAccount) {
+            // Create account link
+            await prisma.accounts.create({
+              data: {
+                id: `${account.provider}_${account.providerAccountId}`,
+                userId: dbUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                token_type: account.token_type,
+                scope: account.scope,
+                id_token: account.id_token,
+                expires_at: account.expires_at,
+              },
+            });
+            console.log('[OAuth] Created account link for:', email);
+          }
+
+          return true;
         } catch (error) {
-          // Log error but allow sign-in to continue
-          console.error('[OAuth] Failed to update user during sign-in:', error);
+          console.error('[OAuth] Failed to handle sign-in:', error);
+          return false;
         }
       }
       return true;
@@ -180,7 +241,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  
+
   debug: process.env.NODE_ENV === "development",
 
   events: {
