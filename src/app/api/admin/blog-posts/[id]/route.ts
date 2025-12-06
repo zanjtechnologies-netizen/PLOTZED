@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { promises } from 'dns';
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -24,8 +23,8 @@ const blogPostUpdateSchema = z.object({
 
 // GET - Get single blog post
 export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise <{ id: string }> }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -61,7 +60,7 @@ export async function GET(
 // PUT - Update blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise <{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -137,8 +136,8 @@ export async function PUT(
 
 // DELETE - Delete blog post
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise <{ id: string }> }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
