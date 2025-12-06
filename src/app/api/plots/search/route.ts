@@ -17,6 +17,65 @@ const serializePlot = (plot: any) => ({
   longitude: plot.longitude?.toNumber() ?? null,
 })
 
+// GET - Search by slug
+export const GET = withErrorHandling(
+  async (request: NextRequest) => {
+    const { searchParams } = new URL(request.url)
+    const slug = searchParams.get('slug')
+
+    if (!slug) {
+      return successResponse({ plots: [] })
+    }
+
+    const plot = await prisma.plots.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        description: true,
+        price: true,
+        booking_amount: true,
+        plot_size: true,
+        dimensions: true,
+        facing: true,
+        address: true,
+        city: true,
+        state: true,
+        pincode: true,
+        latitude: true,
+        longitude: true,
+        images: true,
+        amenities: true,
+        status: true,
+        is_featured: true,
+        is_published: true,
+        rera_number: true,
+        created_at: true,
+        updated_at: true,
+      },
+    })
+
+    if (!plot || !plot.is_published) {
+      return successResponse({ plots: [] })
+    }
+
+    const serializedPlot = serializePlot(plot)
+
+    return successResponse({
+      plots: [serializedPlot],
+      pagination: {
+        page: 1,
+        limit: 1,
+        total: 1,
+        totalPages: 1,
+        hasMore: false,
+      },
+    })
+  },
+  'GET /api/plots/search'
+)
+
 export const POST = withErrorHandling(
   async (request: NextRequest) => {
     const body = await request.json()
