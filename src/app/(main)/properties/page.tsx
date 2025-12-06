@@ -71,7 +71,7 @@ export default function PropertiesPage() {
     maxPrice: '',
     minSize: '',
     maxSize: '',
-    status: 'AVAILABLE',
+    status: '',
     sortBy: 'created_at',
     sortOrder: 'desc',
   });

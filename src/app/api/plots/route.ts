@@ -91,7 +91,8 @@ export const GET = withErrorHandling(
           take: limit,
           orderBy: [
             { is_featured: 'desc' }, // Featured properties first
-            { [sortBy]: sortOrder },  // Then by specified sort field
+            { created_at: 'desc'},
+            /*{ [sortBy]: sortOrder },*/  // Then by specified sort field
           ],
           select: {
             id: true,
