@@ -35,6 +35,7 @@ export default function LandscapeVideo() {
               className="w-full h-full object-cover"
               autoPlay
               loop
+              muted
               playsInline
               src="/videos/main-1.mp4"
             >
