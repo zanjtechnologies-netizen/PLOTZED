@@ -321,7 +321,7 @@ export default function DynamicPropertyPage() {
 
                 <a
                   href={`tel:${phoneNumber}`}
-                  className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition flex items-center justify-center gap-1.5 sm:gap-2 px-2"
+                  className="w-full py-3 sm:py-4 bg-white rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition flex items-center justify-center gap-1.5 sm:gap-2 px-2"
                 >
                   <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                   <span className="hidden md:inline">CALL US - {phoneNumber}</span>
