@@ -47,8 +47,18 @@ export const GET = withErrorHandling(
     if (state) where.state = { contains: state, mode: 'insensitive' }
     if (status) where.status = status
     if (isFeatured) where.is_featured = isFeatured === 'true'
-    if (isPublished !== null) where.is_published = isPublished !== 'false'
-    else where.is_published = true // Default: only published
+
+    // Published filter - ALWAYS default to showing only published plots
+    // Only show unpublished if explicitly requested with published=false
+    if (isPublished === 'false') {
+      where.is_published = false
+    } else if (isPublished === 'all') {
+      // Don't filter by published status
+      // Allow admins to see all plots
+    } else {
+      // Default: only show published plots
+      where.is_published = true
+    }
 
     // Price range filter
     if (minPrice || maxPrice) {

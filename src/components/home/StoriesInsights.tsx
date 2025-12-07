@@ -36,10 +36,10 @@ export default function StoriesInsights() {
   ];
 
   return (
-    <section id="storiesinsights" className="py-20 relative overflow-visible ">
+    <section id="storiesinsights" className="py-10 sm:py-14 md:py-20 relative overflow-visible">
       {/* INNER GRADIENT BOX — correctly wrapping content */}
       <div
-        className="rounded-3xl mx-auto px-8 py-16"
+        className="rounded-xl sm:rounded-2xl md:rounded-3xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12 md:py-16"
         style={{
           background:
             'linear-gradient(180deg, #112250 0%, #1a3570 40%, #2c4266 100%)',
@@ -48,9 +48,9 @@ export default function StoriesInsights() {
       >
         <div className="container-custom relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
             <h2
-              className="text-4xl md:text-5xl font-bold mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-4"
               style={{
                 color: '#D8B893',
                 fontFamily: 'var(--font-playfair)',
@@ -59,7 +59,7 @@ export default function StoriesInsights() {
               Blogs & Stories
             </h2>
             <p
-              className="text-xl max-w-2xl mx-auto"
+              className="text-sm sm:text-base md:text-lg lg:text-xl max-w-2xl mx-auto px-4"
               style={{
                 color: 'rgba(216,184,147,0.85)',
                 fontFamily: 'var(--font-libre)',
@@ -71,7 +71,7 @@ export default function StoriesInsights() {
           </div>
 
           {/* Insights Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12">
             {insights.map((insight) => (
               <Link
                 key={insight.id}
