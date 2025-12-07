@@ -122,12 +122,20 @@ export default async function proxy(request: NextRequest) {
 
       // Validate API key for external/admin API access (if enabled)
       if (securityConfig.apiKeys.enabled) {
-        // Exempt these endpoints from API key requirement:
+        // Exempt these endpoints from API key requirement (public access):
         const exemptPaths = [
           '/api/auth',        // NextAuth endpoints
           '/api/verify-recaptcha', // reCAPTCHA verification
           '/api/health',      // Health check
           '/api/check-env',   // Environment check
+          '/api/plots',       // Public plots listing (read-only)
+          '/api/blog-posts',  // Public blog posts
+          '/api/testimonials', // Public testimonials
+          '/api/site-settings', // Public site settings
+          '/api/inquiries',   // Public inquiry submission
+          '/api/site-visits', // Public site visit booking
+          '/api/debug',       // Debug endpoints
+          '/api/cache/clear', // Public cache management
         ]
 
         const isExempt = exemptPaths.some(path => pathname.startsWith(path))
