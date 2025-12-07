@@ -38,7 +38,7 @@ interface Filters {
   sortOrder: string;
 }
 
-const CITIES = ['Chennai', 'Coimbatore', 'Bangalore', 'Hyderabad', 'Mumbai', 'Delhi'];
+const CITIES = ['Chennai', 'Coimbatore', 'Bangalore', 'Hyderabad', 'Mumbai', 'Delhi', 'Puducherry / Pondicherry'];
 const PRICE_RANGES = [
   { label: 'Any Price', min: '', max: '' },
   { label: 'Under ₹25 Lakhs', min: '', max: '2500000' },
@@ -177,15 +177,18 @@ export default function PropertiesPage() {
           />
         </div>
         <div className="container-custom relative z-10">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-white/70 text-sm mb-6">
-            <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
-              Home
+          {/* Back to Home Button */}
+          <div className="mb-6">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors group bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm"
+            >
+              <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span className="font-medium">Back to Home</span>
             </Link>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-white">Properties</span>
-          </nav>
+          </div>
 
           <h1
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
@@ -246,7 +249,7 @@ export default function PropertiesPage() {
             {/* Expanded Filters */}
             {showFilters && (
               <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Price Range */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
@@ -258,22 +261,6 @@ export default function PropertiesPage() {
                       className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#006DB8]/20 text-gray-800"
                     >
                       {PRICE_RANGES.map((range, idx) => (
-                        <option key={idx} value={idx}>{range.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Plot Size */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Plot Size</label>
-                    <select
-                      onChange={(e) => {
-                        const range = SIZE_RANGES[parseInt(e.target.value)];
-                        handleSizeRangeChange(range.min, range.max);
-                      }}
-                      className="w-full px-4 py-2.5 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#006DB8]/20 text-gray-800"
-                    >
-                      {SIZE_RANGES.map((range, idx) => (
                         <option key={idx} value={idx}>{range.label}</option>
                       ))}
                     </select>
@@ -294,8 +281,6 @@ export default function PropertiesPage() {
                       <option value="created_at-asc">Oldest First</option>
                       <option value="price-asc">Price: Low to High</option>
                       <option value="price-desc">Price: High to Low</option>
-                      <option value="plot_size-asc">Size: Small to Large</option>
-                      <option value="plot_size-desc">Size: Large to Small</option>
                     </select>
                   </div>
                 </div>

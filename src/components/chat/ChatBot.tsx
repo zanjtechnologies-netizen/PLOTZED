@@ -340,7 +340,7 @@ export default function ChatBot() {
     <>
       {/* Collapsed State - Speech Bubble + Chat Button */}
       {!isOpen && (
-        <div className="fixed bottom-4 right-6 z-50 flex items-end gap-3">
+        <div className="fixed bottom-20 sm:bottom-24 right-6 z-50 flex items-end gap-3">
           {/* Speech Bubble */}
           {!isMinimized && (
             <div className="relative bg-white rounded-2xl shadow-lg px-4 py-3 max-w-[200px] animate-fade-in">
@@ -389,7 +389,7 @@ export default function ChatBot() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[550px] max-h-[calc(100vh-100px)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+        <div className="fixed bottom-20 sm:bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[550px] max-h-[calc(100vh-130px)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
           {/* Header */}
           <div className="bg-gradient-to-r from-[#112250] to-[#006DB8] p-4 flex items-center gap-3">
             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">

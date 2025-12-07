@@ -4,8 +4,8 @@ export default function HeroSection() {
   return (
     <section
       id="herosection"
-      className="relative flex items-start justify-center pt-[80px] sm:pt-[100px] md:pt-[120px]"
-      style={{ height: '775.2px', minHeight: '775.2px' }}
+      className="relative flex items-center justify-center"
+      style={{ height: '775.2px', minHeight: '775.2px', paddingTop: '80px' }}
     >
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
@@ -21,7 +21,7 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container-custom text-center px-4 mt-8 sm:mt-12 md:mt-16">
+      <div className="relative z-10 container-custom text-center px-4">
         <div className="max-w-4xl mx-auto">
           {/* Main Heading */}
           <h1

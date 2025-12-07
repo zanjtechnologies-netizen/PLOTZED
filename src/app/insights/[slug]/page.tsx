@@ -113,37 +113,37 @@ export default function BlogPostPage() {
   return (
     <div className={`min-h-screen bg-[#F9FAFB] ${playfair.variable} ${libre.variable}`}>
       {/* Hero Section */}
-      <div className="bg-[#112250] text-white py-16 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#112250]/80 to-[#112250]" />
+      <div className="bg-[#112250] text-white py-12 sm:py-16 md:py-20 relative overflow-hidden mt-16 sm:mt-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#112250]/90 to-[#112250]" />
         {post.featured_image && (
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-20"
+            className="absolute inset-0 bg-cover bg-center opacity-15"
             style={{ backgroundImage: `url(${post.featured_image})` }}
           />
         )}
 
-        <div className="container-custom mx-auto relative z-10">
+        <div className="container-custom mx-auto relative z-10 px-4 sm:px-6">
           <Link
             href="/insights"
-            className="inline-flex items-center text-gray-300 hover:text-white mb-6 transition-colors"
+            className="inline-flex items-center text-gray-300 hover:text-white mb-4 sm:mb-6 transition-colors text-sm sm:text-base"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Insights
           </Link>
 
           {post.category && (
-            <div className="mb-4">
+            <div className="mb-3 sm:mb-4">
               <span className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-[#D8B893] text-[#112250] font-libre uppercase">
                 {post.category}
               </span>
             </div>
           )}
 
-          <h1 className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white max-w-4xl">
+          <h1 className="font-playfair text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 text-white max-w-4xl leading-tight">
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-6 text-gray-300 font-libre">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-gray-300 font-libre text-sm sm:text-base">
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
               <span>{formatDate(post.published_at)}</span>

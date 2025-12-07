@@ -102,7 +102,7 @@ export default function JourneyToOwnership() {
                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
                   <div className="grid grid-cols-3 gap-6 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-[#006DB8] mb-1">500+</div>
+                      <div className="text-3xl font-bold text-[#006DB8] mb-1">25+</div>
                       <div className="text-sm text-gray-600">Properties</div>
                     </div>
                     <div>
@@ -110,7 +110,7 @@ export default function JourneyToOwnership() {
                       <div className="text-sm text-gray-600">Satisfied</div>
                     </div>
                     <div>
-                      <div className="text-3xl font-bold text-[#006DB8] mb-1">15+</div>
+                      <div className="text-3xl font-bold text-[#006DB8] mb-1">3+</div>
                       <div className="text-sm text-gray-600">Years</div>
                     </div>
                   </div>

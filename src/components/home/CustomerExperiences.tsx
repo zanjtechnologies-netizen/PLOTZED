@@ -117,16 +117,16 @@ export default function CustomerExperiences() {
       id: 1,
       name: 'Arun Raj',
       location: 'Chennai',
-      title: 'Investor, Casuarina Greens',
+      title: 'Investor, serene villas',
       rating: 5,
       comment:
         'Plotzed transformed my investment into a peaceful escape. The lush surroundings and guided process made it feel effortless.',
     },
     {
       id: 2,
-      name: 'Priya Sharma',
+      name: 'Prijul',
       location: 'Bengaluru',
-      title: 'Homeowner, Coastal Estates',
+      title: 'Land Owner, Coastal Estates',
       rating: 5,
       comment:
         'The Plotzed team made every step seamless — Transparent, professional, and supportive throughout.',

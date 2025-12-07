@@ -41,47 +41,69 @@ export const GET = withErrorHandling(
     const sortOrder = searchParams.get('sortOrder') || 'desc'
 
     // Build where clause
-    const where: any = {}
+    const where: any = {
+      AND: []
+    }
 
-    if (city) where.city = { contains: city, mode: 'insensitive' }
-    if (state) where.state = { contains: state, mode: 'insensitive' }
-    if (status) where.status = status
-    if (isFeatured) where.is_featured = isFeatured === 'true'
+    // Handle Puducherry/Pondicherry special case
+    if (city) {
+      if (city === 'Puducherry / Pondicherry') {
+        where.AND.push({
+          OR: [
+            { city: { contains: 'Puducherry', mode: 'insensitive' } },
+            { city: { contains: 'Pondicherry', mode: 'insensitive' } },
+          ]
+        })
+      } else {
+        where.AND.push({ city: { contains: city, mode: 'insensitive' } })
+      }
+    }
+
+    if (state) where.AND.push({ state: { contains: state, mode: 'insensitive' } })
+    if (status) where.AND.push({ status })
+    if (isFeatured) where.AND.push({ is_featured: isFeatured === 'true' })
 
     // Published filter - ALWAYS default to showing only published plots
     // Only show unpublished if explicitly requested with published=false
     if (isPublished === 'false') {
-      where.is_published = false
+      where.AND.push({ is_published: false })
     } else if (isPublished === 'all') {
       // Don't filter by published status
       // Allow admins to see all plots
     } else {
       // Default: only show published plots
-      where.is_published = true
+      where.AND.push({ is_published: true })
     }
 
     // Price range filter
     if (minPrice || maxPrice) {
-      where.price = {}
-      if (minPrice) where.price.gte = parseFloat(minPrice)
-      if (maxPrice) where.price.lte = parseFloat(maxPrice)
+      const priceFilter: any = {}
+      if (minPrice) priceFilter.gte = parseFloat(minPrice)
+      if (maxPrice) priceFilter.lte = parseFloat(maxPrice)
+      where.AND.push({ price: priceFilter })
     }
 
     // Size range filter
     if (minSize || maxSize) {
-      where.plot_size = {}
-      if (minSize) where.plot_size.gte = parseFloat(minSize)
-      if (maxSize) where.plot_size.lte = parseFloat(maxSize)
+      const sizeFilter: any = {}
+      if (minSize) sizeFilter.gte = parseFloat(minSize)
+      if (maxSize) sizeFilter.lte = parseFloat(maxSize)
+      where.AND.push({ plot_size: sizeFilter })
     }
 
     // Search in title, description, address
     if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { address: { contains: search, mode: 'insensitive' } },
-      ]
+      where.AND.push({
+        OR: [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { address: { contains: search, mode: 'insensitive' } },
+        ]
+      })
     }
+
+    // Clean up empty AND array
+    const finalWhere = where.AND.length > 0 ? where : {}
 
     // TEMPORARY: Disable cache to test if cache is causing the issue
     // Generate cache key based on query params
@@ -89,10 +111,10 @@ export const GET = withErrorHandling(
 
     // Direct database query (cache disabled for debugging)
     // Get total count for pagination
-    const total = await prisma.plots.count({ where })
+    const total = await prisma.plots.count({ where: finalWhere })
 
     structuredLogger.info('Fetching plots', {
-      where,
+      where: finalWhere,
       total,
       page,
       limit,
@@ -102,7 +124,7 @@ export const GET = withErrorHandling(
     // Get plots with pagination and sorting
     // Featured properties appear first, then sorted by the specified field
     const plots = await prisma.plots.findMany({
-      where,
+      where: finalWhere,
       skip,
       take: limit,
       orderBy: [

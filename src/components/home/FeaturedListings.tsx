@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Heart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface FeaturedPlot {
   id: string;
@@ -20,6 +22,10 @@ interface FeaturedPlot {
 export default function FeaturedListings() {
   const [plots, setPlots] = useState<FeaturedPlot[]>([]);
   const [loading, setLoading] = useState(true);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favoriteLoading, setFavoriteLoading] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     async function loadFeaturedPlots() {
@@ -37,6 +43,68 @@ export default function FeaturedListings() {
     }
     loadFeaturedPlots();
   }, []);
+
+  // Load user's favorites
+  useEffect(() => {
+    async function loadFavorites() {
+      if (!session?.user) return;
+
+      try {
+        const response = await fetch('/api/favorites');
+        const result = await response.json();
+        if (result.success && result.data?.favorites) {
+          setFavorites(result.data.favorites);
+        }
+      } catch (error) {
+        console.error('Failed to load favorites:', error);
+      }
+    }
+    loadFavorites();
+  }, [session]);
+
+  // Toggle favorite
+  const toggleFavorite = async (e: React.MouseEvent, plotId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if user is logged in
+    if (!session?.user) {
+      router.push('/login?callbackUrl=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
+    setFavoriteLoading(plotId);
+
+    try {
+      const isFavorite = favorites.includes(plotId);
+
+      if (isFavorite) {
+        // Remove from favorites
+        const response = await fetch(`/api/favorites?plotId=${plotId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          setFavorites(favorites.filter((id) => id !== plotId));
+        }
+      } else {
+        // Add to favorites
+        const response = await fetch('/api/favorites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plotId }),
+        });
+
+        if (response.ok) {
+          setFavorites([...favorites, plotId]);
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setFavoriteLoading(null);
+    }
+  };
 
   // Fallback data for when API has no data
   const fallbackPlots: FeaturedPlot[] = [
@@ -132,10 +200,18 @@ export default function FeaturedListings() {
 
                   {/* Favorite Button */}
                   <button
-                    onClick={(e) => e.preventDefault()}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                    onClick={(e) => toggleFavorite(e, plot.id)}
+                    disabled={favoriteLoading === plot.id}
+                    className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all hover:scale-110 disabled:opacity-50"
+                    title={session?.user ? (favorites.includes(plot.id) ? 'Remove from favorites' : 'Add to favorites') : 'Login to save favorites'}
                   >
-                    <Heart className="w-5 h-5 text-gray-700" />
+                    <Heart
+                      className={`w-5 h-5 transition-colors ${
+                        favorites.includes(plot.id)
+                          ? 'fill-red-500 text-red-500'
+                          : 'text-gray-700 hover:text-red-500'
+                      }`}
+                    />
                   </button>
 
                   {/* Property Info Overlay */}

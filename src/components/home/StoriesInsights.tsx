@@ -78,9 +78,9 @@ export default function StoriesInsights() {
                 href={insight.link}
                 className="group relative rounded-2xl overflow-hidden border transition-all duration-300 hover:border-[#D8B893]/50"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.06)',
+                  background: 'rgba(17, 34, 80, 0.5)',
                   backdropFilter: 'blur(14px)',
-                  borderColor: 'rgba(216,184,147,0.25)',
+                  borderColor: 'rgba(216,184,147,0.35)',
                 }}
               >
                 {/* Image */}

@@ -1,327 +1,133 @@
 // ================================================
-// src/app/api/site-visits/[id]/route.ts - Single Site Visit Management
+// src/app/api/site-visits/[id]/route.ts - Site Visit Management API
 // ================================================
-export const runtime = "nodejs";
 
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { z } from 'zod'
-import { noContentResponse, successResponse, withErrorHandling } from '@/lib/api-error-handler'
-import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '@/lib/errors'
-import { structuredLogger } from '@/lib/structured-logger'
-import { sendEmail, emailTemplates } from '@/lib/email'
 
-/**
- * Schema for updating site visit
- */
-const updateSiteVisitSchema = z.object({
-  visit_date: z.string().optional(),
-  visit_time: z.string().optional(),
-  attendees: z.number().min(1).max(10).optional(),
-  notes: z.string().optional(),
-  status: z.enum(['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED']).optional(),
-})
-
-/**
- * GET /api/site-visits/:id
- * Fetch a single site visit by ID
- *
- * Authorization:
- * - Users can only view their own site visits
- * - Admins can view all site visits
- */
-export const GET = withErrorHandling(
-  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+// PATCH - Update site visit (reschedule or change status)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
     const session = await auth()
 
-    if (!session?.user) {
-      throw new UnauthorizedError('Please login to view site visit details')
-    }
-
-    const { id } = await params
-
-    const siteVisit = await prisma.site_visits.findUnique({
-      where: { id },
-      include: {
-        plots: {
-          select: {
-            id: true,
-            title: true,
-            address: true,
-            city: true,
-            state: true,
-            pincode: true,
-            images: true,
-            price: true,
-          },
-        },
-        users: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-          },
-        },
-      },
-    })
-
-    if (!siteVisit) {
-      throw new NotFoundError('Site visit not found')
-    }
-
-    // Check if user owns this site visit or is admin
-    if (siteVisit.user_id !== session.user.id && session.user.role !== 'ADMIN') {
-      throw new ForbiddenError('You do not have permission to view this site visit')
-    }
-
-    return successResponse({ siteVisit })
-  },
-  'GET /api/site-visits/[id]'
-)
-
-/**
- * PATCH /api/site-visits/:id
- * Update a site visit (reschedule or change status)
- *
- * Authorization:
- * - Users can update their own site visits (except status)
- * - Admins can update any site visit including status
- *
- * Business Rules:
- * - Cannot update a COMPLETED or CANCELLED site visit
- * - Only admins can change status
- */
-export const PATCH = withErrorHandling(
-  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
-    const session = await auth()
-
-    if (!session?.user) {
-      throw new UnauthorizedError('Please login to update site visit')
-    }
-
-    const { id } = await params
-    const body = await request.json()
-    const validatedData = updateSiteVisitSchema.parse(body)
-
-    // Fetch existing site visit
-    const existingSiteVisit = await prisma.site_visits.findUnique({
-      where: { id },
-      include: {
-        plots: {
-          select: {
-            title: true,
-            address: true,
-          },
-        },
-        users: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
-    })
-
-    if (!existingSiteVisit) {
-      throw new NotFoundError('Site visit not found')
-    }
-
-    // Check ownership
-    const isOwner = existingSiteVisit.user_id === session.user.id
-    const isAdmin = session.user.role === 'ADMIN'
-
-    if (!isOwner && !isAdmin) {
-      throw new ForbiddenError('You do not have permission to update this site visit')
-    }
-
-    // Business rule: Cannot update COMPLETED or CANCELLED visits
-    if (['COMPLETED', 'CANCELLED'].includes(existingSiteVisit.status)) {
-      throw new BadRequestError(
-        `Cannot update a ${existingSiteVisit.status.toLowerCase()} site visit`
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
       )
     }
 
-    // Only admins can change status
-    if (validatedData.status && !isAdmin) {
-      throw new ForbiddenError('Only admins can change site visit status')
+    const body = await request.json()
+    const { status, visit_date, visit_time } = body
+
+    // Verify the site visit belongs to the user
+    const existingVisit = await prisma.site_visits.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!existingVisit) {
+      return NextResponse.json(
+        { success: false, error: 'Site visit not found' },
+        { status: 404 }
+      )
+    }
+
+    if (existingVisit.user_id !== session.user.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 403 }
+      )
     }
 
     // Prepare update data
     const updateData: any = {}
 
-    if (validatedData.visit_date) {
-      updateData.visit_date = new Date(validatedData.visit_date)
-    }
-    if (validatedData.visit_time !== undefined) {
-      updateData.visit_time = validatedData.visit_time
-    }
-    if (validatedData.attendees !== undefined) {
-      updateData.attendees = validatedData.attendees
-    }
-    if (validatedData.notes !== undefined) {
-      updateData.notes = validatedData.notes
-    }
-    if (validatedData.status && isAdmin) {
-      updateData.status = validatedData.status
+    if (status) {
+      updateData.status = status
     }
 
-    // Update site visit
-    const updatedSiteVisit = await prisma.site_visits.update({
-      where: { id },
+    if (visit_date) {
+      updateData.visit_date = new Date(visit_date)
+      updateData.status = 'RESCHEDULED'
+    }
+
+    if (visit_time) {
+      updateData.visit_time = visit_time
+    }
+
+    // Update the site visit
+    const updatedVisit = await prisma.site_visits.update({
+      where: { id: params.id },
       data: updateData,
-      include: {
-        plots: {
-          select: {
-            title: true,
-            address: true,
-            city: true,
-          },
-        },
-      },
     })
 
-    structuredLogger.info('Site visit updated', {
-      siteVisitId: id,
-      userId: session.user.id,
-      changes: Object.keys(updateData),
-      type: 'site_visit_update',
+    return NextResponse.json({
+      success: true,
+      message: 'Site visit updated successfully',
+      data: updatedVisit,
     })
+  } catch (error) {
+    console.error('Error updating site visit:', error)
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
 
-    // Send notification email if rescheduled
-    if (validatedData.visit_date || validatedData.visit_time) {
-      try {
-        if (existingSiteVisit.users.email) {
-          await sendEmail({
-            to: existingSiteVisit.users.email,
-            subject: 'Site Visit Rescheduled - Plotzed Real Estate',
-            html: emailTemplates.siteVisitConfirmation({
-              customerName: existingSiteVisit.users.name,
-              propertyName: updatedSiteVisit.plots.title,
-              visitDate: new Date(updatedSiteVisit.visit_date).toLocaleDateString('en-IN', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              }),
-              visitTime: updatedSiteVisit.visit_time,
-            }),
-          })
-        }
-      } catch (emailError) {
-        structuredLogger.error('Site visit update email failed', emailError as Error, {
-          siteVisitId: id,
-        })
-        // Don't fail the update if email fails
-      }
-    }
-
-    return successResponse({ siteVisit: updatedSiteVisit }, 200, 'Site visit updated successfully')
-  },
-  'PATCH /api/site-visits/[id]'
-)
-
-/**
- * DELETE /api/site-visits/:id
- * Cancel a site visit
- *
- * Authorization:
- * - Users can cancel their own site visits
- * - Admins can cancel any site visit
- *
- * Business Rules:
- * - Cannot cancel a COMPLETED or already CANCELLED visit
- * - Sets status to CANCELLED instead of deleting (for audit trail)
- */
-export const DELETE = withErrorHandling(
-  async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+// DELETE - Cancel site visit
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
     const session = await auth()
 
-    if (!session?.user) {
-      throw new UnauthorizedError('Please login to cancel site visit')
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      )
     }
 
-    const { id } = await params
-
-    // Fetch existing site visit
-    const siteVisit = await prisma.site_visits.findUnique({
-      where: { id },
-      include: {
-        plots: {
-          select: {
-            title: true,
-          },
-        },
-        users: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
+    // Verify the site visit belongs to the user
+    const existingVisit = await prisma.site_visits.findUnique({
+      where: { id: params.id },
     })
 
-    if (!siteVisit) {
-      throw new NotFoundError('Site visit not found')
+    if (!existingVisit) {
+      return NextResponse.json(
+        { success: false, error: 'Site visit not found' },
+        { status: 404 }
+      )
     }
 
-    // Check ownership
-    const isOwner = siteVisit.user_id === session.user.id
-    const isAdmin = session.user.role === 'ADMIN'
-
-    if (!isOwner && !isAdmin) {
-      throw new ForbiddenError('You do not have permission to cancel this site visit')
+    if (existingVisit.user_id !== session.user.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 403 }
+      )
     }
 
-    // Business rule: Cannot cancel COMPLETED visits
-    if (siteVisit.status === 'COMPLETED') {
-      throw new BadRequestError('Cannot cancel a completed site visit')
-    }
-
-    // Business rule: Already cancelled
-    if (siteVisit.status === 'CANCELLED') {
-      throw new BadRequestError('Site visit is already cancelled')
-    }
-
-    // Update status to CANCELLED instead of deleting (for audit trail)
+    // Update status to CANCELLED instead of deleting
     await prisma.site_visits.update({
-      where: { id },
-      data: {
-        status: 'CANCELLED',
-      },
+      where: { id: params.id },
+      data: { status: 'CANCELLED' },
     })
 
-    structuredLogger.warn('Site visit cancelled', {
-      siteVisitId: id,
-      userId: session.user.id,
-      plotId: siteVisit.plot_id,
-      type: 'site_visit_cancelled',
+    return NextResponse.json({
+      success: true,
+      message: 'Site visit cancelled successfully',
     })
-
-    // Send cancellation email
-    try {
-      if (siteVisit.users.email) {
-        await sendEmail({
-          to: siteVisit.users.email,
-          subject: 'Site Visit Cancelled - Plotzed Real Estate',
-          html: `
-            <h2>Site Visit Cancelled</h2>
-            <p>Dear ${siteVisit.users.name},</p>
-            <p>Your site visit for <strong>${siteVisit.plots.title}</strong> has been cancelled.</p>
-            <p>If you would like to reschedule, please contact us or book a new visit through our website.</p>
-            <p>Best regards,<br>Plotzed Real Estate Team</p>
-          `,
-        })
-      }
-    } catch (emailError) {
-      structuredLogger.error('Site visit cancellation email failed', emailError as Error, {
-        siteVisitId: id,
-      })
-      // Don't fail the cancellation if email fails
-    }
-
-    return noContentResponse()
-  },
-  'DELETE /api/site-visits/[id]'
-)
+  } catch (error) {
+    console.error('Error cancelling site visit:', error)
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}

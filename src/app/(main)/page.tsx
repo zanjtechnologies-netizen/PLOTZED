@@ -29,7 +29,7 @@ export default function HomePage() {
       <WhatsAppButton
         phoneNumber="+917708594263"
         message="Hi, I'm interested in learning more about your premium plots."
-        position="left"
+        position="right"
       />
       <ChatBot />
       <div className="overflow-hidden">
@@ -41,12 +41,12 @@ export default function HomePage() {
           <FeaturedListings />
         </section>
 
-        {/* Booking  - White Background */}
+        {/* Booking Experience - Dual Tone Background */}
         <section style={{ backgroundColor: "#F3E8D9" }}>
-        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 ">
-          <BookingExperience />
+          <div className="container-custom py-12 md:py-16">
+            <BookingExperience />
+          </div>
         </section>
-      </section>
 
         {/*  Journey Section - White Background */}
         <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">

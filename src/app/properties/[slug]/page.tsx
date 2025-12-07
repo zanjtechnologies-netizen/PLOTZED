@@ -14,6 +14,7 @@ import {
   Check,
   Phone
 } from 'lucide-react';
+import BookingModal from '@/components/modals/BookingModal';
 
 import { Playfair_Display, Libre_Baskerville, Inter } from 'next/font/google';
 
@@ -38,6 +39,7 @@ export default function DynamicPropertyPage() {
   const [loading, setLoading] = useState(true);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const phoneNumber = '7708594263';
 
@@ -312,12 +314,12 @@ export default function DynamicPropertyPage() {
 
               {/* CTA Buttons */}
               <div className="space-y-3">
-                <Link
-                  href="/visit"
+                <button
+                  onClick={() => setIsBookingModalOpen(true)}
                   className="w-full py-4 bg-[#D8B893] text-[#112250] rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#C9A883] transition flex items-center justify-center"
                 >
                   BOOK A SITE VISIT
-                </Link>
+                </button>
 
                 <a
                   href={`tel:${phoneNumber}`}
@@ -356,12 +358,12 @@ export default function DynamicPropertyPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center max-w-xl mx-auto sm:max-w-none">
-            <Link
-              href="/visit"
+            <button
+              onClick={() => setIsBookingModalOpen(true)}
               className="px-6 sm:px-8 py-3 sm:py-4 bg-[#D8B893] text-[#112250] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#C9A883] transition"
             >
               Book a site visit
-            </Link>
+            </button>
 
             <Link href="/properties" className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white text-white rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-white hover:text-[#112250] transition">
               View More Properties
@@ -370,6 +372,8 @@ export default function DynamicPropertyPage() {
         </div>
       </section>
 
+      {/* Booking Modal */}
+      <BookingModal isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />
     </main>
   );
 }

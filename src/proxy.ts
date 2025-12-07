@@ -134,6 +134,7 @@ export default async function proxy(request: NextRequest) {
           '/api/site-settings', // Public site settings
           '/api/inquiries',   // Public inquiry submission
           '/api/site-visits', // Public site visit booking
+          '/api/favorites',   // User favorites (requires session)
           '/api/debug',       // Debug endpoints
           '/api/cache/clear', // Public cache management
         ]

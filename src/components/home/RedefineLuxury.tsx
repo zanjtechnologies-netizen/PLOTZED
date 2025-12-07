@@ -7,9 +7,9 @@ export default function RedefineLuxury() {
   ];
 
   const stats = [
-    { value: '15+', label: 'Years of Excellence' },
-    { value: '200+', label: 'Luxury Properties' },
-    { value: '150+', label: 'Global Destinations' },
+    { value: '3+', label: 'Years of Excellence' },
+    { value: '50+', label: 'Luxury Properties' },
+    { value: '3+', label: 'Global Destinations' },
     { value: '98%', label: 'Client Satisfaction' },
   ];
 
@@ -56,8 +56,8 @@ export default function RedefineLuxury() {
                 fontFamily: 'var(--font-libre)',
               }}
             >
-              For over 15 years, Plotzed Real Estate Developers has been a trusted name in premium
-              property development — curating exceptional residential plots, estates, and villas
+              For over 3+ years, Plotzed Real Estate Developers has been a trusted name in premium
+              property development — offers no brokage and curating exceptional residential plots, estates, and villas
               across South India's most promising destinations.
             </p>
 

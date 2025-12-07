@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function LandscapeVideo() {
   const videoFeatures = [
-    { label: 'Virtual Tours', count: '100+' },
+    { label: 'Virtual Tours', count: '10+' },
     { label: 'HD Videos', count: '4K' },
     { label: 'Images', count: '50+' },
   ];
