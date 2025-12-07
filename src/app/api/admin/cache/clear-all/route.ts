@@ -22,7 +22,7 @@ export const POST = withErrorHandling(
     }
 
     // Clear all Redis cache
-    await cache.invalidateAll();
+    await cache.clearAll();
 
     return successResponse(
       { message: 'All caches cleared successfully' },
