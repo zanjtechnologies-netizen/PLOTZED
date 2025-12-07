@@ -1,12 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Search } from 'lucide-react';
-
 export default function HeroSection() {
-  const [activeTab, setActiveTab] = useState('buy');
-  const propertyTypes = ['Buy', 'Rent', 'Sell'];
-
   return (
     <section
       id="herosection"
@@ -27,17 +21,17 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container-custom text-center">
+      <div className="relative z-10 container-custom text-center px-4">
         <div className="max-w-4xl mx-auto">
           {/* Centered Logo (from Figma) */}
-          <div className="mb-8 flex justify-center">
-            <img src="/images/hero-logo.svg" alt="Plotzed Mark" className="h-24 w-auto" />
+          <div className="mb-6 md:mb-8 flex justify-center">
+            <img src="/images/hero-logo.svg" alt="Plotzed Mark" className="h-16 sm:h-20 md:h-24 w-auto" />
           </div>
 
           {/* Main Heading */}
           <h1
-            className="font-bold mb-6 text-white"
-            style={{ fontFamily: 'var(--font-playfair)', fontSize: '80px', lineHeight: '1.2' }}
+            className="font-bold mb-4 md:mb-6 text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-[80px]"
+            style={{ fontFamily: 'var(--font-playfair)', lineHeight: '1.2' }}
           >
             Discover Your Perfect
             <br />
@@ -46,7 +40,7 @@ export default function HeroSection() {
 
           {/* Subheading */}
           <p
-            className="text-xl md:text-2xl mb-10 max-w-3xl mx-auto"
+            className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-10 max-w-3xl mx-auto px-2 sm:px-4"
             style={{ color: '#E9EFFF' }}
           >
             Immerse yourself in unparalleled comfort and sophistication with our curated selection

@@ -121,18 +121,19 @@ export default function DynamicPropertyPage() {
         </div>
 
         {/* Nav */}
-        <div className="absolute top-0 left-0 right-0 z-50 p-8 mt-24">
+        <div className="absolute top-0 left-0 right-0 z-50 p-4 sm:p-6 md:p-8 mt-16 sm:mt-20 md:mt-24">
           <div className="container-custom flex justify-between items-center">
 
             <Link
               href="/properties"
-              className="flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full text-white border"
+              className="flex items-center gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 bg-white/10 backdrop-blur-md rounded-full text-white border text-sm md:text-base hover:bg-white/20 transition"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Properties</span>
+              <span className="hidden sm:inline">Back to Properties</span>
+              <span className="sm:hidden">Back</span>
             </Link>
 
-            <div className="flex gap-3 relative">
+            <div className="flex gap-2 sm:gap-3 relative">
               <div className="relative">
                 <button
                   onClick={() => setShowShareMenu(!showShareMenu)}
@@ -184,19 +185,19 @@ export default function DynamicPropertyPage() {
         </div>
 
         {/* Hero Text */}
-        <div className="absolute bottom-0 left-0 right-0 pb-24 z-40">
-          <div className="container-custom max-w-4xl">
+        <div className="absolute bottom-0 left-0 right-0 pb-12 sm:pb-16 md:pb-24 z-40">
+          <div className="container-custom max-w-4xl px-4 sm:px-6">
 
-            <h1 className="text-6xl font-bold text-white mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4">
               {plot.title}
             </h1>
 
-            <div className="flex items-center gap-2 text-white/90 mb-6">
-              <MapPin className="w-5 h-5 text-[#D8B893]" />
-              <span>{plot.address}, {plot.city}, {plot.state}</span>
+            <div className="flex items-start sm:items-center gap-2 text-white/90 mb-4 sm:mb-6">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#D8B893] flex-shrink-0 mt-0.5 sm:mt-0" />
+              <span className="text-sm sm:text-base">{plot.address}, {plot.city}, {plot.state}</span>
             </div>
 
-            <div className="px-8 py-3 bg-[#112250] text-[#D8B892] rounded-full text-xl font-semibold w-fit">
+            <div className="px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 bg-[#112250] text-[#D8B892] rounded-full text-base sm:text-lg md:text-xl font-semibold w-fit">
               From ₹{plot.price?.toLocaleString()}
             </div>
 
@@ -205,19 +206,19 @@ export default function DynamicPropertyPage() {
       </section>
 
       {/* CONTENT */}
-      <section className="py-20">
-        <div className="container-custom grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <section className="py-10 sm:py-14 md:py-20 px-4">
+        <div className="container-custom grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 md:gap-12">
 
           {/* LEFT CONTENT */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="lg:col-span-8 space-y-8 sm:space-y-10 md:space-y-12">
 
             {/* Description */}
             <div>
-              <h2 className="text-4xl font-bold text-[#112250] mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#112250] mb-4 sm:mb-5 md:mb-6">
                 Property Overview
               </h2>
 
-              <p className="text-lg text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
                 {plot.description || "No description available."}
               </p>
             </div>
@@ -225,13 +226,13 @@ export default function DynamicPropertyPage() {
             {/* Gallery */}
             {plot.images && plot.images.length >= 3 && (
               <div>
-                <h3 className="text-3xl font-bold text-[#112250] mb-6">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#112250] mb-4 sm:mb-5 md:mb-6">
                   Gallery
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   {/* Image 1 - Start from images[1] to avoid duplicating cover */}
-                  <div className="h-[350px] rounded-lg overflow-hidden relative">
+                  <div className="h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] rounded-lg overflow-hidden relative">
                     <Image
                       src={plot.images[1]}
                       alt={`${plot.title} - Image 1`}
@@ -241,7 +242,7 @@ export default function DynamicPropertyPage() {
                   </div>
 
                   {/* Image 2 */}
-                  <div className="h-[350px] rounded-lg overflow-hidden relative">
+                  <div className="h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] rounded-lg overflow-hidden relative">
                     <Image
                       src={plot.images[2]}
                       alt={`${plot.title} - Image 2`}
@@ -252,7 +253,7 @@ export default function DynamicPropertyPage() {
 
                   {/* Image 3 - Optional, only if exists */}
                   {plot.images[3] && (
-                    <div className="md:col-span-2 h-[400px] rounded-lg overflow-hidden relative">
+                    <div className="md:col-span-2 h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-lg overflow-hidden relative">
                       <Image
                         src={plot.images[3]}
                         alt={`${plot.title} - Image 3`}
@@ -269,21 +270,21 @@ export default function DynamicPropertyPage() {
 
           {/* RIGHT SIDEBAR */}
           <div className="lg:col-span-4">
-            <div className="bg-[#112250] text-white rounded-2xl p-8 sticky top-8">
+            <div className="bg-[#112250] text-white rounded-2xl p-5 sm:p-6 md:p-8 lg:sticky lg:top-8">
               {/* Location */}
-              <div className="mb-6">
+              <div className="mb-5 sm:mb-6">
                 <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">LOCATION</p>
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-lg sm:text-xl font-bold text-white">
                   {plot.address}
                 </h3>
               </div>
 
               {/* Pricing */}
-              <div className="text-center mb-8">
-                <div className="text-[#D8B893] text-5xl font-bold mb-2">
+              <div className="text-center mb-6 sm:mb-8">
+                <div className="text-[#D8B893] text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
                   From ₹{(plot.price / 10000000).toFixed(2)} Cr
                 </div>
-                <p className="text-sm text-gray-300">Exclusive pre-launch value</p>
+                <p className="text-xs sm:text-sm text-gray-300">Exclusive pre-launch value</p>
               </div>
 
               {/* Property Details */}
@@ -320,19 +321,20 @@ export default function DynamicPropertyPage() {
 
                 <a
                   href={`tel:${phoneNumber}`}
-                  className="w-full py-4 bg-white rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition flex items-center justify-center gap-2"
+                  className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition flex items-center justify-center gap-1.5 sm:gap-2 px-2"
                 >
-                  <Phone className="w-4 h-4" />
-                  <span>CALL US - {phoneNumber}</span>
+                  <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">CALL US - {phoneNumber}</span>
+                  <span className="md:hidden text-xs sm:text-sm">CALL {phoneNumber}</span>
                 </a>
 
-                <button className="w-full py-4 bg-[#3B4B7A] rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition">
+                <button className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition">
                   DOWNLOAD BROCHURE
                 </button>
               </div>
 
               {/* Payment Info */}
-              <div className="mt-6 pt-6 border-t border-white/20 text-center">
+              <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-white/20 text-center">
                 <p className="text-xs text-gray-400">Flexible payment plans available</p>
                 <p className="text-xs text-gray-400">Loan assistance available</p>
               </div>
@@ -343,25 +345,25 @@ export default function DynamicPropertyPage() {
       </section>
 
       {/* CTA SECTION */}
-      <section className="bg-[#112250] py-20">
+      <section className="bg-[#112250] py-12 sm:py-16 md:py-20 px-4">
         <div className="container-custom text-center">
-          <h2 className="text-5xl font-bold text-white mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
             Ready to Own Your Ideal Land?
           </h2>
 
-          <p className="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 mb-8 sm:mb-10 max-w-3xl mx-auto px-4">
             Connect with our property experts for a personalized guided visit, investment insights, and exclusive pre-launch offers.
           </p>
 
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center max-w-xl mx-auto sm:max-w-none">
             <Link
               href="/visit"
-              className="px-8 py-4 bg-[#D8B893] text-[#112250] rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#C9A883] transition"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-[#D8B893] text-[#112250] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#C9A883] transition"
             >
               Book a site visit
             </Link>
 
-            <Link href="/properties" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-bold text-sm uppercase tracking-wider hover:bg-white hover:text-[#112250] transition">
+            <Link href="/properties" className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white text-white rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-white hover:text-[#112250] transition">
               View More Properties
             </Link>
           </div>
