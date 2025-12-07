@@ -83,79 +83,82 @@ export const GET = withErrorHandling(
       ]
     }
 
+    // TEMPORARY: Disable cache to test if cache is causing the issue
     // Generate cache key based on query params
-    const cacheKey = `plots:list:${JSON.stringify({ page, limit, city, state, status, minPrice, maxPrice, minSize, maxSize, isFeatured, isPublished, search, sortBy, sortOrder })}`
+    // const cacheKey = `plots:list:${JSON.stringify({ page, limit, city, state, status, minPrice, maxPrice, minSize, maxSize, isFeatured, isPublished, search, sortBy, sortOrder })}`
 
-    // Use cache for GET requests (cache for 5 minutes)
-    const result = await cache.get(
-      cacheKey,
-      async () => {
-        // Get total count for pagination
-        const total = await prisma.plots.count({ where })
+    // Direct database query (cache disabled for debugging)
+    // Get total count for pagination
+    const total = await prisma.plots.count({ where })
 
-        // Get plots with pagination and sorting
-        // Featured properties appear first, then sorted by the specified field
-        const plots = await prisma.plots.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: [
-            { is_featured: 'desc' }, // Featured properties first
-            { created_at: 'desc'},
-            /*{ [sortBy]: sortOrder },*/  // Then by specified sort field
-          ],
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            description: true,
-            price: true,
-            booking_amount: true,
-            plot_size: true,
-            dimensions: true,
-            facing: true,
-            address: true,
-            city: true,
-            state: true,
-            pincode: true,
-            latitude: true,
-            longitude: true,
-            images: true,
-            amenities: true,
-            status: true,
-            is_featured: true,
-            is_published: true,
-            created_at: true,
-            updated_at: true,
-            _count: {
-              select: { site_visits: true },
-            },
-          },
-        })
+    structuredLogger.info('Fetching plots', {
+      where,
+      total,
+      page,
+      limit,
+      type: 'plots_fetch',
+    })
 
-        // Convert Decimal fields to numbers for JSON serialization
-        const serializedPlots = plots.map((plot: any) => ({
-          ...plot,
-          price: plot.price.toNumber(),
-          booking_amount: plot.booking_amount.toNumber(),
-          plot_size: plot.plot_size.toNumber(),
-          latitude: plot.latitude?.toNumber() ?? null,
-          longitude: plot.longitude?.toNumber() ?? null,
-        }))
-
-        return {
-          plots: serializedPlots,
-          pagination: {
-            page,
-            limit,
-            total,
-            totalPages: Math.ceil(total / limit),
-            hasMore: skip + plots.length < total,
-          },
-        }
+    // Get plots with pagination and sorting
+    // Featured properties appear first, then sorted by the specified field
+    const plots = await prisma.plots.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: [
+        { is_featured: 'desc' }, // Featured properties first
+        { created_at: 'desc'},
+        /*{ [sortBy]: sortOrder },*/  // Then by specified sort field
+      ],
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        description: true,
+        price: true,
+        booking_amount: true,
+        plot_size: true,
+        dimensions: true,
+        facing: true,
+        address: true,
+        city: true,
+        state: true,
+        pincode: true,
+        latitude: true,
+        longitude: true,
+        images: true,
+        amenities: true,
+        status: true,
+        is_featured: true,
+        is_published: true,
+        created_at: true,
+        updated_at: true,
+        _count: {
+          select: { site_visits: true },
+        },
       },
-      CACHE_TTL.MEDIUM // 5 minutes
-    )
+    })
+
+    // Convert Decimal fields to numbers for JSON serialization
+    const serializedPlots = plots.map((plot: any) => ({
+      ...plot,
+      price: plot.price.toNumber(),
+      booking_amount: plot.booking_amount.toNumber(),
+      plot_size: plot.plot_size.toNumber(),
+      latitude: plot.latitude?.toNumber() ?? null,
+      longitude: plot.longitude?.toNumber() ?? null,
+    }))
+
+    const result = {
+      plots: serializedPlots,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasMore: skip + plots.length < total,
+      },
+    }
 
     return successResponse(result)
   },
