@@ -9,7 +9,7 @@ import { prisma } from '@/lib/prisma'
 // PATCH - Update site visit (reschedule or change status)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -21,12 +21,13 @@ export async function PATCH(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     const { status, visit_date, visit_time } = body
 
     // Verify the site visit belongs to the user
     const existingVisit = await prisma.site_visits.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingVisit) {
@@ -61,7 +62,7 @@ export async function PATCH(
 
     // Update the site visit
     const updatedVisit = await prisma.site_visits.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
     })
 
@@ -82,7 +83,7 @@ export async function PATCH(
 // DELETE - Cancel site visit
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -94,9 +95,11 @@ export async function DELETE(
       )
     }
 
+    const { id } = await params
+
     // Verify the site visit belongs to the user
     const existingVisit = await prisma.site_visits.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!existingVisit) {
@@ -115,7 +118,7 @@ export async function DELETE(
 
     // Update status to CANCELLED instead of deleting
     await prisma.site_visits.update({
-      where: { id: params.id },
+      where: { id },
       data: { status: 'CANCELLED' },
     })
 

@@ -22,14 +22,14 @@ export async function GET(request: NextRequest) {
     const user = await prisma.users.findUnique({
       where: { id: session.user.id },
       select: {
-        favorite_plots: true,
+        saved_plots: true,
       },
     })
 
     return NextResponse.json({
       success: true,
       data: {
-        favorites: user?.favorite_plots || [],
+        favorites: user?.saved_plots || [],
       },
     })
   } catch (error) {
@@ -66,17 +66,17 @@ export async function POST(request: NextRequest) {
     // Get current favorites
     const user = await prisma.users.findUnique({
       where: { id: session.user.id },
-      select: { favorite_plots: true },
+      select: { saved_plots: true },
     })
 
-    const currentFavorites = (user?.favorite_plots as string[]) || []
+    const currentFavorites = (user?.saved_plots as string[]) || []
 
     // Add to favorites if not already there
     if (!currentFavorites.includes(plotId)) {
       await prisma.users.update({
         where: { id: session.user.id },
         data: {
-          favorite_plots: [...currentFavorites, plotId],
+          saved_plots: [...currentFavorites, plotId],
         },
       })
     }
@@ -119,10 +119,10 @@ export async function DELETE(request: NextRequest) {
     // Get current favorites
     const user = await prisma.users.findUnique({
       where: { id: session.user.id },
-      select: { favorite_plots: true },
+      select: { saved_plots: true },
     })
 
-    const currentFavorites = (user?.favorite_plots as string[]) || []
+    const currentFavorites = (user?.saved_plots as string[]) || []
 
     // Remove from favorites
     const updatedFavorites = currentFavorites.filter((id) => id !== plotId)
@@ -130,7 +130,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.users.update({
       where: { id: session.user.id },
       data: {
-        favorite_plots: updatedFavorites,
+        saved_plots: updatedFavorites,
       },
     })
 
