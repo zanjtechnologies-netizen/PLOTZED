@@ -31,9 +31,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
     try {
       // Verify reCAPTCHA
-      const recaptchaToken = await verifyRecaptcha('site_visit');
-      if (!recaptchaToken) {
-        setError('Please complete the reCAPTCHA verification');
+      const recaptchaResult = await verifyRecaptcha('site_visit');
+      if (!recaptchaResult.success) {
+        setError(recaptchaResult.error || 'reCAPTCHA verification failed. Please try again.');
         setLoading(false);
         return;
       }
@@ -44,7 +44,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          recaptchaToken,
+          recaptchaToken: recaptchaResult.success ? 'verified' : undefined,
         }),
       });
 
