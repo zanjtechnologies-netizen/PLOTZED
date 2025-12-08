@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  // Fetch user data with site visits
+  // Fetch user data with site visits and inquiries
   const user = await prisma.users.findUnique({
     where: { id: session.user.id },
     include: {
@@ -60,6 +60,19 @@ export default async function DashboardPage() {
           },
         },
         orderBy: { visit_date: 'asc' },
+      },
+      inquiries: {
+        include: {
+          plots: {
+            select: {
+              title: true,
+              price: true,
+              city: true,
+              state: true,
+            },
+          },
+        },
+        orderBy: { created_at: 'desc' },
       },
     },
   })
@@ -98,7 +111,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 bg-blue-50 rounded-xl">
@@ -126,10 +139,25 @@ export default async function DashboardPage() {
             <p className="text-4xl font-bold text-purple-600 mb-1">
               {user?.site_visits.length || 0}
             </p>
-            <p className="text-xs text-gray-500">All time bookings</p>
+            <p className="text-xs text-gray-500">Property viewings</p>
           </div>
 
-          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300 sm:col-span-2 lg:col-span-1">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-amber-50 rounded-xl">
+                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-2">Total Inquiries</h3>
+            <p className="text-4xl font-bold text-amber-600 mb-1">
+              {user?.inquiries.length || 0}
+            </p>
+            <p className="text-xs text-gray-500">Consultation requests</p>
+          </div>
+
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-start justify-between mb-4">
               <div className={`p-3 rounded-xl ${user?.kyc_verified ? 'bg-green-50' : 'bg-orange-50'}`}>
                 <svg className={`w-6 h-6 ${user?.kyc_verified ? 'text-green-600' : 'text-orange-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +212,7 @@ export default async function DashboardPage() {
 
         {/* Past Site Visits */}
         {pastVisits.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8 mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6" style={{ fontFamily: 'var(--font-playfair)' }}>
               Past Site Visits
             </h2>
@@ -229,6 +257,86 @@ export default async function DashboardPage() {
                       </div>
                       <span className={`px-3 py-1.5 rounded-full text-xs font-bold border self-start ${statusColors[visit.status as SiteVisitStatus]}`}>
                         {visit.status}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Consultation Requests / Inquiries */}
+        {user?.inquiries && user.inquiries.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6" style={{ fontFamily: 'var(--font-playfair)' }}>
+              Consultation Requests
+            </h2>
+            <div className="space-y-3 sm:space-y-4">
+              {user.inquiries.map((inquiry: any) => {
+                const createdDate = new Date(inquiry.created_at)
+                const statusColors = {
+                  PENDING: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                  CONTACTED: 'bg-blue-50 text-blue-700 border-blue-200',
+                  RESOLVED: 'bg-green-50 text-green-700 border-green-200',
+                  CANCELLED: 'bg-red-50 text-red-700 border-red-200',
+                }
+
+                return (
+                  <div
+                    key={inquiry.id}
+                    className="border border-gray-200 bg-amber-50/30 rounded-xl p-4 sm:p-5 hover:bg-amber-50/50 transition-colors duration-200"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+                      <div className="flex-1">
+                        {inquiry.plots ? (
+                          <>
+                            <div className="flex items-center gap-2 mb-2">
+                              <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                              </svg>
+                              <h3 className="font-semibold text-gray-900">{inquiry.plots.title}</h3>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-3">{inquiry.plots.city}, {inquiry.plots.state}</p>
+                          </>
+                        ) : (
+                          <div className="flex items-center gap-2 mb-2">
+                            <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <h3 className="font-semibold text-gray-900">General Consultation</h3>
+                          </div>
+                        )}
+
+                        <p className="text-sm text-gray-700 mb-3 line-clamp-2">{inquiry.message}</p>
+
+                        <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                          <span className="flex items-center gap-1.5">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {createdDate.toLocaleDateString('en-IN', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            {inquiry.email}
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            {inquiry.phone}
+                          </span>
+                        </div>
+                      </div>
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-bold border self-start ${statusColors[inquiry.status as keyof typeof statusColors] || 'bg-gray-50 text-gray-700 border-gray-200'}`}>
+                        {inquiry.status || 'PENDING'}
                       </span>
                     </div>
                   </div>
