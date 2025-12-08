@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BlogPostModal from '@/components/admin/BlogPostModal';
 import {
   Plus,
   Edit2,
@@ -39,6 +40,8 @@ export default function BlogPostsManagement() {
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -132,6 +135,26 @@ export default function BlogPostsManagement() {
     }
   };
 
+  const handleAddNew = () => {
+    setSelectedPost(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (post: BlogPost) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
+  };
+
+  const handleModalSuccess = () => {
+    fetchBlogPosts();
+    handleModalClose();
+  };
+
   if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -156,13 +179,13 @@ export default function BlogPostsManagement() {
             <h1 className="text-3xl font-bold text-gray-900">Blog Posts</h1>
             <p className="text-gray-600 mt-1">Manage your blog content</p>
           </div>
-          <Link
-            href="/admin/blog-posts/new"
+          <button
+            onClick={handleAddNew}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus className="w-5 h-5 mr-2" />
             New Post
-          </Link>
+          </button>
         </div>
 
         {/* Filters */}
@@ -234,12 +257,12 @@ export default function BlogPostsManagement() {
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-600">No blog posts found</p>
-                    <Link
-                      href="/admin/blog-posts/new"
+                    <button
+                      onClick={handleAddNew}
                       className="text-blue-600 hover:underline mt-2 inline-block"
                     >
                       Create your first post
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ) : (
@@ -293,13 +316,13 @@ export default function BlogPostsManagement() {
                           <Eye className="w-4 h-4" />
                         )}
                       </button>
-                      <Link
-                        href={`/admin/blog-posts/${post.id}/edit`}
+                      <button
+                        onClick={() => handleEdit(post)}
                         className="inline-flex items-center px-3 py-1 text-sm text-gray-700 hover:text-blue-600 transition-colors"
                         title="Edit"
                       >
                         <Edit2 className="w-4 h-4" />
-                      </Link>
+                      </button>
                       <button
                         onClick={() => handleDelete(post.id)}
                         className="inline-flex items-center px-3 py-1 text-sm text-gray-700 hover:text-red-600 transition-colors"
@@ -340,6 +363,14 @@ export default function BlogPostsManagement() {
           </div>
         )}
       </div>
+
+      {/* Blog Post Modal */}
+      <BlogPostModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        post={selectedPost}
+        onSuccess={handleModalSuccess}
+      />
     </div>
   );
 }

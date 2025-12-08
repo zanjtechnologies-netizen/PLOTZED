@@ -7,9 +7,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { MapPin, IndianRupee, Eye, Edit, Trash2, Plus, CheckCircle, XCircle } from 'lucide-react'
+import { MapPin, IndianRupee, Eye, Edit, Trash2, Plus, CheckCircle, XCircle, Search } from 'lucide-react'
 import Link from 'next/link'
-import PropertyModal from './PropertyModal'
+import PropertyModalEnhanced from './PropertyModalEnhanced'
 
 const statusColors: Record<string, string> = {
   AVAILABLE: 'bg-green-100 text-green-800 border-green-200',
@@ -32,13 +32,21 @@ export default function PropertiesClient({ properties: initialProperties, stats:
   const [properties, setProperties] = useState(initialProperties)
   const [stats, setStats] = useState(initialStats)
   const [statusFilter, setStatusFilter] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  const filteredProperties = statusFilter
-    ? properties.filter((p) => p.status === statusFilter)
-    : properties
+  const filteredProperties = properties.filter((p) => {
+    const matchesStatus = statusFilter ? p.status === statusFilter : true
+    const matchesSearch = searchQuery
+      ? p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.state.toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    return matchesStatus && matchesSearch
+  })
 
   const handleAddNew = () => {
     setSelectedProperty(null)
@@ -96,10 +104,20 @@ export default function PropertiesClient({ properties: initialProperties, stats:
             <p className="text-gray-600 mt-2">Manage all property listings</p>
           </div>
           <div className="flex items-center space-x-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search properties..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-64 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-900"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">All Status</option>
               <option value="AVAILABLE">Available</option>
@@ -245,7 +263,7 @@ export default function PropertiesClient({ properties: initialProperties, stats:
         </div>
       </div>
 
-      <PropertyModal
+      <PropertyModalEnhanced
         isOpen={isModalOpen}
         onClose={handleModalClose}
         property={selectedProperty}
