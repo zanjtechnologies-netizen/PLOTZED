@@ -27,25 +27,49 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate phone number (Indian format: 10 digits starting with 6-9)
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(formData.phone.replace(/\D/g, ''))) {
+      setError('Please enter a valid 10-digit Indian phone number');
+      return;
+    }
+
+    // Ensure message has at least 10 characters
+    const messageContent = formData.preferredDate
+      ? `Preferred Date: ${formData.preferredDate}\n\n${formData.message}`
+      : formData.message || 'General consultation inquiry';
+
+    if (messageContent.length < 10) {
+      setError('Please provide more details in your message (minimum 10 characters)');
+      return;
+    }
+
     setLoading(true);
 
     try {
       // Verify reCAPTCHA
-      const recaptchaResult = await verifyRecaptcha('site_visit');
+      const recaptchaResult = await verifyRecaptcha('booking_inquiry');
       if (!recaptchaResult.success) {
         setError(recaptchaResult.error || 'reCAPTCHA verification failed. Please try again.');
         setLoading(false);
         return;
       }
 
+      // Prepare inquiry data
+      const inquiryData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone.replace(/\D/g, ''), // Remove non-digits
+        message: messageContent,
+        source: 'booking_modal',
+      };
+
       // Submit to API
-      const response = await fetch('/api/site-visits', {
+      const response = await fetch('/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          recaptchaToken: recaptchaResult.success ? 'verified' : undefined,
-        }),
+        body: JSON.stringify(inquiryData),
       });
 
       const result = await response.json();
