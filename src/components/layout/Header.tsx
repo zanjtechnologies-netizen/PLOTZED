@@ -40,7 +40,7 @@ export default function Header() {
     { name: 'Home', href: '/' },
     { name: 'Properties', href: '#featuredlistings' },
     { name: 'Gallery', href: '/gallery' },
-    { name: 'Site Visits', href: '#bookingexperience' },
+    { name: 'Site Visits', href: '/visit' },
     { name: 'Blog', href: '/insights' },
     { name: 'Testimonials', href: '#customerexperiences' },
     { name: 'About', href: '#redefineluxury' },
@@ -119,7 +119,7 @@ export default function Header() {
 
   <li>
     <Link
-      href="#bookingexperience"
+      href="/visit"
       className="transition-colors font-medium"
       style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
     >
