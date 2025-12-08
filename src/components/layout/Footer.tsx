@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Playfair_Display, Libre_Baskerville, Inter } from 'next/font/google';
 import { Instagram, Facebook, Youtube, Linkedin } from 'lucide-react';
 import Link from 'next/link';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -32,6 +33,7 @@ export default function Footer() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +46,17 @@ export default function Footer() {
     setMessage(null);
 
     try {
+      // Get reCAPTCHA token
+      let recaptchaToken = null;
+      if (executeRecaptcha) {
+        try {
+          recaptchaToken = await executeRecaptcha('newsletter_subscribe');
+        } catch (error) {
+          console.warn('reCAPTCHA token generation failed:', error);
+          // Continue without token - server will handle gracefully
+        }
+      }
+
       const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: {
@@ -52,6 +65,7 @@ export default function Footer() {
         body: JSON.stringify({
           email,
           source: 'footer',
+          token: recaptchaToken,
         }),
       });
 

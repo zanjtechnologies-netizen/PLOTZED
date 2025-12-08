@@ -18,14 +18,51 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
+    // Extract and validate reCAPTCHA token if present
+    const { token: recaptchaToken, ...formData } = body
+
+    // Verify reCAPTCHA if token is provided
+    if (recaptchaToken && process.env.RECAPTCHA_SECRET_KEY) {
+      try {
+        const recaptchaResponse = await fetch(
+          `${request.nextUrl.origin}/api/verify-recaptcha`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              token: recaptchaToken,
+              action: 'newsletter_subscribe',
+            }),
+          }
+        )
+
+        const recaptchaResult = await recaptchaResponse.json()
+
+        if (!recaptchaResult.success) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'reCAPTCHA verification failed. Please try again.',
+            },
+            { status: 400 }
+          )
+        }
+      } catch (error) {
+        console.error('reCAPTCHA verification error:', error)
+        // Continue without reCAPTCHA if verification fails
+      }
+    }
+
     // Validate input
-    const validationResult = subscribeSchema.safeParse(body)
+    const validationResult = subscribeSchema.safeParse(formData)
 
     if (!validationResult.success) {
       return NextResponse.json(
         {
           success: false,
-          error: validationResult.error.errors[0].message
+          error: validationResult.error.issues[0].message
         },
         { status: 400 }
       )
