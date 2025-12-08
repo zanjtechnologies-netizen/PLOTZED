@@ -219,7 +219,7 @@ export const POST = withErrorHandling(
         updated_at: new Date(),
         ...restOfPlotData,
         slug,
-        booking_amount: bookingAmount,
+        booking_amount: bookingAmount || 0,
         plot_size: plotSize,
         rera_number: reraNumber,
         is_featured: isFeatured,

@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'plotzed.b65ec9b1c1faaea81471e55d1504a815.r2.dev',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
 
   // Performance Optimizations

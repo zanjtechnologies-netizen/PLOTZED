@@ -30,7 +30,6 @@ export default function PropertyModalEnhanced({
     title: '',
     description: '',
     price: '',
-    booking_amount: '',
     plot_size: '',
     dimensions: '',
     facing: '',
@@ -56,7 +55,6 @@ export default function PropertyModalEnhanced({
         title: property.title || '',
         description: property.description || '',
         price: property.price?.toString() || '',
-        booking_amount: property.booking_amount?.toString() || '',
         plot_size: property.plot_size?.toString() || '',
         dimensions: property.dimensions || '',
         facing: property.facing || '',
@@ -217,7 +215,6 @@ export default function PropertyModalEnhanced({
         title: formData.title,
         description: formData.description || undefined,
         price: parseFloat(formData.price),
-        bookingAmount: parseFloat(formData.booking_amount),
         plotSize: parseFloat(formData.plot_size),
         dimensions: formData.dimensions || undefined,
         facing: formData.facing || undefined,
@@ -342,22 +339,6 @@ export default function PropertyModalEnhanced({
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                   placeholder="5000000"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Booking Amount (₹) *
-                </label>
-                <input
-                  type="number"
-                  name="booking_amount"
-                  required
-                  step="0.01"
-                  value={formData.booking_amount}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  placeholder="500000"
                 />
               </div>
             </div>

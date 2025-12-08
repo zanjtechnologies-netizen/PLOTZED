@@ -31,7 +31,6 @@ async function getPropertiesData() {
     const serializedProperties = properties.map((property: Plot) => ({
       ...property,
       price: property.price.toNumber(),
-      booking_amount: property.booking_amount.toNumber(),
       plot_size: property.plot_size.toNumber(),
       latitude: property.latitude?.toNumber() ?? null,
       longitude: property.longitude?.toNumber() ?? null,
