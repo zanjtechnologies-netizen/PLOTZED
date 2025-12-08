@@ -15,6 +15,7 @@ import {
   Phone
 } from 'lucide-react';
 import BookingModal from '@/components/modals/BookingModal';
+import SiteVisitModal from '@/components/modals/SiteVisitModal';
 
 import { Playfair_Display, Libre_Baskerville, Inter } from 'next/font/google';
 
@@ -40,6 +41,7 @@ export default function DynamicPropertyPage() {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isSiteVisitModalOpen, setIsSiteVisitModalOpen] = useState(false);
 
   const phoneNumber = '7708594263';
 
@@ -315,7 +317,7 @@ export default function DynamicPropertyPage() {
               {/* CTA Buttons */}
               <div className="space-y-3">
                 <button
-                  onClick={() => setIsBookingModalOpen(true)}
+                  onClick={() => setIsSiteVisitModalOpen(true)}
                   className="w-full py-4 bg-[#D8B893] text-[#112250] rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#C9A883] transition flex items-center justify-center"
                 >
                   BOOK A SITE VISIT
@@ -377,8 +379,19 @@ export default function DynamicPropertyPage() {
         </div>
       </section>
 
-      {/* Booking Modal */}
+      {/* Booking Modal (General Consultation) */}
       <BookingModal isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />
+
+      {/* Site Visit Modal (Property-specific visit booking) */}
+      {plot && (
+        <SiteVisitModal
+          isOpen={isSiteVisitModalOpen}
+          onClose={() => setIsSiteVisitModalOpen(false)}
+          plotId={plot.id}
+          plotTitle={plot.title}
+          plotCity={plot.city}
+        />
+      )}
     </main>
   );
 }
