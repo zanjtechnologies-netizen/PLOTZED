@@ -7,12 +7,6 @@ import { ChatBot, WhatsAppButton } from '@/components/home/ClientComponents';
 const BookingExperience = dynamic(() => import('@/components/home/BookingExperience'), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
 });
-const LandscapeVideo = dynamic(() => import('@/components/home/LandscapeVideo'), {
-  loading: () => <div className="min-h-[500px] animate-pulse bg-gray-100" />,
-});
-const StoriesInsights = dynamic(() => import('@/components/home/StoriesInsights'), {
-  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-800" />,
-});
 const CustomerExperiences = dynamic(() => import('@/components/home/CustomerExperiences'), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
 });
@@ -44,22 +38,6 @@ export default function HomePage() {
             <BookingExperience />
           </div>
         </section>
-
-        {/* Video Banner Section */}
-        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 bg-white">
-          <LandscapeVideo />
-        </section>
-
-        {/* Blog/Stories Section - Dark Navy Background */}
-        
-          <section style={{ backgroundColor: "#F3E8D9" }}>
-          <div className="container-custom py-16 md:py-24">
-            <StoriesInsights />
-          </div>
-        </section>
-
-        {/* Spacer between Blogs and Testimonials */}
-        <div className="bg-white py-8" />
 
         {/* Testimonials Section - Full Width */}
         <CustomerExperiences />

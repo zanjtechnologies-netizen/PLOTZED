@@ -1,8 +1,7 @@
-'use client';
-
 import Link from 'next/link';
 import { ArrowRight, Clock, Calendar } from 'lucide-react';
 import { Playfair_Display, Libre_Baskerville } from 'next/font/google';
+import { prisma } from '@/lib/prisma';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -19,42 +18,33 @@ const libre = Libre_Baskerville({
   variable: '--font-libre',
 });
 
-export default function InsightsPage() {
-  const articles = [
-    {
-      id: '1',
-      badge: 'MARKET SPOTLIGHT',
-      title: 'Pondicherry White Town — A Rising Luxury Investment Destination',
-      excerpt:
-        'Known for its colonial heritage, seaside charm, and boutique-stay culture, White Town attracts premium buyers and investors.',
-      readTime: '5 min read',
-      date: 'Nov 30, 2025',
-      image: '/images/white-town-1.jpg',
-      link: '/insights/white-town-luxury-investment',
-    },
-    {
-      id: '2',
-      badge: 'MARKET SPOTLIGHT',
-      title: 'Auroville — An Emerging Hub for Sustainable Luxury Living',
-      excerpt:
-        'Known for its greenery, peaceful environment, and global culture, Auroville attracts conscious investors seeking lifestyle value.',
-      readTime: '5 min read',
-      date: 'Nov 30, 2025',
-      image: '/images/auroville-1.jpg',
-      link: '/insights/auroville-sustainable-luxury',
-    },
-    {
-      id: '3',
-      badge: 'MARKET SPOTLIGHT',
-      title: 'Matrimandir — The Spiritual Heart of Auroville',
-      excerpt:
-        'An iconic meditation space with a distinctive golden dome, symbolizing peace, inner reflection, and human unity.',
-      readTime: '5 min read',
-      date: 'Nov 30, 2025',
-      image: '/images/matrimandir-3.jpg',
-      link: '/insights/matrimandir-spiritual-heart',
-    },
-  ];
+async function getBlogPosts() {
+  try {
+    const posts = await prisma.blog_posts.findMany({
+      where: {
+        is_published: true,
+      },
+      orderBy: {
+        published_at: 'desc',
+      },
+      take: 20,
+    });
+    return posts;
+  } catch (error) {
+    console.error('Error fetching blog posts:', error);
+    return [];
+  }
+}
+
+function calculateReadTime(content: string): string {
+  const wordsPerMinute = 200;
+  const wordCount = content.split(/\s+/).length;
+  const minutes = Math.ceil(wordCount / wordsPerMinute);
+  return `${minutes} min read`;
+}
+
+export default async function InsightsPage() {
+  const posts = await getBlogPosts();
 
   return (
     <div className={`min-h-screen bg-[#F9FAFB] ${playfair.variable} ${libre.variable}`}>
@@ -90,55 +80,75 @@ export default function InsightsPage() {
 
       {/* Articles Grid */}
       <div className="container-custom mx-auto py-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {articles.map((article) => (
-            <Link
-              key={article.id}
-              href={article.link}
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
-            >
-              {/* Image */}
-              <div className="relative h-64 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
-                  style={{ backgroundImage: `url(${article.image})` }}
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-[#D8B893] text-[#112250] font-libre">
-                    {article.badge}
-                  </span>
+        {posts.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-lg font-libre">
+              No blog posts available yet. Check back soon for insights and stories!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/insights/${post.slug}`}
+                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col"
+              >
+                {/* Image */}
+                <div className="relative h-64 overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
+                    style={{
+                      backgroundImage: `url(${post.featured_image || '/images/placeholder-blog.jpg'})`
+                    }}
+                  />
+                  {post.category && (
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-[#D8B893] text-[#112250] font-libre">
+                        {post.category.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              {/* Content */}
-              <div className="p-8 flex-grow flex flex-col">
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 font-libre">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{article.date}</span>
+                {/* Content */}
+                <div className="p-8 flex-grow flex flex-col">
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4 font-libre">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        {post.published_at
+                          ? new Date(post.published_at).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })
+                          : 'Coming Soon'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{calculateReadTime(post.content)}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{article.readTime}</span>
+
+                  <h3 className="font-playfair text-2xl font-bold text-[#112250] mb-3 group-hover:text-[#D8B893] transition-colors">
+                    {post.title}
+                  </h3>
+
+                  <p className="font-libre text-gray-600 mb-6 flex-grow leading-relaxed">
+                    {post.excerpt || post.content.substring(0, 150) + '...'}
+                  </p>
+
+                  <div className="flex items-center gap-2 text-[#112250] font-semibold group-hover:gap-3 transition-all">
+                    Read Article
+                    <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
-
-                <h3 className="font-playfair text-2xl font-bold text-[#112250] mb-3 group-hover:text-[#D8B893] transition-colors">
-                  {article.title}
-                </h3>
-
-                <p className="font-libre text-gray-600 mb-6 flex-grow leading-relaxed">
-                  {article.excerpt}
-                </p>
-
-                <div className="flex items-center gap-2 text-[#112250] font-semibold group-hover:gap-3 transition-all">
-                  Read Article
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

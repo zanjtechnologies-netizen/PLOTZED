@@ -37,14 +37,13 @@ export default function Header() {
     };
   }, []);
   const navigation = [
-    { name: 'Home', href: '#herosection' },
+    { name: 'Home', href: '/' },
     { name: 'Properties', href: '#featuredlistings' },
-    { name: 'Gallery', href: '#landscapevideo' },
+    { name: 'Gallery', href: '/gallery' },
     { name: 'Site Visits', href: '#bookingexperience' },
-    { name: 'Blog&Stories', href: '#storiesinsights' },
+    { name: 'Blog', href: '/insights' },
     { name: 'Testimonials', href: '#customerexperiences' },
     { name: 'About', href: '#redefineluxury' },
-    { name: 'Insights', href: '#journeytoownership' },
     { name: 'Contact', href: '#footer' },
   ];
 
@@ -110,7 +109,7 @@ export default function Header() {
 
   <li>
     <Link
-      href="#landscapevideo"
+      href="/gallery"
       className="transition-colors font-medium"
       style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
     >
@@ -130,7 +129,7 @@ export default function Header() {
 
   <li>
     <Link
-      href="#storiesinsights"
+      href="/insights"
       className="transition-colors font-medium"
       style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
     >
@@ -173,17 +172,6 @@ export default function Header() {
               onClick={() => setMoreOpen(false)}
             >
               About
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              href="#journeytoownership"
-              className="block px-4 py-2 text-[#D8B893] hover:text-white hover:bg-[#D8B893]/10"
-              style={{ fontFamily: 'var(--font-libre)' }}
-              onClick={() => setMoreOpen(false)}
-            >
-              Insights
             </Link>
           </li>
 
