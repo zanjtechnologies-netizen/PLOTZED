@@ -7,9 +7,6 @@ import { ChatBot, WhatsAppButton } from '@/components/home/ClientComponents';
 const BookingExperience = dynamic(() => import('@/components/home/BookingExperience'), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
 });
-const JourneyToOwnership = dynamic(() => import('@/components/home/JourneyToOwnership'), {
-  loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
-});
 const LandscapeVideo = dynamic(() => import('@/components/home/LandscapeVideo'), {
   loading: () => <div className="min-h-[500px] animate-pulse bg-gray-100" />,
 });
@@ -46,11 +43,6 @@ export default function HomePage() {
           <div className="container-custom py-12 md:py-16">
             <BookingExperience />
           </div>
-        </section>
-
-        {/*  Journey Section - White Background */}
-        <section className="pt-16 md:pt-20 lg:pt-24 px-6 md:px-12 lg:px-24 xl:px-40 space-y-12 md:space-y-16 bg-white">
-          <JourneyToOwnership />
         </section>
 
         {/* Video Banner Section */}
