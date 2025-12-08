@@ -107,7 +107,10 @@ async function main() {
     // 1. CASUARINA GREENS
     prisma.plots.upsert({
       where: { slug: 'casuarina-greens' },
-      update: {},
+      update: {
+        brochure: '/brochures/casuarina-greens.pdf',
+        updated_at: new Date(),
+      },
       create: {
         id: randomUUID(),
         title: 'Casuarina Greens',
@@ -136,6 +139,7 @@ async function main() {
           'Secure Location'
         ],
         images: ['/images/casuarina-greens.jpg'],
+        brochure: '/brochures/casuarina-greens.pdf',
         rera_number: 'PY/RERA/2024/001',
         meta_title: 'Casuarina Greens - Premium Land in Auroville Green Belt | Plotzed',
         meta_description: '1.86 acres premium land in Auroville Green Belt, Pondicherry. 380 ft frontage, legally verified, perfect for villa construction.',
@@ -146,7 +150,10 @@ async function main() {
     // 2. KATUMODE GREENS
     prisma.plots.upsert({
       where: { slug: 'katumode-greens' },
-      update: {},
+      update: {
+        brochure: '/brochures/katumode-greens.pdf',
+        updated_at: new Date(),
+      },
       create: {
         id: randomUUID(),
         title: 'Katumode Greens',
@@ -175,6 +182,7 @@ async function main() {
           'Secure Location'
         ],
         images: ['/images/katumode-greens.jpg'],
+        brochure: '/brochures/katumode-greens.pdf',
         rera_number: 'PY/RERA/2024/002',
         meta_title: 'Katumode Greens - Auroville Green Belt Premium Plot | Plotzed',
         meta_description: '1.35 acres premium plot in Auroville Green Belt, Pondicherry. 750 ft frontage, legally verified, ideal for luxury development.',
@@ -185,7 +193,10 @@ async function main() {
     // 3. HOUSE PROPERTY - KOONIMEDU
     prisma.plots.upsert({
       where: { slug: 'house-property-koonimedu' },
-      update: {},
+      update: {
+        brochure: '/brochures/house-property-koonimedu.pdf',
+        updated_at: new Date(),
+      },
       create: {
         id: randomUUID(),
         title: 'House Property',
@@ -214,6 +225,7 @@ async function main() {
           'Bird Sanctuary Nearby'
         ],
         images: ['/images/house-property.jpg'],
+        brochure: '/brochures/house-property-koonimedu.pdf',
         rera_number: 'PY/RERA/2024/003',
         meta_title: 'House Property Koonimedu - ECR Pondicherry | Plotzed',
         meta_description: '2 BHK house property in Koonimedu, ECR Pondicherry. 100m from ECR Main Road, beach access, perfect for serene living.',

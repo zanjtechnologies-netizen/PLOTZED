@@ -330,9 +330,21 @@ export default function DynamicPropertyPage() {
                   <span className="md:hidden text-xs sm:text-sm">CALL {phoneNumber}</span>
                 </a>
 
-                <button className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition">
-                  DOWNLOAD BROCHURE
-                </button>
+                {plot?.brochure ? (
+                  <a
+                    href={plot.brochure}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition text-center block"
+                  >
+                    DOWNLOAD BROCHURE
+                  </a>
+                ) : (
+                  <button className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition opacity-50 cursor-not-allowed">
+                    BROCHURE COMING SOON
+                  </button>
+                )}
               </div>
 
               {/* Payment Info */}
@@ -357,14 +369,7 @@ export default function DynamicPropertyPage() {
             Connect with our property experts for a personalized guided visit, investment insights, and exclusive pre-launch offers.
           </p>
 
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center max-w-xl mx-auto sm:max-w-none">
-            <button
-              onClick={() => setIsBookingModalOpen(true)}
-              className="px-6 sm:px-8 py-3 sm:py-4 bg-[#D8B893] text-[#112250] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#C9A883] transition"
-            >
-              Book a site visit
-            </button>
-
+          <div className="flex justify-center">
             <Link href="/properties" className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white text-white rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-white hover:text-[#112250] transition">
               View More Properties
             </Link>

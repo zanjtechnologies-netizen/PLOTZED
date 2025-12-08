@@ -46,6 +46,7 @@ export const GET = withErrorHandling(
         latitude: true,
         longitude: true,
         images: true,
+        brochure: true,
         amenities: true,
         status: true,
         is_featured: true,

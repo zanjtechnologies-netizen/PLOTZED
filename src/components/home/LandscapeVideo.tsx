@@ -37,7 +37,7 @@ export default function LandscapeVideo() {
               loop
               muted
               playsInline
-              src="/videos/main-1.mp4"
+              src="/videos/FINAL PLOTZED 2K.mp4"
             >
               Your browser does not support the video tag.
             </video>

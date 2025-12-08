@@ -242,6 +242,18 @@ model site_settings {
   updatedAt             DateTime @updatedAt
 }
 
+model newsletter_subscriptions {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  is_active     Boolean  @default(true)
+  subscribed_at DateTime @default(now())
+  unsubscribed_at DateTime?
+  source        String?  // e.g., "footer", "popup", "checkout"
+
+  @@index([email])
+  @@index([is_active])
+}
+
 
 
 model verification_tokens {

@@ -41,10 +41,43 @@ export default function Footer() {
     }
 
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setLoading(false);
-    setMessage({ type: 'success', text: 'Successfully subscribed! Welcome to our circle.' });
-    setEmail('');
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source: 'footer',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({
+          type: 'success',
+          text: data.message || 'Successfully subscribed! Check your email for confirmation.',
+        });
+        setEmail('');
+      } else {
+        setMessage({
+          type: 'error',
+          text: data.error || 'Failed to subscribe. Please try again.',
+        });
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again later.',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

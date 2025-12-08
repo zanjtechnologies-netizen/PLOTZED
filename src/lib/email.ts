@@ -503,6 +503,122 @@ export const emailTemplates = {
       </body>
     </html>
   `,
+
+  // Newsletter Subscription Confirmation
+  newsletterConfirmation: (email: string) => `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+          }
+          .content {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: -10px;
+          }
+          .highlight-box {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+          }
+          .benefits {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+          }
+          .benefit-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+          }
+          .benefit-item:last-child {
+            border-bottom: none;
+          }
+          .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+          }
+          .button {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎉 Welcome to Our Newsletter!</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px;">Join Our Exclusive Circle</p>
+          </div>
+          <div class="content">
+            <h2>Thank you for subscribing!</h2>
+            <p>We're excited to have you in our exclusive community of property enthusiasts.</p>
+
+            <div class="highlight-box">
+              <p style="margin: 0;">📧 You're now subscribed with: <strong>${email}</strong></p>
+            </div>
+
+            <div class="benefits">
+              <h3 style="margin-top: 0; color: #667eea;">What You'll Receive:</h3>
+              <div class="benefit-item">
+                <strong>🏡 Exclusive Property Listings</strong><br>
+                <span style="color: #666;">Be the first to know about new premium plots</span>
+              </div>
+              <div class="benefit-item">
+                <strong>💰 Special Offers & Deals</strong><br>
+                <span style="color: #666;">Subscriber-only discounts and early-bird pricing</span>
+              </div>
+              <div class="benefit-item">
+                <strong>📈 Market Insights</strong><br>
+                <span style="color: #666;">Real estate trends and investment tips</span>
+              </div>
+              <div class="benefit-item">
+                <strong>🎯 Personalized Recommendations</strong><br>
+                <span style="color: #666;">Property suggestions based on your preferences</span>
+              </div>
+            </div>
+
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="http://localhost:3000/properties" class="button">Browse Properties Now</a>
+            </p>
+
+            <p style="color: #666; font-size: 14px; margin-top: 30px;">
+              <strong>Stay tuned!</strong> Our next newsletter is coming soon with exciting updates and exclusive opportunities.
+            </p>
+
+            <p>Best regards,<br><strong>The Plotzed Team</strong></p>
+          </div>
+          <div class="footer">
+            <p>© 2025 Plotzed Real Estate. All rights reserved.</p>
+            <p>www.plotzedrealestate.com</p>
+            <p style="margin-top: 10px;">
+              <a href="http://localhost:3000/unsubscribe?email=${encodeURIComponent(email)}" style="color: #666; font-size: 11px;">
+                Unsubscribe from this list
+              </a>
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `,
 };
 
 // Send Email Function
@@ -596,6 +712,15 @@ export const emailService = {
       to,
       subject: 'Site Visit Confirmation - Plotzed Real Estate',
       html: emailTemplates.siteVisitConfirmation(details),
+    });
+  },
+
+  // Send Newsletter Confirmation
+  sendNewsletterConfirmation: async (to: string) => {
+    return sendEmail({
+      to,
+      subject: 'Welcome to Plotzed Newsletter - Exclusive Property Updates',
+      html: emailTemplates.newsletterConfirmation(to),
     });
   },
 };
