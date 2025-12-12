@@ -144,12 +144,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Verification successful
-    console.log('[reCAPTCHA] Verification successful:', {
-      score: data.score,
-      action: data.action,
-      hostname: data.hostname,
-    })
-
     return NextResponse.json({
       success: true,
       score: data.score,

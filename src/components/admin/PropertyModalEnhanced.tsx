@@ -233,8 +233,6 @@ export default function PropertyModalEnhanced({
         is_published: formData.is_published,
       }
 
-      console.log('Submitting property payload:', payload)
-
       const url = property ? `/api/plots/${property.id}` : '/api/plots'
       const method = property ? 'PUT' : 'POST'
 
@@ -247,8 +245,6 @@ export default function PropertyModalEnhanced({
       })
 
       const data = await response.json()
-
-      console.log('API Response:', data)
 
       if (data.success) {
         alert(property ? 'Property updated successfully!' : 'Property created successfully!')

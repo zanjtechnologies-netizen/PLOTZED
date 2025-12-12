@@ -204,8 +204,6 @@ export default function BlogPostModal({
         is_published: formData.is_published,
       }
 
-      console.log('Submitting blog post payload:', payload)
-
       const url = post ? `/api/admin/blog-posts/${post.id}` : '/api/admin/blog-posts'
       const method = post ? 'PUT' : 'POST'
 
@@ -218,8 +216,6 @@ export default function BlogPostModal({
       })
 
       const data = await response.json()
-
-      console.log('API Response:', data)
 
       if (data.success) {
         alert(post ? 'Blog post updated successfully!' : 'Blog post created successfully!')

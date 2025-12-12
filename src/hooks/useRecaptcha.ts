@@ -104,11 +104,6 @@ export function useRecaptcha() {
           }
         }
 
-        console.log('✅ reCAPTCHA verification successful:', {
-          score: data.score,
-          action: data.action,
-        })
-
         return data
 
       } catch (error) {
