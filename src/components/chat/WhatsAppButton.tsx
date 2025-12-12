@@ -57,14 +57,14 @@ export default function WhatsAppButton({
   };
 
   const positionClasses = position === 'left'
-    ? 'left-4 sm:left-6'
-    : 'right-4 sm:right-6';
+    ? 'left-6 sm:left-6'
+    : 'right-6 sm:right-6';
 
   return (
     <>
       {/* WhatsApp Floating Button */}
       <div
-        className={`fixed bottom-[180px] sm:bottom-56 ${positionClasses} z-50 transition-all duration-500 ${
+        className={`fixed bottom-[240px] sm:bottom-56 ${positionClasses} z-50 transition-all duration-500 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
