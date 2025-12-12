@@ -20,4 +20,4 @@ Allow: /plots
 Allow: /properties
 
 # Sitemap location
-Sitemap: https://plotzed.com/sitemap.xml
+Sitemap: https://www.plotzedrealestate.com/sitemap.xml

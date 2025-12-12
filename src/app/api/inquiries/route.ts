@@ -29,11 +29,16 @@ export const POST = withErrorHandling(
     const body = await request.json()
     const validatedData = inquirySchema.parse(body)
 
+    // Check if user is logged in to associate inquiry with user
+    const session = await auth()
+    const user_id = session?.user?.id || null
+
     const inquiry = await prisma.inquiries.create({
       data: {
         id: randomUUID(),
         updated_at: new Date(),
         ...validatedData,
+        user_id,
         status: 'NEW',
       },
       include: {
@@ -47,6 +52,7 @@ export const POST = withErrorHandling(
 
     structuredLogger.info('New inquiry received', {
       inquiryId: inquiry.id,
+      userId: user_id,
       email: validatedData.email,
       plotId: validatedData.plot_id,
       type: 'inquiry_creation',

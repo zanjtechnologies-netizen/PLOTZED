@@ -37,6 +37,7 @@ export const GET = withErrorHandling(
         const serializedPlot = {
           ...plot,
           price: plot.price.toNumber(),
+          original_price: plot.original_price?.toNumber() ?? null,
           booking_amount: plot.booking_amount.toNumber(),
           plot_size: plot.plot_size.toNumber(),
           latitude: plot.latitude?.toNumber() ?? null,
@@ -69,7 +70,7 @@ export const PUT = withErrorHandling(
     const body = await request.json()
     const plotData = updatePlotSchema.parse(body)
 
-    const { bookingAmount, plotSize, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
+    const { bookingAmount, plotSize, originalPrice, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
 
     const updateData: any = {
       ...restOfPlotData,
@@ -77,6 +78,7 @@ export const PUT = withErrorHandling(
 
     if (bookingAmount !== undefined) updateData.booking_amount = bookingAmount
     if (plotSize !== undefined) updateData.plot_size = plotSize
+    if (originalPrice !== undefined) updateData.original_price = originalPrice
     if (reraNumber !== undefined) updateData.rera_number = reraNumber
     if (isFeatured !== undefined) updateData.is_featured = isFeatured
     if (is_published !== undefined) updateData.is_published = is_published
@@ -99,6 +101,7 @@ export const PUT = withErrorHandling(
     const serializedPlot = {
       ...updatedPlot,
       price: updatedPlot.price.toNumber(),
+      original_price: updatedPlot.original_price?.toNumber() ?? null,
       booking_amount: updatedPlot.booking_amount.toNumber(),
       plot_size: updatedPlot.plot_size.toNumber(),
       latitude: updatedPlot.latitude?.toNumber() ?? null,

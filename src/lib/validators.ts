@@ -127,6 +127,7 @@ export const createPlotSchema = z.object({
   title: z.string().min(5),
   description: z.string().optional(),
   price: z.number().positive(),
+  originalPrice: z.number().positive().optional(),
   bookingAmount: z.number().positive().optional(),
   plotSize: z.number().positive(),
   dimensions: z.string().optional(),

@@ -11,6 +11,7 @@ export interface PlotData {
   slug?: string;
   description?: string;
   price: number;
+  original_price?: number | null;
   plot_size?: number;
   dimensions?: string;
   facing?: string;
@@ -58,9 +59,11 @@ export default function PlotCard({
   };
 
   // Create price display with original and discounted price
-  const getPriceDisplay = (price: number) => {
-    // Original price is 20% higher than the displayed price
-    const originalPrice = price * 1.2;
+  const getPriceDisplay = (price: number, adminOriginalPrice?: number | null) => {
+    // Use admin-provided original price if available, otherwise calculate 20% higher
+    const originalPrice = adminOriginalPrice && adminOriginalPrice > price
+      ? adminOriginalPrice
+      : price * 1.2;
     const discountedPrice = price;
 
     return {
@@ -181,10 +184,10 @@ export default function PlotCard({
           <div className="mb-4 transition-all duration-300">
             <div className="flex items-center gap-2">
               <span className="text-gray-400 font-semibold text-sm line-through">
-                {getPriceDisplay(plot.price).original}
+                {getPriceDisplay(plot.price, plot.original_price).original}
               </span>
               <span className="text-orange-600 font-bold text-lg">
-                {getPriceDisplay(plot.price).discounted}
+                {getPriceDisplay(plot.price, plot.original_price).discounted}
               </span>
             </div>
           </div>
@@ -331,10 +334,10 @@ export default function PlotCard({
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <span className="text-gray-400 font-semibold text-sm line-through">
-                {getPriceDisplay(plot.price).original}
+                {getPriceDisplay(plot.price, plot.original_price).original}
               </span>
               <span className="text-2xl font-bold text-[#112250]">
-                {getPriceDisplay(plot.price).discounted}
+                {getPriceDisplay(plot.price, plot.original_price).discounted}
               </span>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -407,10 +410,10 @@ export default function PlotCard({
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-white/60 font-semibold text-sm line-through">
-              {getPriceDisplay(plot.price).original}
+              {getPriceDisplay(plot.price, plot.original_price).original}
             </span>
             <span className="text-2xl font-bold text-white">
-              {getPriceDisplay(plot.price).discounted}
+              {getPriceDisplay(plot.price, plot.original_price).discounted}
             </span>
           </div>
         </div>

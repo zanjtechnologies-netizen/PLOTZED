@@ -73,6 +73,8 @@ export default function InsightsClient({ posts }: { posts: BlogPost[] }) {
             style={{ y: headerY }}
             className="absolute inset-0 bg-[url('/images/blog-overlay.jpg')] bg-cover bg-center opacity-100 scale-110 brightness-90 contrast-110"
           />
+          {/* Dark overlay for better text visibility */}
+          <div className="absolute inset-0 bg-black/20" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#F9FAFB]/30 via-[#F9FAFB]/10 to-[#F9FAFB]" />
           <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/95 to-transparent backdrop-blur-sm" />
         </div>
@@ -101,8 +103,11 @@ export default function InsightsClient({ posts }: { posts: BlogPost[] }) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="font-playfair text-5xl md:text-6xl font-bold mb-6 text-[#D8B893] drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
-              style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.2)' }}
+              className="font-playfair text-5xl md:text-6xl font-bold mb-6 text-[#D8B893]"
+              style={{
+                textShadow: '3px 3px 6px rgba(0,0,0,0.5), -1px -1px 3px rgba(0,0,0,0.3), 0 0 20px rgba(216,184,147,0.4)',
+                filter: 'brightness(1.2)'
+              }}
             >
               Blogs & Stories
             </motion.h1>
@@ -110,8 +115,11 @@ export default function InsightsClient({ posts }: { posts: BlogPost[] }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="font-libre text-xl text-[#112250] max-w-2xl mx-auto drop-shadow-[0_2px_6px_rgba(255,255,255,0.8)] font-semibold"
-              style={{ textShadow: '1px 1px 3px rgba(255,255,255,0.9), -1px -1px 3px rgba(255,255,255,0.9)' }}
+              className="font-libre text-xl text-[#112250] max-w-2xl mx-auto font-bold"
+              style={{
+                textShadow: '0 0 10px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.6), 2px 2px 4px rgba(255,255,255,0.9)',
+                WebkitTextStroke: '0.5px rgba(255,255,255,0.3)'
+              }}
             >
               Curated articles on luxury travel, refined living, and the art of the perfect escape
             </motion.p>

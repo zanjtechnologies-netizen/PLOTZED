@@ -13,6 +13,7 @@ interface FeaturedPlot {
   slug?: string;
   description?: string;
   price: number;
+  original_price?: number | null;
   plot_size?: number;
   dimensions?: string;
   facing?: string;

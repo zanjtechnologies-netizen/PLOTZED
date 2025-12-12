@@ -8,7 +8,7 @@
 export const seoConfig = {
   // Site Information
   siteName: 'Plotzed Real Estate',
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://plotzedrealestate.com',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.plotzedrealestate.com',
   description: 'Discover premium residential plots and villas in prime locations. Expert real estate developers offering transparent pricing, site visits, and hassle-free ownership.',
 
   // Default Meta Tags

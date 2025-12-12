@@ -64,7 +64,7 @@ export default function WhatsAppButton({
     <>
       {/* WhatsApp Floating Button */}
       <div
-        className={`fixed bottom-52 sm:bottom-56 ${positionClasses} z-50 transition-all duration-500 ${
+        className={`fixed bottom-[180px] sm:bottom-56 ${positionClasses} z-50 transition-all duration-500 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >

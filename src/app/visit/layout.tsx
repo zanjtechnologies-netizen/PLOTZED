@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Schedule Free Site Visit | Premium Plots | Plotzed Real Estate',
   description:
-    'Book your free site visit to explore premium RERA-approved plots. Zero brokerage, flexible EMI, prime locations. Starting ₹15 lakhs.',
+    'Book your free site visit to explore premium plots. Zero brokerage, prime locations. Starting at your Budget.',
   keywords: [
     'site visit',
     'premium plots',

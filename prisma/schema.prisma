@@ -88,6 +88,7 @@ model plots {
   slug             String        @unique
   description      String?
   price            Decimal       @db.Decimal(15, 2)
+  original_price   Decimal?      @db.Decimal(15, 2)
   booking_amount   Decimal       @db.Decimal(15, 2)
   plot_size        Decimal       @db.Decimal(10, 2)
   dimensions       String?

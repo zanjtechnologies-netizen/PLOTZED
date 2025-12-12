@@ -69,13 +69,13 @@ export default function Header() {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Properties', href: '#featuredlistings' },
+    { name: 'Properties', href: '/#featuredlistings' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'Site Visits', href: '/visit' },
     { name: 'Blog', href: '/insights' },
-    { name: 'Testimonials', href: '#customerexperiences' },
-    { name: 'About', href: '#redefineluxury' },
-    { name: 'Contact', href: '#footer' },
+    { name: 'Testimonials', href: '/#customerexperiences' },
+    { name: 'About', href: '/#redefineluxury' },
+    { name: 'Contact', href: '/#footer' },
   ];
 
   return (
@@ -143,14 +143,14 @@ export default function Header() {
                 </li>
 
                 <li>
-                  <Link
-                    href="#featuredlistings"
+                  <a
+                    href="/#featuredlistings"
                     className="relative group transition-colors font-medium"
                     style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
                   >
                     Properties
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D8B893] group-hover:w-full transition-all duration-300" />
-                  </Link>
+                  </a>
                 </li>
 
                 <li>
@@ -187,14 +187,14 @@ export default function Header() {
                 </li>
 
                 <li>
-                  <Link
-                    href="#customerexperiences"
+                  <a
+                    href="/#customerexperiences"
                     className="relative group transition-colors font-medium"
                     style={{ color: '#D8B893', fontFamily: 'var(--font-libre)' }}
                   >
                     Testimonials
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D8B893] group-hover:w-full transition-all duration-300" />
-                  </Link>
+                  </a>
                 </li>
 
                 {/* Dropdown */}
@@ -220,24 +220,24 @@ export default function Header() {
                       >
                         <ul className="flex flex-col py-2">
                           <li>
-                            <Link
-                              href="#redefineluxury"
+                            <a
+                              href="/#redefineluxury"
                               className="block px-4 py-2 text-[#D8B893] hover:text-white hover:bg-[#D8B893]/10 transition-colors"
                               style={{ fontFamily: 'var(--font-libre)' }}
                               onClick={() => setMoreOpen(false)}
                             >
                               About
-                            </Link>
+                            </a>
                           </li>
                           <li>
-                            <Link
-                              href="#footer"
+                            <a
+                              href="/#footer"
                               className="block px-4 py-2 text-[#D8B893] hover:text-white hover:bg-[#D8B893]/10 transition-colors"
                               style={{ fontFamily: 'var(--font-libre)' }}
                               onClick={() => setMoreOpen(false)}
                             >
                               Contact
-                            </Link>
+                            </a>
                           </li>
                         </ul>
                       </motion.div>
@@ -383,23 +383,43 @@ export default function Header() {
                         closed: { opacity: 0, x: -20 }
                       }}
                     >
-                      <Link
-                        href={item.href}
-                        className="font-medium py-3 px-4 rounded-lg transition-colors block"
-                        style={{
-                          color: '#D8B893',
-                          fontFamily: 'var(--font-libre)',
-                        }}
-                        onMouseEnter={(e) =>
-                          ((e.target as HTMLElement).style.color = '#FFFFFF')
-                        }
-                        onMouseLeave={(e) =>
-                          ((e.target as HTMLElement).style.color = '#D8B893')
-                        }
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </Link>
+                      {item.href.startsWith('/#') ? (
+                        <a
+                          href={item.href}
+                          className="font-medium py-3 px-4 rounded-lg transition-colors block"
+                          style={{
+                            color: '#D8B893',
+                            fontFamily: 'var(--font-libre)',
+                          }}
+                          onMouseEnter={(e) =>
+                            ((e.target as HTMLElement).style.color = '#FFFFFF')
+                          }
+                          onMouseLeave={(e) =>
+                            ((e.target as HTMLElement).style.color = '#D8B893')
+                          }
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className="font-medium py-3 px-4 rounded-lg transition-colors block"
+                          style={{
+                            color: '#D8B893',
+                            fontFamily: 'var(--font-libre)',
+                          }}
+                          onMouseEnter={(e) =>
+                            ((e.target as HTMLElement).style.color = '#FFFFFF')
+                          }
+                          onMouseLeave={(e) =>
+                            ((e.target as HTMLElement).style.color = '#D8B893')
+                          }
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      )}
                     </motion.div>
                   ))}
                 </motion.div>
@@ -488,7 +508,7 @@ export default function Header() {
                     style={{ fontFamily: 'var(--font-libre)' }}
                   >
                     <Phone className="w-4 h-4" />
-                    <span>+1 40 9999909</span>
+                    <span>+91 7708594263</span>
                   </a>
                   <a
                     href="mailto:reservations@plotzedrealestate.com"
@@ -496,7 +516,7 @@ export default function Header() {
                     style={{ fontFamily: 'var(--font-libre)' }}
                   >
                     <Mail className="w-4 h-4" />
-                    <span className="text-xs sm:text-sm">reservations@PlotzedRealEstate.com</span>
+                    <span className="text-xs sm:text-sm">PlotzedRealEstate@gmail.com</span>
                   </a>
                 </motion.div>
               </div>

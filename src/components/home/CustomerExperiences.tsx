@@ -1,9 +1,8 @@
 'use client';
 
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Testimonial {
   id: number;
@@ -51,7 +50,7 @@ const SlideCard = ({ t }: { t: Testimonial }) => {
           initial={{ height: 0 }}
           animate={{ height: '100%' }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="absolute left-0 top-8 bottom-8 w-1 rounded-full"
+          className="absolute left-0 top-0 bottom-0 w-1 rounded-l-3xl"
           style={{ backgroundColor: '#D8B893' }}
         />
 
@@ -165,13 +164,6 @@ const SlideCard = ({ t }: { t: Testimonial }) => {
 
 export default function CustomerExperiences() {
   const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Parallax effect for background
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
 
   const testimonials: Testimonial[] = [
     {
@@ -227,18 +219,15 @@ export default function CustomerExperiences() {
       id="customerexperiences"
       className="py-16 sm:py-20 md:py-24 relative overflow-hidden"
     >
-      {/* Parallax Background */}
-      <motion.div
-        style={{ y: backgroundY }}
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
-      >
+      {/* Background */}
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('/images/testimonials-bg.jpg')",
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Dark overlay with gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#112250]/85 via-[#0a1536]/90 to-[#112250]/85 z-0" />

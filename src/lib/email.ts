@@ -235,7 +235,7 @@ export const emailTemplates = {
             <p>Thank you for registering with Plotzed Real Estate!</p>
             <p>We're excited to help you find your dream property.</p>
             <p>Start browsing our premium plots and properties today.</p>
-            <a href="http://localhost:3000/plots" class="button">Browse Properties</a>
+            <a href="https://www.plotzedrealestate.com/plots" class="button">Browse Properties</a>
             <p>If you have any questions, feel free to contact us.</p>
             <p>Best regards,<br>Plotzed Team</p>
           </div>
@@ -597,7 +597,7 @@ export const emailTemplates = {
             </div>
 
             <p style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:3000/properties" class="button">Browse Properties Now</a>
+              <a href="https://www.plotzedrealestate.com/properties" class="button">Browse Properties Now</a>
             </p>
 
             <p style="color: #666; font-size: 14px; margin-top: 30px;">
@@ -610,7 +610,7 @@ export const emailTemplates = {
             <p>© 2025 Plotzed Real Estate. All rights reserved.</p>
             <p>www.plotzedrealestate.com</p>
             <p style="margin-top: 10px;">
-              <a href="http://localhost:3000/unsubscribe?email=${encodeURIComponent(email)}" style="color: #666; font-size: 11px;">
+              <a href="https://www.plotzedrealestate.com/unsubscribe?email=${encodeURIComponent(email)}" style="color: #666; font-size: 11px;">
                 Unsubscribe from this list
               </a>
             </p>

@@ -338,7 +338,7 @@ export default function DynamicPropertyPage() {
                     download
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3 sm:py-4 bg-[#3B4B7A] rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition text-center block"
+                    className="w-full py-3 sm:py-4 bg-[#3B4B7A] text-white rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#4B5B8A] transition text-center block"
                   >
                     DOWNLOAD BROCHURE
                   </a>

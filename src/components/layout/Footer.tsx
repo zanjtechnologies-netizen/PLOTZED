@@ -107,8 +107,153 @@ export default function Footer() {
       className={`${playfair.variable} ${libre.variable} ${inter.variable} bg-[#0C1A3D] text-white pt-20 pb-10`}
     >
       <div className="container-custom">
-        {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-12">
+        {/* Contact Information - Highlighted Section (Moved to Top) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 pb-12 border-b border-white/10"
+        >
+          <div className="text-center mb-8">
+            <h3
+              className="text-3xl font-bold mb-2"
+              style={{ fontFamily: 'var(--font-playfair)', color: '#D8B893' }}
+            >
+              Get in Touch
+            </h3>
+            <p
+              className="text-sm"
+              style={{ color: '#C7C9D1', fontFamily: 'var(--font-libre)' }}
+            >
+              We're here to help you find your dream property
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {/* Email */}
+            <motion.a
+              href="mailto:plotzedrealestate@gmail.com"
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
+                <Mail className="w-7 h-7 text-[#D8B893]" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                  EMAIL US
+                </p>
+                <p className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-libre)' }}>
+                  plotzedrealestate@gmail.com
+                </p>
+              </div>
+            </motion.a>
+
+            {/* Phone */}
+            <motion.a
+              href="tel:+917708594263"
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
+                <Phone className="w-7 h-7 text-[#D8B893]" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                  CALL US
+                </p>
+                <p className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-libre)' }}>
+                  +91 7708594263
+                </p>
+              </div>
+            </motion.a>
+
+            {/* Location */}
+            <motion.div
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
+                <MapPin className="w-7 h-7 text-[#D8B893]" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                  VISIT US
+                </p>
+                <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-libre)' }}>
+                  Auroville, Tamil Nadu / Puducherry
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Newsletter Section (Moved to Middle) */}
+        <div className="text-center mb-12 pb-12 border-b border-white/10">
+          <h3
+            className="text-2xl font-bold mb-2"
+            style={{ fontFamily: 'var(--font-playfair)', color: '#D8B893' }}
+          >
+            Join Our Exclusive Circle
+          </h3>
+          <p
+            className="text-sm mb-6"
+            style={{ color: '#C7C9D1', fontFamily: 'var(--font-libre)' }}
+          >
+            Receive curated luxury travel insights and exclusive offers
+          </p>
+
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-lg mx-auto"
+          >
+            <input
+              type="email"
+              placeholder="Your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              className="flex-1 px-6 py-4 rounded-full bg-[#162D6A] text-white placeholder-gray-400 border border-[#1D377B] outline-none"
+              style={{ fontFamily: 'var(--font-libre)' }}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-8 py-4 rounded-full font-semibold text-[#112250] transition-all flex items-center justify-center gap-2 bg-[#D8B893] hover:bg-[#caa579]"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-[#112250] border-t-transparent rounded-full animate-spin" />
+                  <span>Subscribing...</span>
+                </>
+              ) : (
+                <>
+                  Subscribe
+                  <Send className="w-5 h-5" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {message && (
+            <p
+              className={`mt-4 text-sm ${
+                message.type === 'success' ? 'text-[#D8B893]' : 'text-red-400'
+              }`}
+              style={{ fontFamily: 'var(--font-libre)' }}
+            >
+              {message.text}
+            </p>
+          )}
+        </div>
+
+        {/* Company Info Section (Moved to Bottom) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-12 mb-12 border-b border-white/10">
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
@@ -239,153 +384,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Contact Information - Highlighted Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 pb-12 border-y border-white/10 py-8"
-        >
-          <div className="text-center mb-8">
-            <h3
-              className="text-3xl font-bold mb-2"
-              style={{ fontFamily: 'var(--font-playfair)', color: '#D8B893' }}
-            >
-              Get in Touch
-            </h3>
-            <p
-              className="text-sm"
-              style={{ color: '#C7C9D1', fontFamily: 'var(--font-libre)' }}
-            >
-              We're here to help you find your dream property
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {/* Email */}
-            <motion.a
-              href="mailto:plotzedrealestate@gmail.com"
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
-            >
-              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
-                <Mail className="w-7 h-7 text-[#D8B893]" />
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
-                  EMAIL US
-                </p>
-                <p className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-libre)' }}>
-                  plotzedrealestate@gmail.com
-                </p>
-              </div>
-            </motion.a>
-
-            {/* Phone */}
-            <motion.a
-              href="tel:+917708594263"
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
-            >
-              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
-                <Phone className="w-7 h-7 text-[#D8B893]" />
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
-                  CALL US
-                </p>
-                <p className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-libre)' }}>
-                  +91 7708594263
-                </p>
-              </div>
-            </motion.a>
-
-            {/* Location */}
-            <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
-            >
-              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
-                <MapPin className="w-7 h-7 text-[#D8B893]" />
-              </div>
-              <div className="text-center">
-                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
-                  VISIT US
-                </p>
-                <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-libre)' }}>
-                  Auroville, Tamil Nadu / Puducherry
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        {/* Newsletter Section */}
-        <div className="text-center mt-12 border-t border-white/10 pt-8">
-          <h3
-            className="text-2xl font-bold mb-2"
-            style={{ fontFamily: 'var(--font-playfair)', color: '#D8B893' }}
-          >
-            Join Our Exclusive Circle
-          </h3>
-          <p
-            className="text-sm mb-6"
-            style={{ color: '#C7C9D1', fontFamily: 'var(--font-libre)' }}
-          >
-            Receive curated luxury travel insights and exclusive offers
-          </p>
-
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-lg mx-auto"
-          >
-            <input
-              type="email"
-              placeholder="Your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={loading}
-              className="flex-1 px-6 py-4 rounded-full bg-[#162D6A] text-white placeholder-gray-400 border border-[#1D377B] outline-none"
-              style={{ fontFamily: 'var(--font-libre)' }}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-8 py-4 rounded-full font-semibold text-[#112250] transition-all flex items-center justify-center gap-2 bg-[#D8B893] hover:bg-[#caa579]"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-[#112250] border-t-transparent rounded-full animate-spin" />
-                  <span>Subscribing...</span>
-                </>
-              ) : (
-                <>
-                  Subscribe
-                  <Send className="w-5 h-5" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {message && (
-            <p
-              className={`mt-4 text-sm ${
-                message.type === 'success' ? 'text-[#D8B893]' : 'text-red-400'
-              }`}
-              style={{ fontFamily: 'var(--font-libre)' }}
-            >
-              {message.text}
-            </p>
-          )}
-        </div>
-
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-sm mt-12 border-t border-white/10 pt-6 text-gray-400">
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm mt-12 pt-6 text-gray-400">
           <p style={{ fontFamily: 'var(--font-libre)' }}>
             © 2023 Plotzed Real Estate Developer. All rights reserved.
           </p>

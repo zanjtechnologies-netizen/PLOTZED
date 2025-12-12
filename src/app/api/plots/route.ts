@@ -138,6 +138,7 @@ export const GET = withErrorHandling(
         slug: true,
         description: true,
         price: true,
+        original_price: true,
         booking_amount: true,
         plot_size: true,
         dimensions: true,
@@ -151,6 +152,7 @@ export const GET = withErrorHandling(
         images: true,
         brochure: true,
         amenities: true,
+        nearby_places: true,
         status: true,
         is_featured: true,
         is_published: true,
@@ -166,6 +168,7 @@ export const GET = withErrorHandling(
     const serializedPlots = plots.map((plot: any) => ({
       ...plot,
       price: plot.price.toNumber(),
+      original_price: plot.original_price?.toNumber() ?? null,
       booking_amount: plot.booking_amount.toNumber(),
       plot_size: plot.plot_size.toNumber(),
       latitude: plot.latitude?.toNumber() ?? null,
@@ -211,7 +214,7 @@ export const POST = withErrorHandling(
       .trim()
       .replace(/[\s-]+/g, '-')
 
-    const { bookingAmount, plotSize, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
+    const { bookingAmount, plotSize, originalPrice, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
 
     const newPlot = await prisma.plots.create({
       data: {
@@ -221,6 +224,7 @@ export const POST = withErrorHandling(
         slug,
         booking_amount: bookingAmount || 0,
         plot_size: plotSize,
+        original_price: originalPrice || null,
         rera_number: reraNumber,
         is_featured: isFeatured,
         is_published: is_published,

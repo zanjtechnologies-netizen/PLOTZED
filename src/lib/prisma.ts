@@ -27,3 +27,10 @@ prisma.$connect().catch((err) => {
   console.error('❌ Failed to connect to database:', err)
   console.log('🔄 Attempting to reconnect...')
 })
+
+// Gracefully disconnect on process termination
+if (process.env.NODE_ENV !== 'production') {
+  process.on('beforeExit', async () => {
+    await prisma.$disconnect()
+  })
+}

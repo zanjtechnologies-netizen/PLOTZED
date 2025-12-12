@@ -41,6 +41,7 @@ export const GET = withErrorHandling(
             slug: true,
             description: true,
             price: true,
+            original_price: true,
             booking_amount: true,
             plot_size: true,
             dimensions: true,
@@ -52,6 +53,7 @@ export const GET = withErrorHandling(
             images: true,
             brochure: true,
             amenities: true,
+            nearby_places: true,
             status: true,
             is_featured: true,
             rera_number: true,
@@ -60,9 +62,10 @@ export const GET = withErrorHandling(
         })
 
         // Convert Decimal fields to numbers for JSON serialization
-        const serializedPlots = plots.map((plot: { price: Decimal, booking_amount: Decimal, plot_size: Decimal }) => ({
+        const serializedPlots = plots.map((plot) => ({
           ...plot,
           price: plot.price.toNumber(),
+          original_price: plot.original_price?.toNumber() ?? null,
           booking_amount: plot.booking_amount.toNumber(),
           plot_size: plot.plot_size.toNumber(),
         }))
