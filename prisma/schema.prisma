@@ -224,6 +224,7 @@ model site_settings {
   company_email         String?  @unique
   company_phone         String?
   company_address       String?
+  whatsapp_number       String?
   facebook_url          String?
   twitter_url           String?
   instagram_url         String?
@@ -233,6 +234,7 @@ model site_settings {
   logo_url              String?
   favicon_url           String?
   google_analytics_id   String?
+  google_maps_api_key   String?
   business_hours        String?
   footer_text           String?
   meta_title            String?
@@ -254,7 +256,24 @@ model newsletter_subscriptions {
   @@index([is_active])
 }
 
+model gallery_items {
+  id          String      @id @default(cuid())
+  title       String
+  description String?     @db.Text
+  type        GalleryType
+  media_url   String
+  thumbnail   String?
+  location    String?
+  plot_id     String?
+  is_active   Boolean     @default(true)
+  display_order Int       @default(0)
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
 
+  @@index([type])
+  @@index([is_active])
+  @@index([display_order])
+}
 
 model verification_tokens {
   identifier String
@@ -289,4 +308,9 @@ enum SiteVisitStatus {
 enum UserRole {
   ADMIN
   CUSTOMER
+}
+
+enum GalleryType {
+  IMAGE
+  TOUR
 }

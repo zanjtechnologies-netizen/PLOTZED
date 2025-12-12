@@ -1,85 +1,83 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { MapPin, Heart } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import PlotCard from '@/components/plots/PlotCard';
 
 interface FeaturedPlot {
   id: string;
   title: string;
   slug?: string;
+  description?: string;
   price: number;
+  plot_size?: number;
+  dimensions?: string;
+  facing?: string;
   city?: string;
   state?: string;
+  address?: string;
   location?: string;
   images?: string[];
+  amenities?: string[];
+  nearby_places?: Record<string, any>;
+  status?: string;
   is_featured?: boolean;
+  brochure?: string;
 }
 
 export default function FeaturedListings() {
   const [plots, setPlots] = useState<FeaturedPlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [favoriteLoading, setFavoriteLoading] = useState<string | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    async function loadFeaturedPlots() {
+    async function loadData() {
       try {
-        const response = await fetch('/api/plots?featured=true&limit=3');
-        const result = await response.json();
-        if (result.success && result.data?.plots) {
-          setPlots(result.data.plots);
+        // Parallelize API calls for better performance
+        const requests = [
+          fetch('/api/plots?featured=true&limit=3').then(res => res.json())
+        ];
+
+        // Only fetch favorites if user is logged in
+        if (session?.user) {
+          requests.push(fetch('/api/favorites').then(res => res.json()));
+        }
+
+        const results = await Promise.all(requests);
+
+        // Handle plots response
+        if (results[0]?.success && results[0].data?.plots) {
+          setPlots(results[0].data.plots);
+        }
+
+        // Handle favorites response (if user is logged in)
+        if (session?.user && results[1]?.success && results[1].data?.favorites) {
+          setFavorites(results[1].data.favorites);
         }
       } catch (error) {
-        console.error('Failed to load featured plots:', error);
+        console.error('Failed to load data:', error);
       } finally {
         setLoading(false);
       }
     }
-    loadFeaturedPlots();
-  }, []);
-
-  // Load user's favorites
-  useEffect(() => {
-    async function loadFavorites() {
-      if (!session?.user) return;
-
-      try {
-        const response = await fetch('/api/favorites');
-        const result = await response.json();
-        if (result.success && result.data?.favorites) {
-          setFavorites(result.data.favorites);
-        }
-      } catch (error) {
-        console.error('Failed to load favorites:', error);
-      }
-    }
-    loadFavorites();
+    loadData();
   }, [session]);
 
   // Toggle favorite
-  const toggleFavorite = async (e: React.MouseEvent, plotId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const toggleFavorite = useCallback(async (plotId: string, _isFavorite: boolean) => {
     // Check if user is logged in
     if (!session?.user) {
       router.push('/login?callbackUrl=' + encodeURIComponent(window.location.pathname));
       return;
     }
 
-    setFavoriteLoading(plotId);
-
     try {
-      const isFavorite = favorites.includes(plotId);
-
-      if (isFavorite) {
+      if (favorites.includes(plotId)) {
         // Remove from favorites
         const response = await fetch(`/api/favorites?plotId=${plotId}`, {
           method: 'DELETE',
@@ -102,57 +100,62 @@ export default function FeaturedListings() {
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-    } finally {
-      setFavoriteLoading(null);
     }
-  };
+  }, [session, router, favorites]);
 
   // Fallback data for when API has no data
   const fallbackPlots: FeaturedPlot[] = [
     {
       id: '1',
       title: 'Casuarina Greens',
-      location: 'Auroville Green Belt, Pondicherry',
+      location: 'Pondicherry, Puducherry',
       price: 40500000,
+      plot_size: 217800,
+      dimensions: '450 Units',
+      amenities: ['2, 3 & 4 BHK Apts'],
+      nearby_places: {
+        areas: ['Chromepet', 'Kundrathur', 'Tambaram', 'Guindy', 'Pammal', 'Meenambakkam', 'Nanganallur', 'Alandur']
+      },
       images: ['/images/casuarina-greens.jpg'],
+      brochure: '/brochures/sample-brochure.pdf',
+      status: 'AVAILABLE',
     },
     {
       id: '2',
       title: 'Katumode Greens',
-      location: 'Auroville Green Belt, Pondicherry',
+      location: 'Pondicherry, Puducherry',
       price: 43200000,
+      plot_size: 217800,
+      dimensions: '450 Units',
+      amenities: ['2, 3 & 4 BHK Apts'],
+      nearby_places: {
+        areas: ['Chromepet', 'Kundrathur', 'Tambaram', 'Guindy', 'Pammal', 'Meenambakkam', 'Nanganallur', 'Alandur']
+      },
       images: ['/images/katumode-greens.jpg'],
+      brochure: '/brochures/sample-brochure.pdf',
+      status: 'AVAILABLE',
     },
     {
       id: '3',
       title: 'House Property',
-      location: 'Koonimedu, ECR, Pondicherry',
+      location: 'Pondicherry, Puducherry',
       price: 19200000,
+      plot_size: 87120,
+      dimensions: '180 Units',
+      amenities: ['2, 3 & 4 BHK Apts'],
+      nearby_places: {
+        areas: ['Chromepet', 'Kundrathur', 'Tambaram', 'Guindy', 'Pammal', 'Meenambakkam', 'Nanganallur', 'Alandur']
+      },
       images: ['/images/house-property.jpg'],
+      brochure: '/brochures/sample-brochure.pdf',
+      status: 'AVAILABLE',
     },
   ];
 
-  const displayPlots = plots.length > 0 ? plots : fallbackPlots;
+  const displayPlots = useMemo(() => plots.length > 0 ? plots : fallbackPlots, [plots]);
 
-  // Format price in Indian style
-  const formatPrice = (price: number) => {
-    if (price >= 10000000) {
-      return `₹${(price / 10000000).toFixed(2)} Cr`;
-    } else if (price >= 100000) {
-      return `₹${(price / 100000).toFixed(2)} Lakhs`;
-    }
-    return `₹${price.toLocaleString('en-IN')}`;
-  };
-
-  // Get location display
-  const getLocation = (plot: FeaturedPlot) => {
-    if (plot.city && plot.state) return `${plot.city}, ${plot.state}`;
-    if (plot.city) return plot.city;
-    return plot.location || 'Location TBD';
-  };
-
-  // Animation variants
-  const containerVariants = {
+  // Animation variants - memoized to prevent recreation
+  const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -161,15 +164,15 @@ export default function FeaturedListings() {
         delayChildren: 0.1
       }
     }
-  };
+  }), []);
 
-  const itemVariants = {
+  const itemVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     visible: { opacity: 1, y: 0, scale: 1 }
-  };
+  }), []);
 
   return (
-    <section id="featuredlistings" className="py-20 bg-gray-50 px-4">
+    <section id="featuredlistings" className="py-16 bg-gray-50 px-4">
       <div className="container-custom">
         {/* Section Header with Animation */}
         <motion.div
@@ -177,7 +180,7 @@ export default function FeaturedListings() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-14"
         >
           <h2
             className="font-bold mb-4"
@@ -200,13 +203,17 @@ export default function FeaturedListings() {
 
         {/* Enhanced Loading State with Shimmer */}
         {loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 mb-16">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-lg">
-                <div className="h-[340px] relative overflow-hidden bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-shimmer" />
-                <div className="p-6 space-y-3">
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-shimmer rounded w-3/4" />
-                  <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%] animate-shimmer rounded w-1/2" />
+              <div key={i} className="bg-white rounded-lg overflow-hidden shadow-lg animate-pulse">
+                <div className="h-64 bg-gray-200" />
+                <div className="p-6 space-y-4">
+                  <div className="h-6 bg-gray-200 rounded w-3/4" />
+                  <div className="h-5 bg-gray-200 rounded w-1/2" />
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-200 rounded" />
+                    <div className="h-4 bg-gray-200 rounded w-5/6" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -220,94 +227,21 @@ export default function FeaturedListings() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16 px-4"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 max-w-7xl mx-auto mb-16"
           >
-            {displayPlots.slice(0, 3).map((plot, index) => (
-              <motion.div key={plot.id} variants={itemVariants}>
-                <Link
-                  href={`/properties/${plot.slug || plot.id}`}
-                  className="block group"
-                >
-                  <motion.div
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="relative bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-[0_10px_40px_rgba(17,34,80,0.12)] hover:shadow-[0_25px_60px_rgba(17,34,80,0.25)] transition-all duration-500"
-                  >
-                    {/* Property Image with Enhanced Overlay */}
-                    <div className="relative h-[340px] overflow-hidden">
-                      <div className="absolute inset-0">
-                        <Image
-                          src={plot.images?.[0] || '/images/hero-bg-fallback-1.png'}
-                          alt={plot.title}
-                          fill
-                          unoptimized={true}
-                          priority={index === 0}
-                          quality={85}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover transform group-hover:scale-110 transition-transform duration-700"
-                        />
-                      </div>
-
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#112250]/90 via-[#112250]/40 to-transparent" />
-
-                      {/* Animated Border Gradient on Hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#D8B893]/20 via-transparent to-[#006DB8]/20" />
-                      </div>
-
-                      {/* Favorite Button with Animation */}
-                      <motion.button
-                        onClick={(e) => toggleFavorite(e, plot.id)}
-                        disabled={favoriteLoading === plot.id}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white transition-all disabled:opacity-50 shadow-lg"
-                        title={session?.user ? (favorites.includes(plot.id) ? 'Remove from favorites' : 'Add to favorites') : 'Login to save favorites'}
-                      >
-                        <motion.div
-                          animate={favorites.includes(plot.id) ? { scale: [1, 1.2, 1] } : {}}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <Heart
-                            className={`w-5 h-5 transition-colors ${
-                              favorites.includes(plot.id)
-                                ? 'fill-red-500 text-red-500'
-                                : 'text-gray-700 group-hover:text-red-500'
-                            }`}
-                          />
-                        </motion.div>
-                      </motion.button>
-
-                      {/* Property Info Overlay with Micro-interactions */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <motion.div
-                          className="flex items-center text-white/80 mb-2"
-                          whileHover={{ x: 4 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <motion.div
-                            animate={{ y: [0, -2, 0] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                          >
-                            <MapPin className="w-4 h-4 mr-2" />
-                          </motion.div>
-                          <span className="text-sm">{getLocation(plot)}</span>
-                        </motion.div>
-                        <h3 className="text-xl font-bold text-white mb-2 line-clamp-1 group-hover:text-[#D8B893] transition-colors duration-300">
-                          {plot.title}
-                        </h3>
-                        <motion.div
-                          className="text-2xl font-bold bg-gradient-to-r from-white to-[#D8B893] bg-clip-text text-transparent"
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {formatPrice(plot.price)}
-                        </motion.div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
+            {displayPlots.slice(0, 3).map((plot) => (
+              <motion.div
+                key={plot.id}
+                variants={itemVariants}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <PlotCard
+                  plot={plot}
+                  variant="compact"
+                  showFavorite={true}
+                  onFavoriteToggle={toggleFavorite}
+                  isFavorite={favorites.includes(plot.id)}
+                />
               </motion.div>
             ))}
           </motion.div>

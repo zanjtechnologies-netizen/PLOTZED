@@ -31,12 +31,8 @@ export async function uploadToS3(
 
     await s3Client.send(command)
 
-    // Return R2 public URL
-    // Option 1: Use custom domain (recommended)
-    // return `https://${process.env.R2_PUBLIC_DOMAIN}/${key}`
-
-    // Option 2: Use R2.dev subdomain (if enabled)
-    return `https://${process.env.R2_BUCKET}.${process.env.R2_ACCOUNT_ID}.r2.dev/${key}`
+    // Return R2 public URL using the public R2.dev subdomain
+    return `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${key}`
   } catch (error) {
     console.error('R2 upload error:', error)
     throw new Error('File upload failed')

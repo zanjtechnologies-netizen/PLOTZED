@@ -12,7 +12,8 @@ import {
   Users,
   TrendingUp,
   TrendingDown,
-  Activity
+  Activity,
+  Image
 } from 'lucide-react'
 import StatsCard from '@/components/admin/StatsCard'
 import RecentActivity from '@/components/admin/RecentActivity'
@@ -216,31 +217,38 @@ export default async function AdminDashboard() {
       {/* Quick Actions */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-white">
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <a
             href="/admin/properties?action=new"
-            className="bg-white/10 hover:bg-white/20 rounded-lg p-4 text-center transition"
+            className="bg-white hover:bg-white/20 rounded-lg p-4 text-center transition"
           >
             <Building2 className="w-8 h-8 mx-auto mb-2" />
             <span className="text-sm">Add Property</span>
           </a>
           <a
+            href="/admin/gallery"
+            className="bg-white hover:bg-white/20 rounded-lg p-4 text-center transition"
+          >
+            <Image className="w-8 h-8 mx-auto mb-2" />
+            <span className="text-sm">Manage Gallery</span>
+          </a>
+          <a
             href="/admin/site-visits?status=PENDING"
-            className="bg-white/10 hover:bg-white/20 rounded-lg p-4 text-center transition"
+            className="bg-white hover:bg-white/20 rounded-lg p-4 text-center transition"
           >
             <CalendarCheck className="w-8 h-8 mx-auto mb-2" />
             <span className="text-sm">Review Visits</span>
           </a>
           <a
             href="/admin/inquiries?status=NEW"
-            className="bg-white/10 hover:bg-white/20 rounded-lg p-4 text-center transition"
+            className="bg-white hover:bg-white/20 rounded-lg p-4 text-center transition"
           >
             <MessageSquare className="w-8 h-8 mx-auto mb-2" />
             <span className="text-sm">View Inquiries</span>
           </a>
           <a
             href="/admin/analytics"
-            className="bg-white/10 hover:bg-white/20 rounded-lg p-4 text-center transition"
+            className="bg-white hover:bg-white/20 rounded-lg p-4 text-center transition"
           >
             <Activity className="w-8 h-8 mx-auto mb-2" />
             <span className="text-sm">Analytics</span>

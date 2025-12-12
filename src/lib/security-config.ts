@@ -111,6 +111,8 @@ export const securityConfig = {
       'https://www.google.com',
       'https://www.gstatic.com',
       'https://recaptcha.google.com',
+      'https://www.youtube.com',
+      'https://youtube.com',
     ],
   },
 

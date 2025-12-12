@@ -6,6 +6,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   BarChart3,
@@ -16,6 +17,7 @@ import {
   Settings,
   FileText,
   TrendingUp,
+  Image,
 } from 'lucide-react'
 
 const navigation = [
@@ -33,6 +35,11 @@ const navigation = [
     name: 'Properties',
     href: '/admin/properties',
     icon: Building2,
+  },
+  {
+    name: 'Gallery',
+    href: '/admin/gallery',
+    icon: Image,
   },
   {
     name: 'Site Visits',
@@ -61,8 +68,43 @@ const navigation = [
   },
 ]
 
+interface QuickStats {
+  activeListings: number;
+  pendingVisits: number;
+  newInquiries: number;
+}
+
 export default function AdminSidebar() {
   const pathname = usePathname()
+  const [stats, setStats] = useState<QuickStats>({
+    activeListings: 0,
+    pendingVisits: 0,
+    newInquiries: 0,
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch('/api/admin/quick-stats')
+        if (response.ok) {
+          const result = await response.json()
+          if (result.success) {
+            setStats(result.data)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch quick stats:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+    // Refresh stats every 30 seconds
+    const interval = setInterval(fetchStats, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const isActive = (href: string) => {
     if (href === '/admin') {
@@ -106,15 +148,27 @@ export default function AdminSidebar() {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Active Listings</span>
-            <span className="font-semibold text-gray-900">18</span>
+            {loading ? (
+              <span className="font-semibold text-gray-400">...</span>
+            ) : (
+              <span className="font-semibold text-gray-900">{stats.activeListings}</span>
+            )}
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Pending Visits</span>
-            <span className="font-semibold text-blue-600">3</span>
+            {loading ? (
+              <span className="font-semibold text-gray-400">...</span>
+            ) : (
+              <span className="font-semibold text-blue-600">{stats.pendingVisits}</span>
+            )}
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">New Inquiries</span>
-            <span className="font-semibold text-green-600">5</span>
+            {loading ? (
+              <span className="font-semibold text-gray-400">...</span>
+            ) : (
+              <span className="font-semibold text-green-600">{stats.newInquiries}</span>
+            )}
           </div>
         </div>
       </div>

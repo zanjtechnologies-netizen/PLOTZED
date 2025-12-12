@@ -1,11 +1,18 @@
 'use client';
 
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle, Instagram, Facebook, Youtube, Linkedin } from 'lucide-react';
 import { useState } from 'react';
 import { Playfair_Display, Libre_Baskerville, Inter } from 'next/font/google';
-import { Instagram, Facebook, Youtube, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { motion } from 'framer-motion';
+
+// X (Twitter) Icon Component
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -134,55 +141,58 @@ export default function Footer() {
               locations where modern living meets timeless natural beauty.
             </p>
 
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-[#D8B893]" />
-                <span>plotzedrealestate@gmail.com</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#D8B893]" />
-                <span>+91 7708594263</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[#D8B893]" />
-                <span>Auroville, India</span>
-              </li>
-            </ul>
-
             {/* Social Icons */}
-            <div className="flex gap-4 mt-6">
-              <a
+            <div className="flex gap-3 mt-6">
+              <motion.a
                 href="https://www.instagram.com/plotzedrealestate"
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
               >
                 <Instagram className="w-5 h-5 text-[#D8B893]" />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
                 href="https://www.facebook.com/share/19raHNyU5T/"
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
               >
                 <Facebook className="w-5 h-5 text-[#D8B893]" />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                href="https://x.com/OFFICIALPLOTZED"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
+              >
+                <XIcon className="w-5 h-5 text-[#D8B893]" />
+              </motion.a>
+              <motion.a
                 href="https://www.youtube.com/@PLOTZEDREALESTATE"
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
               >
                 <Youtube className="w-5 h-5 text-[#D8B893]" />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D8B893]/20 transition-colors"
               >
                 <Linkedin className="w-5 h-5 text-[#D8B893]" />
-              </a>
+              </motion.a>
             </div>
           </div>
 
@@ -228,6 +238,90 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+
+        {/* Contact Information - Highlighted Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 pb-12 border-y border-white/10 py-8"
+        >
+          <div className="text-center mb-8">
+            <h3
+              className="text-3xl font-bold mb-2"
+              style={{ fontFamily: 'var(--font-playfair)', color: '#D8B893' }}
+            >
+              Get in Touch
+            </h3>
+            <p
+              className="text-sm"
+              style={{ color: '#C7C9D1', fontFamily: 'var(--font-libre)' }}
+            >
+              We're here to help you find your dream property
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {/* Email */}
+            <motion.a
+              href="mailto:plotzedrealestate@gmail.com"
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
+                <Mail className="w-7 h-7 text-[#D8B893]" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                  EMAIL US
+                </p>
+                <p className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-libre)' }}>
+                  plotzedrealestate@gmail.com
+                </p>
+              </div>
+            </motion.a>
+
+            {/* Phone */}
+            <motion.a
+              href="tel:+917708594263"
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
+                <Phone className="w-7 h-7 text-[#D8B893]" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                  CALL US
+                </p>
+                <p className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-libre)' }}>
+                  +91 7708594263
+                </p>
+              </div>
+            </motion.a>
+
+            {/* Location */}
+            <motion.div
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#D8B893]/50 transition-all group"
+            >
+              <div className="w-14 h-14 rounded-full bg-[#D8B893]/20 flex items-center justify-center group-hover:bg-[#D8B893]/30 transition-colors">
+                <MapPin className="w-7 h-7 text-[#D8B893]" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-semibold text-[#D8B893] mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                  VISIT US
+                </p>
+                <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-libre)' }}>
+                  Auroville, Tamil Nadu / Puducherry
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
 
         {/* Newsletter Section */}
         <div className="text-center mt-12 border-t border-white/10 pt-8">

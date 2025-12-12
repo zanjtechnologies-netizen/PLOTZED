@@ -20,9 +20,21 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'plotzed.b65ec9b1c1faaea81471e55d1504a815.r2.dev',
+        hostname: 'pub-56b50bd6691b4c6bbabbefee2d6ffeb8.r2.dev',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        port: '',
+        pathname: '/vi/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        port: '',
+        pathname: '/vi/**',
       },
     ],
   },
@@ -35,6 +47,9 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', '@sentry/nextjs'],
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP'],
+    serverActions: {
+      bodySizeLimit: '100mb',
+    },
   },
 };
 

@@ -3,6 +3,20 @@
 @tailwind utilities;
 
 /* =========================
+   ACCESSIBILITY - REDUCED MOTION
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================
    GLOBAL BASE STYLES
    ========================= */
 @layer base {
@@ -178,7 +192,205 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-/*scroll behaviour*/
+/* =========================
+   SCROLL BEHAVIOR
+   ========================= */
 html {
   scroll-behavior: smooth;
+}
+
+/* Disable smooth scroll for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* =========================
+   MODERN ENHANCEMENTS
+   ========================= */
+
+/* Glass Morphism Utilities */
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(17, 34, 80, 0.15);
+}
+
+.glass-dark {
+  background: rgba(17, 34, 80, 0.3);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated Gradient Backgrounds */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(270deg, #006DB8, #094D88, #D8B893);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-gradient {
+    animation: none;
+    background: linear-gradient(135deg, #006DB8 0%, #094D88 100%);
+  }
+}
+
+/* Shimmer Animation for Skeletons */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background-size: 200% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+/* =========================
+   ACCESSIBILITY
+   ========================= */
+
+/* Disable all animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #D8B893;
+  outline-offset: 2px;
+}
+
+/* Remove focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =========================
+   PERFORMANCE OPTIMIZATIONS
+   ========================= */
+
+/* GPU acceleration for transforms */
+.transform-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Smooth font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Optimize touch targets for mobile */
+@media (pointer: coarse) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* =========================
+   MOBILE OPTIMIZATIONS
+   ========================= */
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Safe area padding for notched devices */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Improve tap highlighting on mobile */
+* {
+  -webkit-tap-highlight-color: rgba(216, 184, 147, 0.2);
+}
+
+/* =========================
+   LUXURY THEME UTILITIES
+   ========================= */
+
+/* Elegant hover shadows */
+.shadow-luxury {
+  box-shadow: 0 10px 40px rgba(17, 34, 80, 0.12);
+}
+
+.shadow-luxury-hover {
+  box-shadow: 0 20px 60px rgba(17, 34, 80, 0.2);
+}
+
+/* Brand gradient */
+.bg-brand-gradient {
+  background: linear-gradient(135deg, #112250 0%, #1a3570 100%);
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #D8B893 0%, #E0C58F 100%);
+}
+
+/* Text shimmer effect for luxury headings */
+@keyframes textShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #112250 0%,
+    #D8B893 50%,
+    #112250 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-shimmer {
+    animation: none;
+    background: #112250;
+    -webkit-text-fill-color: #112250;
+  }
 }

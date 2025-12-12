@@ -4,6 +4,7 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CookieConsent from '@/components/cookies/CookieConsent';
+import BackToTop from '@/components/common/BackToTop';
 
 export default function MainLayout({
   children,
@@ -16,6 +17,7 @@ export default function MainLayout({
       <main className="flex-grow">{children}</main>
       <Footer />
       <CookieConsent />
+      <BackToTop />
     </div>
   );
 }
