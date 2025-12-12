@@ -18,6 +18,8 @@ import {
   FileText,
   TrendingUp,
   Image,
+  BookOpen,
+  Star,
 } from 'lucide-react'
 
 const navigation = [
@@ -40,6 +42,16 @@ const navigation = [
     name: 'Gallery',
     href: '/admin/gallery',
     icon: Image,
+  },
+  {
+    name: 'Blog / Insights',
+    href: '/admin/blog-posts',
+    icon: BookOpen,
+  },
+  {
+    name: 'Testimonials',
+    href: '/admin/testimonials',
+    icon: Star,
   },
   {
     name: 'Site Visits',
