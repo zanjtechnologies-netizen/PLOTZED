@@ -197,7 +197,7 @@ export default function PropertiesPage() {
             Explore Premium Plots
           </h1>
           <p className="text-xl text-white/80 mb-8 max-w-2xl">
-            Discover RERA-approved plots in prime locations across India.
+            Discover Luxury plots in prime locations across India.
             Your dream property is just a click away.
           </p>
 
