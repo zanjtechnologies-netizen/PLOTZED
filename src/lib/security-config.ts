@@ -110,6 +110,8 @@ export const securityConfig = {
       'https://*.googletagmanager.com',
       'https://www.google-analytics.com',
       'https://*.google-analytics.com',
+      'https://stats.g.doubleclick.net',
+      'https://*.doubleclick.net',
     ],
     'frame-src': [
       "'self'",
