@@ -11,6 +11,7 @@ import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import { GlobalSeo } from "@/components/seo";
 import { seoConfig } from "@/lib/seo/config";
 import WebVitals from "@/components/analytics/WebVitals";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 // Font setup
 const geistSans = Geist({
@@ -74,6 +75,7 @@ export default function RootLayout({
           antialiased bg-[#0C1A3D] text-white
         `}
       >
+        <GoogleAnalytics />
         <WebVitals />
         <RecaptchaProvider>
           <SessionProvider>{children}</SessionProvider>
