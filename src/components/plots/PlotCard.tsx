@@ -271,10 +271,10 @@ export default function PlotCard({
     return (
       <Link
         href={linkUrl}
-        className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex"
+        className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col sm:flex-row"
       >
         {/* Property Image */}
-        <div className="relative w-72 h-48 flex-shrink-0 overflow-hidden">
+        <div className="relative w-full sm:w-72 h-56 sm:h-48 flex-shrink-0 overflow-hidden">
           <Image
             src={imageUrl}
             alt={plot.title}
@@ -354,10 +354,10 @@ export default function PlotCard({
   return (
     <Link
       href={linkUrl}
-      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 sm:hover:-translate-y-2"
     >
       {/* Property Image */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
         <Image
           src={imageUrl}
           alt={plot.title}
@@ -400,19 +400,19 @@ export default function PlotCard({
         )}
 
         {/* Price Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="flex items-center text-white/80 mb-2">
-            <MapPin className="w-4 h-4 mr-2" />
-            <span className="text-sm">{mainLocation}</span>
+        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6">
+          <div className="flex items-center text-white/80 mb-1 sm:mb-2">
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="text-xs sm:text-sm line-clamp-1">{mainLocation}</span>
           </div>
-          <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">
+          <h3 className="text-sm sm:text-lg md:text-xl font-bold text-white mb-1 sm:mb-2 line-clamp-1">
             {plot.title}
           </h3>
-          <div className="flex items-center gap-2">
-            <span className="text-white/60 font-semibold text-sm line-through">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <span className="text-white/60 font-semibold text-xs sm:text-sm line-through">
               {getPriceDisplay(plot.price, plot.original_price).original}
             </span>
-            <span className="text-2xl font-bold text-white">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-white">
               {getPriceDisplay(plot.price, plot.original_price).discounted}
             </span>
           </div>
@@ -420,28 +420,28 @@ export default function PlotCard({
       </div>
 
       {/* Property Details */}
-      <div className="p-4 border-t border-gray-100">
-        <div className="flex items-center justify-between text-sm text-gray-600">
+      <div className="p-3 sm:p-4 border-t border-gray-100">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 flex-wrap gap-1">
           {plot.plot_size && (
             <span className="flex items-center gap-1">
               <span className="font-medium">{formatPlotSize(plot.plot_size)}</span>
             </span>
           )}
           {plot.dimensions && (
-            <span>{plot.dimensions}</span>
+            <span className="hidden sm:inline">{plot.dimensions}</span>
           )}
           {plot.facing && (
-            <span>{plot.facing} Facing</span>
+            <span className="hidden sm:inline">{plot.facing} Facing</span>
           )}
         </div>
 
         {/* Amenities */}
         {plot.amenities && plot.amenities.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-1 sm:gap-2 mt-2 sm:mt-3">
             {plot.amenities.slice(0, 3).map((amenity) => (
               <span
                 key={amenity}
-                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                className="text-[10px] sm:text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
               >
                 {amenity}
               </span>
