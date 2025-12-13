@@ -275,7 +275,7 @@ export default function BlogPostModal({
                 required
                 value={formData.title}
                 onChange={handleTitleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                 placeholder="Enter blog post title"
               />
             </div>
@@ -290,7 +290,7 @@ export default function BlogPostModal({
                 required
                 value={formData.slug}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-mono text-base shadow-sm"
                 placeholder="post-slug-here"
               />
               <p className="text-xs text-gray-500 mt-1">URL: /blog/{formData.slug || 'post-slug'}</p>
@@ -305,7 +305,7 @@ export default function BlogPostModal({
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
@@ -342,7 +342,7 @@ export default function BlogPostModal({
                 onChange={handleInputChange}
                 rows={3}
                 maxLength={300}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base leading-relaxed shadow-sm"
                 placeholder="Brief description shown in post previews (max 300 characters)"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -361,8 +361,9 @@ export default function BlogPostModal({
                 value={formData.content}
                 onChange={handleInputChange}
                 rows={16}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 font-mono text-sm"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base leading-relaxed shadow-sm"
                 placeholder="Write your blog post content here... (Supports Markdown)"
+                style={{ minHeight: '400px' }}
               />
               <p className="text-xs text-gray-500 mt-1">
                 You can use Markdown syntax for formatting. Rich text editor can be added later.
@@ -434,14 +435,14 @@ export default function BlogPostModal({
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                className="flex-1 px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                 placeholder="Add tag (e.g., real estate, investment)"
               />
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 Add
               </button>
@@ -480,7 +481,7 @@ export default function BlogPostModal({
                 value={formData.meta_title}
                 onChange={handleInputChange}
                 maxLength={60}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                 placeholder="SEO title for search engines"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -498,7 +499,7 @@ export default function BlogPostModal({
                 onChange={handleInputChange}
                 rows={3}
                 maxLength={160}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base leading-relaxed shadow-sm"
                 placeholder="SEO description shown in search results"
               />
               <p className="text-xs text-gray-500 mt-1">
