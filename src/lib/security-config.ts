@@ -93,6 +93,8 @@ export const securityConfig = {
       'https://checkout.razorpay.com',
       'https://www.google.com',
       'https://www.gstatic.com',
+      'https://www.googletagmanager.com',
+      'https://*.googletagmanager.com',
     ],
     'worker-src': ["'self'", 'blob:'], // Allow web workers from blob URLs
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
@@ -104,6 +106,10 @@ export const securityConfig = {
       'https://*.google.com',
       'https://www.google.com',
       'https://www.gstatic.com',
+      'https://www.googletagmanager.com',
+      'https://*.googletagmanager.com',
+      'https://www.google-analytics.com',
+      'https://*.google-analytics.com',
     ],
     'frame-src': [
       "'self'",
