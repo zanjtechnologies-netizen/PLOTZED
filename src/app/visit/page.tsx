@@ -17,7 +17,6 @@ import {
   Trees,
   Car,
   Star,
-  MessageCircle,
   ArrowRight,
   Loader2,
   X,
@@ -26,32 +25,11 @@ import {
 } from 'lucide-react';
 import { WhatsAppButton } from '@/components/chat';
 
-// Types - matches API response from /api/plots
-interface Plot {
-  id: string;
-  title: string;
-  slug?: string;
-  description?: string;
-  price: number;
-  plot_size: number;
-  dimensions: string;
-  facing?: string;
-  address?: string;
-  city: string;
-  state?: string;
-  images: string[];
-  amenities?: string[];
-  status: string;
-  is_featured?: boolean;
-}
-
 interface FormData {
   name: string;
   phone: string;
   email: string;
   address: string;
-  timeline: string;
-  purpose: string;
   financeAssistance: string;
   message: string;
 }
@@ -69,18 +47,6 @@ const WHATSAPP_NUMBER = '917708594263'; // Plotzed Real Estate WhatsApp
 const EMAIL = 'plotzedrealestate@gmail.com';
 const ADDRESS = 'Plotzed Real Estate, Premium Tower, Business District';
 
-const TIMELINE_OPTIONS = [
-  { value: '', label: 'Select Timeline' },
-  { value: 'immediate', label: 'Immediate' },
-  { value: '3-6months', label: '3-6 Months' },
-];
-
-const PURPOSE_OPTIONS = [
-  { value: '', label: 'Select Purpose' },
-  { value: 'investment', label: 'Investment' },
-  { value: 'personal', label: 'Personal Use' },
-];
-
 const FINANCE_OPTIONS = [
   { value: '', label: 'Select Option' },
   { value: 'yes', label: 'Yes, I need finance assistance' },
@@ -88,15 +54,6 @@ const FINANCE_OPTIONS = [
 ];
 
 // Utility functions
-function formatPrice(price: number): string {
-  if (price >= 10000000) {
-    return `₹${(price / 10000000).toFixed(2)} Cr`;
-  } else if (price >= 100000) {
-    return `₹${(price / 100000).toFixed(2)} L`;
-  }
-  return `₹${price.toLocaleString('en-IN')}`;
-}
-
 function formatPhoneNumber(value: string): string {
   // Remove all non-digits
   const digits = value.replace(/\D/g, '');
@@ -199,11 +156,6 @@ function BenefitsSection() {
       description: 'Direct from developer. No middlemen, no hidden charges.',
     },
     {
-      icon: TrendingUp,
-      title: 'Flexible EMI',
-      description: 'Easy payment plans with bank financing options available.',
-    },
-    {
       icon: MapPin,
       title: 'Prime Locations',
       description: 'Strategic locations with excellent connectivity & amenities.',
@@ -222,7 +174,7 @@ function BenefitsSection() {
           Why Invest With Us?
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {benefits.map((benefit, index) => (
             <div
               key={index}
@@ -323,8 +275,6 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
     phone: '',
     email: '',
     address: '',
-    timeline: '',
-    purpose: '',
     financeAssistance: '',
     message: '',
   });
@@ -389,8 +339,6 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
         `Site Visit Request from Visit Page`,
         ``,
         `Address: ${formData.address}`,
-        formData.timeline ? `Timeline to Buy: ${formData.timeline === 'immediate' ? 'Immediate' : '3-6 Months'}` : '',
-        formData.purpose ? `Purchase Purpose: ${formData.purpose === 'investment' ? 'Investment' : 'Personal Use'}` : '',
         formData.financeAssistance ? `Finance Assistance: ${formData.financeAssistance === 'yes' ? 'Yes, I need finance assistance' : 'No, I have my own funding'}` : '',
         formData.message ? `Additional Notes: ${formData.message}` : '',
       ].filter(Boolean).join('\n');
@@ -414,8 +362,6 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
           phone: '',
           email: '',
           address: '',
-          timeline: '',
-          purpose: '',
           financeAssistance: '',
           message: '',
         });
@@ -457,9 +403,9 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.name ? 'border-red-500' : 'border-gray-300'
-                  } focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all`}
+                  className={`w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#006DB8] focus:border-[#006DB8] bg-white text-gray-900 font-sans text-base shadow-sm outline-none transition-all ${
+                    errors.name ? 'border-red-500' : ''
+                  }`}
                 />
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
@@ -478,9 +424,9 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="Enter 10-digit mobile"
-                    className={`w-full pl-12 pr-4 py-3 rounded-lg border ${
-                      errors.phone ? 'border-red-500' : 'border-gray-300'
-                    } focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all`}
+                    className={`w-full pl-12 pr-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#006DB8] focus:border-[#006DB8] bg-white text-gray-900 font-sans text-base shadow-sm outline-none transition-all ${
+                      errors.phone ? 'border-red-500' : ''
+                    }`}
                   />
                 </div>
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
@@ -498,9 +444,9 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email address"
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.email ? 'border-red-500' : 'border-gray-300'
-                } focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all`}
+                className={`w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#006DB8] focus:border-[#006DB8] bg-white text-gray-900 font-sans text-base shadow-sm outline-none transition-all ${
+                  errors.email ? 'border-red-500' : ''
+                }`}
               />
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
@@ -516,50 +462,11 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="Enter your complete address"
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.address ? 'border-red-500' : 'border-gray-300'
-                } focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all`}
+                className={`w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#006DB8] focus:border-[#006DB8] bg-white text-gray-900 font-sans text-base shadow-sm outline-none transition-all ${
+                  errors.address ? 'border-red-500' : ''
+                }`}
               />
               {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
-            </div>
-
-            {/* Timeline & Purpose Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Timeline to Buy
-                </label>
-                <select
-                  name="timeline"
-                  value={formData.timeline}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all bg-white"
-                >
-                  {TIMELINE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Purchase Purpose
-                </label>
-                <select
-                  name="purpose"
-                  value={formData.purpose}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all bg-white"
-                >
-                  {PURPOSE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             {/* Finance Assistance */}
@@ -571,7 +478,7 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
                 name="financeAssistance"
                 value={formData.financeAssistance}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all bg-white"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#006DB8] focus:border-[#006DB8] bg-white text-gray-900 font-sans text-base shadow-sm outline-none transition-all"
               >
                 {FINANCE_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -592,7 +499,7 @@ function LeadCaptureForm({ formRef }: { formRef: React.RefObject<HTMLDivElement 
                 onChange={handleChange}
                 placeholder="Tell us about your requirements..."
                 rows={3}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#006DB8] focus:border-transparent outline-none transition-all resize-none"
+                className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-[#006DB8] focus:border-[#006DB8] bg-white text-gray-900 font-sans text-base shadow-sm outline-none transition-all resize-none"
               />
             </div>
 
@@ -788,7 +695,8 @@ function ContactSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-12">
           {/* Get Brochure Button */}
           <a
-            href="mailto:plotzedrealestate@gmail.com?subject=Request for Property Brochure&body=Hi, I would like to receive the property brochure."
+            href="/brochures/casuarina-greens.pdf"
+            download="Casuarina-Greens-Brochure.pdf"
             className="group flex items-center justify-center gap-3 bg-[#D8B893] hover:bg-[#c9a77e] text-[#112250] font-bold px-6 py-4 rounded-full transition-all duration-300 hover:scale-105 shadow-lg"
           >
             <Download className="w-5 h-5" />
