@@ -351,7 +351,7 @@ export default function TestimonialsManagement() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                   />
                 </div>
 
@@ -364,7 +364,7 @@ export default function TestimonialsManagement() {
                       type="text"
                       value={formData.role}
                       onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                       placeholder="CEO, Customer, etc."
                     />
                   </div>
@@ -377,7 +377,7 @@ export default function TestimonialsManagement() {
                       type="text"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                     />
                   </div>
                 </div>
@@ -390,9 +390,10 @@ export default function TestimonialsManagement() {
                     required
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={6}
+                    className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base leading-relaxed shadow-sm"
                     placeholder="The testimonial content..."
+                    style={{ minHeight: '150px' }}
                   />
                 </div>
 
@@ -406,7 +407,7 @@ export default function TestimonialsManagement() {
                       onChange={(e) =>
                         setFormData({ ...formData, rating: parseInt(e.target.value) })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                     >
                       <option value={5}>5 Stars</option>
                       <option value={4}>4 Stars</option>
@@ -426,7 +427,7 @@ export default function TestimonialsManagement() {
                       onChange={(e) =>
                         setFormData({ ...formData, avatar_url: e.target.value })
                       }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-sans text-base shadow-sm"
                       placeholder="https://..."
                     />
                   </div>
