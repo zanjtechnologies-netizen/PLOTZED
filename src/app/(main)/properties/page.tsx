@@ -60,7 +60,7 @@ export default function PropertiesPage() {
   const [plots, setPlots] = useState<PlotData[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
@@ -317,13 +317,14 @@ export default function PropertiesPage() {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* View Toggle */}
-              <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1">
+              {/* View Toggle - Hidden on mobile, shown on tablet/desktop */}
+              <div className="hidden sm:flex items-center bg-white rounded-lg border border-gray-200 p-1">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition-colors ${
                     viewMode === 'grid' ? 'bg-[#112250] text-white' : 'text-gray-600 hover:bg-gray-100'
                   }`}
+                  aria-label="Grid view"
                 >
                   <Grid3X3 className="w-5 h-5" />
                 </button>
@@ -332,16 +333,9 @@ export default function PropertiesPage() {
                   className={`p-2 rounded-md transition-colors ${
                     viewMode === 'list' ? 'bg-[#112250] text-white' : 'text-gray-600 hover:bg-gray-100'
                   }`}
+                  aria-label="List view"
                 >
                   <List className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Sort Dropdown (Mobile) */}
-              <div className="md:hidden relative">
-                <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">
-                  <ArrowUpDown className="w-4 h-4" />
-                  Sort
                 </button>
               </div>
             </div>
@@ -373,9 +367,11 @@ export default function PropertiesPage() {
 
           {/* Properties Grid */}
           {!loading && plots.length > 0 && (
-            <div className={viewMode === 'grid'
-              ? 'grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8'
-              : 'grid grid-cols-1 gap-6'
+            <div className={
+              // Force list view on mobile, allow toggle on tablet/desktop
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8'
+                : 'grid grid-cols-1 gap-6'
             }>
               {plots.map((plot) => (
                 <PlotCard
