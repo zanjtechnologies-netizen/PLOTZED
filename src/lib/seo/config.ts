@@ -25,14 +25,14 @@ export const seoConfig = {
 
   // Contact Information (for Schema.org)
   contact: {
-    phone: '+1 40 9999909',
-    email: 'reservations@plotzedrealestate.com',
+    phone: '+917708594263',
+    email: 'plotzedrealestate@gmail.com',
     address: {
-      streetAddress: '',
-      addressLocality: '',
-      addressRegion: '',
-      postalCode: '',
-      addressCountry: 'US',
+      streetAddress: 'Plotzed Real Estate, Premium Tower, Business District',
+      addressLocality: 'Chennai',
+      addressRegion: 'Tamil Nadu',
+      postalCode: '600001',
+      addressCountry: 'IN',
     },
   },
 

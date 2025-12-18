@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
+import { Metadata } from 'next';
 import HeroSection from '@/components/home/HeroSection';
 import FeaturedListings from '@/components/home/FeaturedListings';
 import { ChatBot, WhatsAppButton } from '@/components/home/ClientComponents';
+import { generateMetadata as genMetadata } from '@/lib/seo/metadata';
 
 // Lazy load below-the-fold components for better performance
 const BookingExperience = dynamic(() => import('@/components/home/BookingExperience'), {
@@ -12,6 +14,26 @@ const CustomerExperiences = dynamic(() => import('@/components/home/CustomerExpe
 });
 const RedefineLuxury = dynamic(() => import('@/components/home/RedefineLuxury'), {
   loading: () => <div className="min-h-[400px] animate-pulse bg-gray-100" />,
+});
+
+// Homepage SEO Metadata
+export const metadata: Metadata = genMetadata({
+  title: 'Premium Plots & Villas in Prime Locations',
+  description: 'Discover premium residential plots and villas with zero brokerage, RERA approved properties, and transparent pricing. Expert real estate developers offering site visits and hassle-free ownership across India.',
+  keywords: [
+    'real estate',
+    'plots for sale',
+    'premium plots',
+    'residential plots India',
+    'villas for sale',
+    'RERA approved plots',
+    'zero brokerage property',
+    'land investment',
+    'property developers',
+    'site visit booking',
+  ],
+  path: '/',
+  type: 'website',
 });
 
 export default function HomePage() {

@@ -9,6 +9,7 @@ import "./globals.css";
 import SessionProvider from "@/components/providers/SessionProvider";
 import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 import { GlobalSeo } from "@/components/seo";
+import { PreconnectDomains } from "@/components/seo/SeoEnhancements";
 import { seoConfig } from "@/lib/seo/config";
 import WebVitals from "@/components/analytics/WebVitals";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
@@ -51,10 +52,38 @@ export const metadata: Metadata = {
     template: seoConfig.titleTemplate,
   },
   description: seoConfig.description,
-  
+
   icons: {
     icon: "/icon.png",
     apple: "/apple-icon.png",
+  },
+
+  manifest: "/manifest.json",
+
+  // Additional SEO improvements
+  applicationName: "Plotzed Real Estate",
+  keywords: seoConfig.keywords.join(", "),
+  authors: [{ name: seoConfig.business.name }],
+  creator: seoConfig.business.name,
+  publisher: seoConfig.business.name,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+
+  // Apple-specific
+  appleWebApp: {
+    capable: true,
+    title: "Plotzed",
+    statusBarStyle: "default",
+  },
+
+  // Verification (add your verification codes here when ready)
+  verification: {
+    // google: "your-google-verification-code",
+    // yandex: "your-yandex-verification-code",
+    // bing: "your-bing-verification-code",
   },
 };
 
@@ -70,6 +99,8 @@ export default function RootLayout({
       <head>
         {/* Global SEO: Organization, Website, LocalBusiness schemas */}
         <GlobalSeo />
+        {/* Preconnect to external domains for performance */}
+        <PreconnectDomains />
       </head>
       <body
         className={`

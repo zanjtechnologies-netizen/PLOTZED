@@ -16,6 +16,9 @@ import {
 } from 'lucide-react';
 import BookingModal from '@/components/modals/BookingModal';
 import SiteVisitModal from '@/components/modals/SiteVisitModal';
+import StructuredData from '@/components/seo/StructuredData';
+import { generatePropertySchema, generateBreadcrumbSchema, type PropertySchemaData } from '@/lib/seo/schemas';
+import { seoConfig } from '@/lib/seo/config';
 
 import { Playfair_Display, Libre_Baskerville, Inter } from 'next/font/google';
 
@@ -110,8 +113,34 @@ export default function DynamicPropertyPage() {
     );
   }
 
+  // Generate structured data for SEO
+  const propertyData: PropertySchemaData = {
+    id: plot.id,
+    name: plot.title,
+    description: plot.description || `Premium ${plot.plot_size} sq ft plot in ${plot.city}`,
+    price: plot.price,
+    priceCurrency: 'INR',
+    address: plot.address,
+    city: plot.city,
+    state: plot.state,
+    country: 'India',
+    images: plot.images || [],
+    floorSize: plot.plot_size ? { value: plot.plot_size, unit: 'SqFt' } : undefined,
+  };
+
+  const breadcrumbItems = [
+    { name: 'Home', url: seoConfig.siteUrl },
+    { name: 'Properties', url: `${seoConfig.siteUrl}/properties` },
+    { name: plot.title, url: `${seoConfig.siteUrl}/properties/${slug}` },
+  ];
+
   return (
     <main className={`${playfair.variable} ${libre.variable} ${inter.variable} bg-[#F8F9FA] min-h-screen`}>
+      {/* SEO Structured Data */}
+      <StructuredData data={[
+        generatePropertySchema(propertyData),
+        generateBreadcrumbSchema(breadcrumbItems),
+      ]} />
 
       {/* HERO SECTION */}
       <section className="relative h-[85vh] w-full overflow-hidden">
