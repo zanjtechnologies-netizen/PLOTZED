@@ -41,7 +41,7 @@ export default function FeaturedListings() {
       try {
         // Parallelize API calls for better performance
         const requests = [
-          fetch('/api/plots?featured=true&limit=3').then(res => res.json())
+          fetch('/api/plots?featured=true&limit=6').then(res => res.json())
         ];
 
         // Only fetch favorites if user is logged in
@@ -155,6 +155,9 @@ export default function FeaturedListings() {
 
   const displayPlots = useMemo(() => plots.length > 0 ? plots : fallbackPlots, [plots]);
 
+  // Determine how many plots to display: 6 if we have 6+, otherwise 3
+  const displayCount = useMemo(() => displayPlots.length >= 6 ? 6 : 3, [displayPlots]);
+
   // Animation variants - memoized to prevent recreation
   const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
@@ -202,10 +205,10 @@ export default function FeaturedListings() {
           />
         </motion.div>
 
-        {/* Enhanced Loading State with Shimmer */}
+        {/* Enhanced Loading State with Shimmer - Dynamic count */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 mb-16">
-            {[1, 2, 3].map((i) => (
+            {Array.from({ length: 6 }, (_, i) => i + 1).map((i) => (
               <div key={i} className="bg-white rounded-lg overflow-hidden shadow-lg animate-pulse">
                 <div className="h-64 bg-gray-200" />
                 <div className="p-6 space-y-4">
@@ -221,7 +224,7 @@ export default function FeaturedListings() {
           </div>
         )}
 
-        {/* Properties Grid with Stagger Animation */}
+        {/* Properties Grid with Stagger Animation - Dynamic count */}
         {!loading && (
           <motion.div
             variants={containerVariants}
@@ -230,7 +233,7 @@ export default function FeaturedListings() {
             viewport={{ once: true, margin: "-100px" }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8 max-w-7xl mx-auto mb-16"
           >
-            {displayPlots.slice(0, 3).map((plot) => (
+            {displayPlots.slice(0, displayCount).map((plot) => (
               <motion.div
                 key={plot.id}
                 variants={itemVariants}
