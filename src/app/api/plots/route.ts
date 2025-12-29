@@ -208,11 +208,19 @@ export const POST = withErrorHandling(
     const plotData = createPlotSchema.parse(body)
 
     // Create a URL-friendly slug from the title
-    const slug = plotData.title
+    let baseSlug = plotData.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .trim()
       .replace(/[\s-]+/g, '-')
+
+    // Ensure slug is unique by checking database and appending number if needed
+    let slug = baseSlug
+    let counter = 1
+    while (await prisma.plots.findUnique({ where: { slug } })) {
+      counter++
+      slug = `${baseSlug}-${counter}`
+    }
 
     const { bookingAmount, plotSize, originalPrice, reraNumber, isFeatured, is_published, heroImage, brochure, ...restOfPlotData } = plotData
 

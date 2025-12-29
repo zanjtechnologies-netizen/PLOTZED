@@ -76,6 +76,31 @@ export const PUT = withErrorHandling(
       ...restOfPlotData,
     }
 
+    // If title is being updated, regenerate slug and ensure it's unique
+    if (plotData.title) {
+      let baseSlug = plotData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/[\s-]+/g, '-')
+
+      // Check if slug needs to be updated (different from current)
+      const currentPlot = await prisma.plots.findUnique({ where: { id }, select: { slug: true } })
+
+      if (currentPlot && baseSlug !== currentPlot.slug) {
+        // Ensure new slug is unique (excluding current property)
+        let slug = baseSlug
+        let counter = 1
+        while (true) {
+          const existing = await prisma.plots.findUnique({ where: { slug } })
+          if (!existing || existing.id === id) break
+          counter++
+          slug = `${baseSlug}-${counter}`
+        }
+        updateData.slug = slug
+      }
+    }
+
     if (bookingAmount !== undefined) updateData.booking_amount = bookingAmount
     if (plotSize !== undefined) updateData.plot_size = plotSize
     if (originalPrice !== undefined) updateData.original_price = originalPrice
