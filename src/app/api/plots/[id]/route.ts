@@ -70,7 +70,7 @@ export const PUT = withErrorHandling(
     const body = await request.json()
     const plotData = updatePlotSchema.parse(body)
 
-    const { bookingAmount, plotSize, originalPrice, reraNumber, isFeatured, is_published, ...restOfPlotData } = plotData
+    const { bookingAmount, plotSize, originalPrice, reraNumber, isFeatured, is_published, heroImage, brochure, ...restOfPlotData } = plotData
 
     const updateData: any = {
       ...restOfPlotData,
@@ -80,6 +80,8 @@ export const PUT = withErrorHandling(
     if (plotSize !== undefined) updateData.plot_size = plotSize
     if (originalPrice !== undefined) updateData.original_price = originalPrice
     if (reraNumber !== undefined) updateData.rera_number = reraNumber
+    if (heroImage !== undefined) updateData.hero_image = heroImage
+    if (brochure !== undefined) updateData.brochure = brochure
     if (isFeatured !== undefined) updateData.is_featured = isFeatured
     if (is_published !== undefined) updateData.is_published = is_published
 
