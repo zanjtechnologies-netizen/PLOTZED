@@ -137,11 +137,14 @@ export default function PropertyModalEnhanced({
         setHeroImage(data.data.url)
         alert('Hero image uploaded successfully!')
       } else {
-        throw new Error(data.error || 'Upload failed')
+        const errorMsg = data.error || 'Upload failed'
+        console.error('Hero image upload failed:', errorMsg, data)
+        throw new Error(errorMsg)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Hero image upload error:', error)
-      alert('Failed to upload hero image. Please try again.')
+      const errorMessage = error.message || 'Failed to upload hero image. Please try again.'
+      alert(`Upload Error: ${errorMessage}`)
     } finally {
       setUploadingHeroImage(false)
     }
