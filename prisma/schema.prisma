@@ -102,6 +102,7 @@ model plots {
   rera_number      String?
   approved_layout  String?
   legal_docs       String[]
+  hero_image       String?
   images           String[]
   videos           String[]
   tour_360         String?

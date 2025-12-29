@@ -25,6 +25,7 @@ export default function PropertyModalEnhanced({
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [uploadingImages, setUploadingImages] = useState(false)
+  const [uploadingHeroImage, setUploadingHeroImage] = useState(false)
   const [uploadingBrochure, setUploadingBrochure] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
@@ -45,6 +46,7 @@ export default function PropertyModalEnhanced({
     is_featured: false,
     is_published: true,
   })
+  const [heroImage, setHeroImage] = useState<string>('')
   const [images, setImages] = useState<string[]>([])
   const [brochure, setBrochure] = useState<string>('')
   const [amenityInput, setAmenityInput] = useState('')
@@ -70,6 +72,7 @@ export default function PropertyModalEnhanced({
         is_featured: property.is_featured || false,
         is_published: property.is_published !== undefined ? property.is_published : true,
       })
+      setHeroImage(property.hero_image || '')
       setImages(property.images || [])
       setBrochure(property.brochure || '')
     }
@@ -102,6 +105,46 @@ export default function PropertyModalEnhanced({
       ...prev,
       amenities: prev.amenities.filter((a) => a !== amenity),
     }))
+  }
+
+  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image is too large (max 5MB)')
+      return
+    }
+
+    setUploadingHeroImage(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'properties/hero')
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+      if (data.success && data.data?.url) {
+        setHeroImage(data.data.url)
+        alert('Hero image uploaded successfully!')
+      } else {
+        throw new Error(data.error || 'Upload failed')
+      }
+    } catch (error) {
+      console.error('Hero image upload error:', error)
+      alert('Failed to upload hero image. Please try again.')
+    } finally {
+      setUploadingHeroImage(false)
+    }
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,8 +269,9 @@ export default function PropertyModalEnhanced({
         longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
         reraNumber: formData.rera_number || undefined,
         amenities: formData.amenities,
+        heroImage: heroImage || undefined,
         images: images,
-        brochure: brochure || undefined, // ✅ NEW: Include brochure in payload
+        brochure: brochure || undefined,
         status: formData.status,
         isFeatured: formData.is_featured,
         is_published: formData.is_published,
@@ -530,13 +574,64 @@ export default function PropertyModalEnhanced({
             </div>
           </div>
 
-          {/* Images */}
+          {/* Hero/Cover Image */}
           <div className="space-y-4 border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900">Property Images</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Hero/Cover Image</h3>
+            <p className="text-sm text-gray-500">Main background image for property detail page</p>
+
+            <div>
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-blue-300 border-dashed rounded-lg cursor-pointer bg-blue-50 hover:bg-blue-100">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <Upload className="w-10 h-10 mb-2 text-blue-400" />
+                    <p className="mb-2 text-sm text-gray-700">
+                      <span className="font-semibold">Click to upload hero image</span>
+                    </p>
+                    <p className="text-xs text-gray-500">PNG, JPG, WEBP (MAX. 5MB, Recommended: 1920x1080)</p>
+                  </div>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleHeroImageUpload}
+                    disabled={uploadingHeroImage}
+                  />
+                </label>
+              </div>
+              {uploadingHeroImage && (
+                <p className="text-sm text-blue-600 mt-2">Uploading hero image...</p>
+              )}
+            </div>
+
+            {heroImage && (
+              <div className="relative group">
+                <img
+                  src={heroImage}
+                  alt="Hero"
+                  className="w-full h-64 object-cover rounded-lg border-2 border-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setHeroImage('')}
+                  className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
+                <div className="absolute bottom-2 left-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  HERO IMAGE
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Gallery Images */}
+          <div className="space-y-4 border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900">Gallery Images</h3>
+            <p className="text-sm text-gray-500">Additional images shown in the gallery section</p>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Upload Images
+                Upload Gallery Images
               </label>
               <div className="flex items-center justify-center w-full">
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">

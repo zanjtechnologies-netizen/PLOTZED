@@ -231,7 +231,9 @@ export default function PropertiesClient({ properties: initialProperties, stats:
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
                     <Link
-                      href={`/plots/${property.id}`}
+                      href={`/properties/${property.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium text-center flex items-center justify-center"
                     >
                       <Eye className="w-4 h-4 mr-1" />
