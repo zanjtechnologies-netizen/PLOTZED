@@ -19,6 +19,7 @@ export interface PlotData {
   state?: string;
   address?: string;
   location?: string; // fallback for city
+  hero_image?: string | null;
   images?: string[];
   amenities?: string[];
   nearby_places?: Record<string, any>;
@@ -128,8 +129,8 @@ export default function PlotCard({
   const mainLocation = plot.city || plot.location || 'Location TBD';
   const nearbyLocations = getNearbyLocations();
 
-  // Get image URL
-  const imageUrl = plot.images?.[0] || '/images/hero-bg-fallback-1.png';
+  // Get image URL - prioritize hero_image, then first gallery image, then fallback
+  const imageUrl = plot.hero_image || plot.images?.[0] || '/images/hero-bg-fallback-1.png';
 
   // Get link URL
   const linkUrl = `/properties/${plot.slug || plot.id}`;

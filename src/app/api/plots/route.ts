@@ -149,6 +149,7 @@ export const GET = withErrorHandling(
         pincode: true,
         latitude: true,
         longitude: true,
+        hero_image: true,
         images: true,
         brochure: true,
         amenities: true,
