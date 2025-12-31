@@ -50,6 +50,7 @@ export const GET = withErrorHandling(
             city: true,
             state: true,
             pincode: true,
+            hero_image: true,
             images: true,
             brochure: true,
             amenities: true,
