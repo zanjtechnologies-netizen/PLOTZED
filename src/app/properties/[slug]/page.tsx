@@ -12,7 +12,12 @@ import {
   MessageCircle,
   Link as LinkIcon,
   Check,
-  Phone
+  Phone,
+  CheckCircle2,
+  Home,
+  Ruler,
+  FileText,
+  Calendar
 } from 'lucide-react';
 import BookingModal from '@/components/modals/BookingModal';
 import SiteVisitModal from '@/components/modals/SiteVisitModal';
@@ -300,6 +305,106 @@ export default function DynamicPropertyPage() {
                 </div>
               </div>
             )}
+
+            {/* Key Features */}
+            <div>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#112250] mb-4 sm:mb-5 md:mb-6">
+                Key Features
+              </h3>
+
+              <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6 mb-6">
+                  {/* Plot Size */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-10 h-10 bg-[#112250]/5 rounded-full flex items-center justify-center">
+                      <Ruler className="w-5 h-5 text-[#112250]" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Plot Size</p>
+                      <p className="text-base sm:text-lg font-semibold text-[#112250]">{plot.plot_size} sq ft</p>
+                    </div>
+                  </div>
+
+                  {/* Dimensions */}
+                  {plot.dimensions && (
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 bg-[#112250]/5 rounded-full flex items-center justify-center">
+                        <Home className="w-5 h-5 text-[#112250]" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Dimensions</p>
+                        <p className="text-base sm:text-lg font-semibold text-[#112250]">{plot.dimensions} ft</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Facing */}
+                  {plot.facing && (
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 bg-[#112250]/5 rounded-full flex items-center justify-center">
+                        <MapPin className="w-5 h-5 text-[#112250]" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Facing</p>
+                        <p className="text-base sm:text-lg font-semibold text-[#112250]">{plot.facing}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* RERA Number */}
+                  {plot.rera_number && (
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 bg-[#112250]/5 rounded-full flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-[#112250]" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">RERA No.</p>
+                        <p className="text-base sm:text-lg font-semibold text-[#112250]">{plot.rera_number}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Status */}
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Status</p>
+                      <p className="text-base sm:text-lg font-semibold text-green-600">{plot.status}</p>
+                    </div>
+                  </div>
+
+                  {/* Booking Amount */}
+                  {plot.booking_amount > 0 && (
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 bg-[#D8B893]/10 rounded-full flex items-center justify-center">
+                        <Calendar className="w-5 h-5 text-[#D8B893]" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Booking Amount</p>
+                        <p className="text-base sm:text-lg font-semibold text-[#112250]">₹{plot.booking_amount.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Amenities */}
+                {plot.amenities && plot.amenities.length > 0 && (
+                  <div className="border-t border-gray-100 pt-6">
+                    <h4 className="text-base sm:text-lg font-bold text-[#112250] mb-4">Nearby Amenities</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {plot.amenities.map((amenity: string, index: number) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                          <span className="text-sm sm:text-base text-gray-700">{amenity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
           </div>
 
