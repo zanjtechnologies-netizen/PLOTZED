@@ -38,6 +38,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: seoConfig.sitemap.priority.properties,
     },
     {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: seoConfig.sitemap.changefreq.pages,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/visit`,
+      lastModified: new Date(),
+      changeFrequency: seoConfig.sitemap.changefreq.pages,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/privacy-policy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/cookie-policy`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.3,
+    },
+    {
       url: `${baseUrl}/login`,
       lastModified: new Date(),
       changeFrequency: seoConfig.sitemap.changefreq.pages,
@@ -82,12 +118,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: seoConfig.sitemap.priority.propertyDetails,
     }));
 
+    // Fetch all published blog posts
+    const blogPosts = await prisma.blog_posts.findMany({
+      where: {
+        status: 'PUBLISHED',
+      },
+      select: {
+        slug: true,
+        updated_at: true,
+      },
+      orderBy: {
+        updated_at: 'desc',
+      },
+    });
+
+    // Dynamic blog post pages
+    const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updated_at,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }));
+
     // TODO: Add properties to sitemap when Property model is created
     // For now, we only include plots
     // const propertyPages: MetadataRoute.Sitemap = [];
 
     // Combine all pages
-    return [...staticPages, ...plotPages];
+    return [...staticPages, ...plotPages, ...blogPages];
   } catch (error) {
     console.error('Error generating sitemap:', error);
     // Return static pages if database query fails

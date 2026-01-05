@@ -329,7 +329,7 @@ export default function Footer() {
                 <Youtube className="w-5 h-5 text-[#D8B893]" />
               </motion.a>
               <motion.a
-                href="#"
+                href="#" {/* TODO: Add LinkedIn URL here once account is created */}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1, y: -3 }}
@@ -350,7 +350,11 @@ export default function Footer() {
               Company
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
-              <li>About Us</li>
+              <li>
+                <Link href="/about" className="hover:text-[#D8B893] transition-colors">
+                  About Us
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -378,8 +382,16 @@ export default function Footer() {
               Support
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
-              <li>Cancellation Policy</li>
-              <li>Terms of Service</li>
+              <li>
+                <Link href="/terms" className="hover:text-[#D8B893] transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="hover:text-[#D8B893] transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -390,15 +402,15 @@ export default function Footer() {
             © 2023 Plotzed Real Estate Developer. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-[#D8B893] transition-colors">
+            <Link href="/privacy-policy" className="hover:text-[#D8B893] transition-colors">
               Privacy Policy
-            </a>
+            </Link>
             <Link href="/cookie-policy" className="hover:text-[#D8B893] transition-colors">
               Cookie Policy
             </Link>
-            <a href="#" className="hover:text-[#D8B893] transition-colors">
+            <Link href="/sitemap.xml" className="hover:text-[#D8B893] transition-colors">
               Sitemap
-            </a>
+            </Link>
           </div>
         </div>
       </div>
