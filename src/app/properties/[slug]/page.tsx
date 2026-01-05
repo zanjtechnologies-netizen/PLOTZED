@@ -147,7 +147,7 @@ export default function DynamicPropertyPage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url(${plot?.hero_image || plot?.images?.[0] || "/images/placeholder.png"})`,
+            backgroundImage: `url("${plot?.hero_image || plot?.images?.[0] || "/images/placeholder.png"}")`,
           }}
           data-hero-image={plot?.hero_image}
           data-first-gallery={plot?.images?.[0]}
