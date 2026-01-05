@@ -15,8 +15,6 @@ import {
   MessageSquare,
   Users,
   Settings,
-  FileText,
-  TrendingUp,
   Image,
   BookOpen,
   Star,
@@ -67,11 +65,6 @@ const navigation = [
     name: 'Users',
     href: '/admin/users',
     icon: Users,
-  },
-  {
-    name: 'Reports',
-    href: '/admin/reports',
-    icon: FileText,
   },
   {
     name: 'Settings',
