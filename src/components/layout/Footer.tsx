@@ -352,7 +352,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
               <li>
-                <Link href="/about" className="hover:text-[#D8B893] transition-colors">
+                <Link href="/about" className="text-white hover:text-[#D8B893] transition-colors">
                   About Us
                 </Link>
               </li>
@@ -384,12 +384,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-libre)' }}>
               <li>
-                <Link href="/terms" className="hover:text-[#D8B893] transition-colors">
+                <Link href="/terms" className="text-white hover:text-[#D8B893] transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-[#D8B893] transition-colors">
+                <Link href="/privacy-policy" className="text-white hover:text-[#D8B893] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
@@ -403,13 +403,13 @@ export default function Footer() {
             © 2023 Plotzed Real Estate Developer. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <Link href="/privacy-policy" className="hover:text-[#D8B893] transition-colors">
+            <Link href="/privacy-policy" className="text-white hover:text-[#D8B893] transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/cookie-policy" className="hover:text-[#D8B893] transition-colors">
+            <Link href="/cookie-policy" className="text-white hover:text-[#D8B893] transition-colors">
               Cookie Policy
             </Link>
-            <Link href="/sitemap.xml" className="hover:text-[#D8B893] transition-colors">
+            <Link href="/sitemap.xml" className="text-white hover:text-[#D8B893] transition-colors">
               Sitemap
             </Link>
           </div>

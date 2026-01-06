@@ -262,7 +262,7 @@ export default function AboutPage() {
               Browse Properties
             </Link>
             <Link
-              href="/#contact"
+              href="/visit"
               className="bg-white text-[#112250] px-8 py-3 rounded-lg font-semibold border-2 border-[#112250] hover:bg-gray-50 transition-colors"
             >
               Contact Us
