@@ -328,8 +328,9 @@ export default function Footer() {
               >
                 <Youtube className="w-5 h-5 text-[#D8B893]" />
               </motion.a>
+              {/* TODO: Add LinkedIn URL here once account is created */}
               <motion.a
-                href="#" {/* TODO: Add LinkedIn URL here once account is created */}
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1, y: -3 }}

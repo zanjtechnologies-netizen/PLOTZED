@@ -121,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch all published blog posts
     const blogPosts = await prisma.blog_posts.findMany({
       where: {
-        status: 'PUBLISHED',
+        is_published: true,
       },
       select: {
         slug: true,
